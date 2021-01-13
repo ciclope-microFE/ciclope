@@ -1,0 +1,25 @@
+** User material property definition:
+** ---------------------------------------------------
+** STEEL
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET1, MATERIAL=STEEL
+1.
+*MATERIAL,NAME=STEEL
+*ELASTIC
+180000, 0.3
+** ---------------------------------------------------
+** Analysis definition. The Step module defines the analysis steps and associated output requests.
+** More info at:
+** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** ---------------------------------------------------
+*STEP
+*STATIC
+*BOUNDARY
+NODES_B, 1, 3, 0.0
+*BOUNDARY
+NODES_T, 3, 3, -50
+*NODE FILE
+U
+*EL FILE
+S
+*END STEP
