@@ -1,0 +1,32 @@
+** ---------------------------------------------------
+** Material definition:
+*MATERIAL, NAME=STEEL_4301
+*ELASTIC
+210000, 0.3333333333, 0
+*DENSITY
+7.85e-9
+*PLASTIC
+2000, 0, 0
+3000, 5, 0
+*SOLID SECTION, ELSET=SET1, MATERIAL=STEEL_4301
+** ---------------------------------------------------
+** Analysis definition:
+*TIME POINTS, NAME=t10, GENERATE
+0, 1, 0.1
+*STEP, NLGEOM,
+*STATIC
+0.001, 1, 0.0000001
+** Vertical displacement fixed at bottom:
+*BOUNDARY
+NODES_B, 3, 3, 0.0
+** Vertical displacement imposed at top:
+*BOUNDARY
+NODES_T, 3, 3, -50
+
+*EL FILE, OUTPUT=2D, TIME POINTS=t10
+S,PEEQ
+*NODE FILE, OUTPUT=2D
+U
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_B
+RF
+*END STEP

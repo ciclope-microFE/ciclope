@@ -1,0 +1,8 @@
+** ---------------------------------------------------
+** prop_PMMA.inp
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SetName, MATERIAL=MatName
+1.
+*MATERIAL, NAME=MatName
+*ELASTIC
+4500., 0.3

@@ -1,0 +1,8 @@
+** ---------------------------------------------------
+** prop_steel.inp
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SetName, MATERIAL=MatName
+1.
+*MATERIAL, NAME=MatName
+*ELASTIC
+190000., 0.3
