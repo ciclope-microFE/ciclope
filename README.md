@@ -2,7 +2,8 @@
 (Computed Tomography to Finite Elements)
 
 Utilities, scripts and notebooks for the conversion of 3D computed tomography data to finite element models. <br />
-The folder [test_data](test_data) contains a test dataset for stress/displacement analysis.
+The folder [test_data](test_data) contains a test dataset for stress/displacement analysis. <br />
+For further CalculiX examples visit [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples) <br />
 
 ___
 
@@ -20,7 +21,7 @@ ___
     Tutorial for mesh generation in 3D Slicer using the -> [SlicerSegmentMesher module](https://github.com/lassoan/SlicerSegmentMesher#tutorial) 
     - [x] Read and modify mesh including:
         - [x] Material property definition
-        - [x] Non-linear, quasi-static analysis definition: tensile test with material plasticity
+        - [x] Non-linear, quasi-static analysis definition: tensile test with material plasticity. Visit also [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples/blob/master/Drahtbiegen/Zug/Zug.inp)
         - [x] Definition of boundary conditions
     - [x] Run simulation in Calculix
     - [x] Convert Calculix output to .VTK for visualization in Paraview
