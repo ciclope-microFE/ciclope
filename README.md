@@ -9,6 +9,7 @@ ___
 
 ### Jupyter notebooks with CT2FE examples:
 - [CT2FE_example01_voxelFE_static_Calculix.ipynb](CT2FE_example01_voxelFE_static_Calculix.ipynb)
+![](test_data/example_01/masked_8bit_cap1.png)
     - [x] Load, inspect and write a 3D CT dataset
     - [x] Convert 3D stack to voxel-FE model for simulation in CalculX or Abaqus
         - [x] Local mapping of the dataset grey values to bone material properties
@@ -17,6 +18,7 @@ ___
     - [x] Visualize simulation results in Paraview
 
 - [CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb](CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb)
+![](test_data/example_02/D_single_tens_Nlgeom.png)
     - [x] Load unstructured grid mesh preprocessed and generated with [3D Slicer](https://www.slicer.org/) <br />
     Tutorial for mesh generation in 3D Slicer using the -> [SlicerSegmentMesher module](https://github.com/lassoan/SlicerSegmentMesher#tutorial) 
     - [x] Read and modify mesh including:
