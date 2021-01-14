@@ -1,5 +1,5 @@
 # CT2FE
-(Computed Tomography to Finite Elements)
+#### (Computed Tomography to Finite Elements)
 
 Utilities, scripts and notebooks for the conversion of 3D computed tomography data to finite element models. <br />
 The folder [test_data](test_data) contains a test dataset for stress/displacement analysis. <br />
