@@ -25,6 +25,7 @@ ___
         - [x] Material property definition
         - [x] Non-linear, quasi-static analysis definition: tensile test with material plasticity. Visit also [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples/blob/master/Drahtbiegen/Zug/Zug.inp)
         - [x] Definition of boundary conditions
+    - [x] Export mesh using the [meshio module](https://github.com/nschloe/meshio/blob/master/meshio/abaqus/_abaqus.py)
     - [x] Run simulation in Calculix
     - [x] Convert Calculix output to .VTK for visualization in Paraview
     - [x] Visualize simulation results in Paraview
