@@ -19,7 +19,7 @@ For more information, call this script with the help option::
 
 __author__ = 'Gianluca Iori'
 __date_created__ = '2021-01-13'
-__date__ = '2021-01-13'
+__date__ = '2021-01-14'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
@@ -97,9 +97,8 @@ def main():
     parser.add_argument('fileout', type=str, default=None, help='Output filename (Abaqus .INP).')
     parser.add_argument('-k', '--keywords', type=str, nargs='*', default=None, help='Abaqus keywords.')
     # parser.add_argument('--eltype', type=str, default='C3D8', help='Element type.')
-    parser.add_argument('--nset_type', type=str, default='face', help='Node set type (to be used with NSET keyword for additional node sets).')
-    parser.add_argument('--elset_type', type=str, default='face', help='Element set type (to be used with ELSET keyword for additional element sets).')
     parser.add_argument('-t', '--template', type=str, default='temp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
+    parser.add_argument('--float_fmt', type=str, default='.6e', help='Float formatting option.')
     parser.add_argument('-v', '--verbose', type=bool, default=False, help='Verbose output')
 
     args = parser.parse_args()
@@ -187,9 +186,7 @@ def main():
         mesh.cell_sets = {'SET1': [np.arange(0, len(mesh.cells[0][1]))]}
 
     # write Abaqus mesh using meshio
-    meshio.abaqus.write(args.fileout, mesh, float_fmt=".6e")
-
-
+    meshio.abaqus.write(args.fileout, mesh, args.float_fmt)
 
     # # MATERIAL MAPPING:
     # if 'PROPERTY' in args.keywords:
