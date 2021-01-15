@@ -1,7 +1,7 @@
 # CT2FE
 #### (Computed Tomography to Finite Elements)
 
-Utilities, scripts and notebooks for the conversion of 3D computed tomography data to finite element models. <br />
+Utilities, scripts and notebooks for the conversion of synchrotron computed tomography data to finite element models. <br />
 The folder [test_data](test_data) contains a test dataset for stress/displacement analysis. <br />
 For further CalculiX examples visit [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples) <br />
 
