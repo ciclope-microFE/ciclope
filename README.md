@@ -7,7 +7,7 @@ For further CalculiX examples visit [github.com/mkraska/CalculiX-Examples](https
 
 ___
 
-### Jupyter notebooks with CT2FE examples:
+### Jupyter notebooks containing CT2FE examples:
 - [CT2FE_example01_voxelFE_static_Calculix.ipynb](CT2FE_example01_voxelFE_static_Calculix.ipynb)
 ![](test_data/example_01/masked_8bit_cap1.png)
     - [x] Load, inspect and write a 3D CT dataset
@@ -20,7 +20,7 @@ ___
 - [CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb](CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb)
 ![](test_data/example_02/D_single_tens_Nlgeom.png)
     - [x] Load unstructured grid mesh preprocessed and generated with [3D Slicer](https://www.slicer.org/) <br />
-    Tutorial for mesh generation in 3D Slicer using the -> [SlicerSegmentMesher module](https://github.com/lassoan/SlicerSegmentMesher#tutorial) 
+    Follow tutorial for mesh generation in 3D Slicer using the -> [SlicerSegmentMesher module](https://github.com/lassoan/SlicerSegmentMesher#tutorial) 
     - [x] Read and modify mesh including:
         - [x] Material property definition
         - [x] Non-linear, quasi-static analysis definition: tensile test with material plasticity. Visit also [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples/blob/master/Drahtbiegen/Zug/Zug.inp)
