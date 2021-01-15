@@ -36,9 +36,9 @@ ___
 - [ ] 3D dataset embedding
 - [ ] BMD-based material property calibration utilities
 
-**Repo:**
-- [ ] embedding
-- [ ] BMD-based material property calibration utilities
+**Repo/functions:**
+- [ ] model embedding
+- [ ] BMD-based material property calibration methods
 - [ ] write midplanes images (.PNG)
 - [ ] move TIFF (or other image formats) reading methods to separate library
 - [ ] create module library
