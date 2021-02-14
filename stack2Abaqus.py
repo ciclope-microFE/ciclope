@@ -10,8 +10,8 @@ For more information, call this script with the help option::
 
 """
 2DO:
-- jupyter notebook documenting one full example
-- run complete test with Calculix
+- jupyter nb - bone microFE example
+    - posptrocess CalculiX files
 - move TIFF (or other image formats) reading methods to separate library
 - documentation pages (sphinx?)
 - BC and FE solution parameters definition as command line input (?)
@@ -20,7 +20,7 @@ For more information, call this script with the help option::
 
 __author__ = 'Gianluca Iori'
 __date_created__ = '2020-11-15'
-__date__ = '2021-01-07'
+__date__ = '2021-02-14'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
@@ -81,7 +81,7 @@ def main():
             See "prop.inp" and "property_temp_bone.inp" for examples.
 
             Boundary conditions (BCs), simulation steps and associated output requests
-            are defined in a separate template file. See "temp.inp" for an example.
+            are defined in a separate template file. See "tmp.inp" for an example.
             More info at:
             https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
             ''')
@@ -125,13 +125,13 @@ def main():
             * Convert CT scan of embedded bone tissue mapping the model GVs to local material properties.
               GVs between 251 and 255 are reserved for the embedding matrix, and a separate property file is given
               for the mechanical properties of this material. The type of FE analysis, all BCs and requested output are
-              defined in the template file "temp.inp"::    
+              defined in the template file "tmp.inp"::    
                 
                 stack2abaqus.py scan-sample_15-3-crop_c0001.tif pippo.inp
                 -k NODE ELEMENT NSET PROPERTY
-                -p property_temp_bone.inp property_temp_embed.inp
+                -p ./material_properties/bone.inp ./material_properties/PMMA.inp
                 -pr 1:250 251:255
-                -t temp.inp
+                -t input_templates/tmp.inp
             ''')
 
     parser = argparse.ArgumentParser(description = description, epilog=epilog, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -143,7 +143,7 @@ def main():
     parser.add_argument('--eltype', type=str, default='C3D8', help='Element type.')
     parser.add_argument('-p', '--property', type=str, nargs='*', default='prop.inp', help='Template file for material property mapping.')
     parser.add_argument('-pr', '--prange', type=str, nargs='*', default='1:255', help='GV range for user material property.')
-    parser.add_argument('-t', '--template', type=str, default='temp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
+    parser.add_argument('-t', '--template', type=str, default='input_templates/tmp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
     parser.add_argument('-v', '--verbose', type=bool, default=False, help='Verbose output')
 
     args = parser.parse_args()

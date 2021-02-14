@@ -1,0 +1,10 @@
+** ---------------------------------------------------
+** bone.inp
+** material property definition with E=18GPa and nu=0.3
+** ---------------------------------------------------
+** Material definition:
+*SOLID SECTION, ELSET=SetName, MATERIAL=MatName
+1.
+*MATERIAL,NAME=MatName
+*ELASTIC
+18000, 0.3

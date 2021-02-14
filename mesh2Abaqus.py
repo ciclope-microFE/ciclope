@@ -43,10 +43,10 @@ def main():
 
             The scripts converts a .VTK unstructured grid mesh file to an Abaqus .INP file.            
             The output of this script is an input file (.INP) in ABAQUS syntax
-            that can be solved using ABAQUS or CALCULIX.
+            that can be solved using ABAQUS or CalculiX.
             
             Boundary conditions (BCs), simulation steps and associated output requests
-            are defined in a separate template file. See "temp.inp" for an example.
+            are defined in a separate template file. See "tmp.inp" for an example.
             More info at:
             https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
             ''')
@@ -83,12 +83,12 @@ def main():
                 
             EXAMPLES:
             
-            * Convert VTk unstructured grid mesh to CalculiX FE for tensile test simulations.
-              The analysis type and all BCs and requested outputs are defined in the template file "temp_example02_tens_Nlgeom.inp":
+            * Convert VTK unstructured grid mesh to CalculiX FE for tensile test simulations.
+              The analysis type and all BCs and requested outputs are defined in the template file "tmp_example02_tens_Nlgeom.inp":
                 
                 mesh2Abaqus.py D_single.vtk CalculiX/D_single.inp
                 -k NSET ELSET
-                -t temp_example02_tens_Nlgeom.inp
+                -t input_templates/tmp_example02_tens_Nlgeom.inp
 
             ''')
 
@@ -97,7 +97,7 @@ def main():
     parser.add_argument('fileout', type=str, default=None, help='Output filename (Abaqus .INP).')
     parser.add_argument('-k', '--keywords', type=str, nargs='*', default=None, help='Abaqus keywords.')
     # parser.add_argument('--eltype', type=str, default='C3D8', help='Element type.')
-    parser.add_argument('-t', '--template', type=str, default='temp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
+    parser.add_argument('-t', '--template', type=str, default='input_templates/tmp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
     parser.add_argument('--float_fmt', type=str, default='.6e', help='Float formatting option.')
     parser.add_argument('-v', '--verbose', type=bool, default=False, help='Verbose output')
 
