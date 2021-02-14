@@ -1,8 +1,9 @@
 ** ---------------------------------------------------
-** prop_bone.inp
+** PMMA.inp
 ** ---------------------------------------------------
+** Material definition:
 *SOLID SECTION, ELSET=SetName, MATERIAL=MatName
 1.
-*MATERIAL,NAME=MatName
+*MATERIAL, NAME=MatName
 *ELASTIC
-18000.*(GV/250.)**2.5, 0.3
+4500., 0.3

@@ -1,6 +1,7 @@
 ** ---------------------------------------------------
-** prop_steel.inp
+** steel.inp
 ** ---------------------------------------------------
+** Material definition:
 *SOLID SECTION, ELSET=SetName, MATERIAL=MatName
 1.
 *MATERIAL, NAME=MatName

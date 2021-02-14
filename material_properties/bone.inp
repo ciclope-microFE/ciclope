@@ -1,8 +1,10 @@
 ** ---------------------------------------------------
-** prop_PMMA.inp
+** bone.inp
+** material property definition with E=f(GV) and nu=0.3
 ** ---------------------------------------------------
+** Material definition:
 *SOLID SECTION, ELSET=SetName, MATERIAL=MatName
 1.
-*MATERIAL, NAME=MatName
+*MATERIAL,NAME=MatName
 *ELASTIC
-4500., 0.3
+18000.*(GV/250.)**2.5, 0.3
