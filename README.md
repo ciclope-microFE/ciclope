@@ -8,7 +8,7 @@ For further CalculiX examples visit [github.com/mkraska/CalculiX-Examples](https
 ___
 
 ### Jupyter notebooks containing CT2FE examples:
-- [CT2FE_example01_voxelFE_static_Calculix.ipynb](CT2FE_example01_voxelFE_static_Calculix.ipynb)
+- [CT2FE_example01_voxelFE_static_CalculiX.ipynb](CT2FE_example01_voxelFE_static_Calculix.ipynb)
 ![](test_data/example_01/masked_8bit_cap1.png)
     - [x] Load, inspect and write a 3D CT dataset
     - [x] Convert 3D stack to voxel-FE model for simulation in CalculX or Abaqus
@@ -16,6 +16,9 @@ ___
     - [x] Run simulation in Calculix
     - [x] Convert Calculix output to .VTK for visualization in Paraview
     - [x] Visualize simulation results in Paraview
+
+- [CT2FE_example03_voxelFE_linear_CalculiX.ipynb](CT2FE_example01_voxelFE_static_Calculix.ipynb)
+    <br /> Same test as example01 but with constant material properties assigned to the bone tissue
 
 - [CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb](CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb)
 ![](test_data/example_02/D_single_tens_Nlgeom.png)
@@ -44,11 +47,12 @@ ___
 - [ ] create module library
 
 **Other:**
+- [x] linear elastic analysis
 - [x] non-linear analysis (Nlgeom)
-- [ ] non-linear analysis (bone damage [Rincón-Kohli 2008](10.1007/s10237-008-0128-z))
+- [ ] bone failure analysis (bone damage with Pistoia model?)
 - [x] Calculix parallel (ccx_MT)
 - [ ] BC and FE solution parameters definition as command line input (?)
-- [ ] output different file format (.VTK)
+- [x] output different file format (.VTK)
 - [ ] documentation pages (sphinx?)
 
 
