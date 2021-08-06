@@ -188,60 +188,6 @@ def main():
     # write Abaqus mesh using meshio
     meshio.abaqus.write(args.fileout, mesh, args.float_fmt)
 
-    # # MATERIAL MAPPING:
-    # if 'PROPERTY' in args.keywords:
-    #     logging.info('User material properties defined.')
-    #     INP.write('** User material property definition:\n')
-    #     INP.write('** internal variables are: "SetName", "MatName", "GV"\n')
-    #
-    #     n_propfile = 0
-    #     for property in args.property:
-    #         # open material property template file
-    #         try:
-    #             PROPfile = open(property, 'r')
-    #         except IOError('Material property file not found'):
-    #             exit(1)
-    #
-    #         lines = PROPfile.readlines()
-    #         # for each GV corresponding to an existing material index
-    #         for GV in existing_GV:
-    #
-    #             # if elements with that GV exist
-    #             if len(elset_nodes[GV]) > 0:
-    #
-    #                 # if the GV belongs to the GVrange assigned to the specific material property
-    #                 if prop_GV[n_propfile][0] <= GV <= prop_GV[n_propfile][1]:
-    #                     matset_str = 'SET' + str(GV)
-    #
-    #                     for line in lines:
-    #                         line = line.replace('\n', '')
-    #                         # replace keyword 'SetName' and assign current material to the corresponding (by GV) elset
-    #                         if 'SetName' in line:
-    #                             line = line.replace('SetName', matset_str)
-    #
-    #                         # replace keyword 'MatName' and create new material flag for current GV
-    #                         if 'MatName' in line:
-    #                             line = line.replace('MatName', 'MAT' + matset_str)
-    #
-    #                         # replace keyword 'GV' with current GV and evaluate expression for each material property
-    #                         if 'GV' in line:
-    #                             prop_strings = line.split(',')
-    #                             prop_n = 0
-    #                             for prop in prop_strings:
-    #                                 if 'GV' in prop:
-    #                                     INP.write('{}'.format(eval(prop)))
-    #                                 else:
-    #                                     INP.write('{}'.format(prop))
-    #                                 if prop_n < len(prop_strings) - 1:
-    #                                     INP.write(',')
-    #                                 prop_n = prop_n + 1
-    #
-    #                             INP.write('\n')
-    #                         else:
-    #                             INP.write('{}\n'.format(line))
-    #         PROPfile.close()
-    #         n_propfile = n_propfile + 1
-
     # Add analysis definition to the end of the Abaqus INP from template
     # Open ABAQUS *.INP output file in Append mode
     INP = open(args.fileout, 'a')
