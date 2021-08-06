@@ -112,14 +112,6 @@ def main():
     logging.info('Loaded mesh with fields:\n')
     logging.info(vars(mesh))
 
-    # variables initialization
-    # prop_GV = {} # dictionaries (two) of GVs for each user-defined material property
-    # prop_GV2 = {}
-    # existing_GV = [] # dictionary of the GVs existing in the input model
-    # nodes = {} # dictionary of existing nodes of the output FE model
-    # nodes_XYZ = {}  # dictionary of the model nodal coordinates. For more info see: https://abaqus-docs.mit.edu/2017/English/SIMACAEMODRefMap/simamod-c-node.htm
-    # elset_nodes = {} # dictionary of element set nodes
-
     if 'NSET' in args.keywords:
         # find model boundaries
         model_coors_max = np.amax(mesh.points, 0)  # [microns?]
