@@ -20,7 +20,7 @@ ___
 - [CT2FE_example03_voxelFE_linear_CalculiX.ipynb](CT2FE_example03_voxelFE_linear_CalculiX.ipynb)
     <br /> Same test as example01 but with constant material properties assigned to the bone tissue
 
-- [CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb](CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb)
+- [CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb](tmp.ipynb)
 ![](test_data/example_02/D_single_tens_Nlgeom.png)
     - [x] Load unstructured grid mesh preprocessed and generated with [3D Slicer](https://www.slicer.org/) <br />
     Follow tutorial for mesh generation in 3D Slicer using the -> [SlicerSegmentMesher module](https://github.com/lassoan/SlicerSegmentMesher#tutorial) 
