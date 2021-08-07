@@ -96,7 +96,6 @@ def main():
     parser.add_argument('filein', type=str, help='Input filename (voxel data).')
     parser.add_argument('fileout', type=str, default=None, help='Output filename (Abaqus .INP).')
     parser.add_argument('-k', '--keywords', type=str, nargs='*', default=None, help='Abaqus keywords.')
-    # parser.add_argument('--eltype', type=str, default='C3D8', help='Element type.')
     parser.add_argument('-t', '--template', type=str, default='input_templates/tmp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
     parser.add_argument('--float_fmt', type=str, default='.6e', help='Float formatting option.')
     parser.add_argument('-v', '--verbose', type=bool, default=False, help='Verbose output')
