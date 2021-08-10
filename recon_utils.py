@@ -2,7 +2,6 @@
 
 """
 2DO:
-- write midplanes
 - bounding box
 - latex report
 
@@ -10,7 +9,7 @@
 
 __author__ = 'Gianluca Iori'
 __date_created__ = '2021-03-28'
-__date__ = '2021-03-28'
+__date__ = '2021-08-10'
 __copyright__ = 'Copyright (c) 2021, BEATS'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
@@ -92,3 +91,10 @@ def read_tiff_stack(filename):
 
     # load stack using tifffile
     return tifffile.imread(tifffiles)
+
+def add_cap(data_3D, cap_thickness, cap_val):
+    # Add caps of voxels with given GV to the input 3D data.
+    # Caps are added on both ends along the Z-direction (first dataset dimension).
+    data_3D_cap = np.ones([data_3D.shape[0]+2*cap_thickness, data_3D.shape[1], data_3D.shape[2]], data_3D.dtype)*cap_val
+    data_3D_cap[cap_thickness:-cap_thickness, :, :] = data_3D
+    return data_3D_cap
