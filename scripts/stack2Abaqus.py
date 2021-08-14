@@ -141,8 +141,8 @@ def main():
     parser.add_argument('-k', '--keywords', type=str, nargs='*', default=['NODE', 'ELEMENT', 'PROPERTY'], help='Abaqus keywords.')
     parser.add_argument('--bits', type=int, default=8, help='Bit depth for material mapping.')
     parser.add_argument('--eltype', type=str, default='C3D8', help='Element type.')
-    parser.add_argument('-p', '--property', type=str, nargs='*', default='prop.inp', help='Template file for material property mapping.')
-    parser.add_argument('-pr', '--prange', type=str, nargs='*', default='1:255', help='GV range for user material property.')
+    parser.add_argument('-p', '--property', type=str, nargs='*', default=['./../material_properties/steel.inp'], help='Template file for material property mapping.')
+    parser.add_argument('-pr', '--prange', type=str, nargs='*', default=['1:255'], help='GV range for user material property.')
     parser.add_argument('-t', '--template', type=str, default='input_templates/tmp.inp', help='Template file (Abaqus syntax) defining analysis steps, boundary conditions and output requests.')
     parser.add_argument('-v', '--verbose', type=bool, default=False, help='Verbose output')
 
@@ -162,7 +162,7 @@ def main():
     # load 3D voxel data
     data = read_tiff_stack(args.filein)
     data_shape = data.shape
-    logging.info('Data loaded with size {size[0]} x {size[1]} x {size[2]}'.format(size=data_shape))
+    logging.info('Data loaded with size {size[2]} x {size[1]} x {size[0]}'.format(size=data_shape))
 
     # variables initialization
     prop_GV = {} # dictionaries (two) of GVs for each user-defined material property
@@ -198,6 +198,7 @@ def main():
     if args.property is not None:
         n_propfile = 0
         for prange in args.prange:
+            logging.info('Checking GV range for user material properties')
             GVrange = prange.split(':')
             prop_GVmin, prop_GVmax = int(GVrange[0]), int(GVrange[1])
             # checks on property range Min and Max
@@ -234,12 +235,13 @@ def main():
     col_nodes = data_shape[1] + 1 # n nodes in 1 row
     slice_nodes = (data_shape[2] + 1) * (data_shape[1] + 1) # n nodes in 1 slice
 
+    logging.info('Composing element sets')
     for slice in range(data_shape[0]):
         for col in range(data_shape[2]):
             for row in range(data_shape[1]):
 
                 # get voxel GV
-                GV = data[(slice, col, row)]
+                GV = data[(slice, row, col)]
                 
                 if GV in elset_nodes:
                     el_i = el_i + 1
@@ -280,6 +282,7 @@ def main():
                         nodes[i] = 1
 
     # compose lists of node indexes belonging to boundary sets
+    logging.info('Detecting boundary nodes')
     node_i = 0
     for slice in range(data_shape[0] + 1):
         for col in range(data_shape[2] + 1):
@@ -312,6 +315,7 @@ def main():
     INP = open(args.fileout, 'w')
 
     # write ABAQUS *.inp output file
+    logging.info('Start writing INP file')
     # HEADER:
     INP.write('** ---------------------------------------------------------\n')
     INP.write('** Abaqus .INP file written on {}\n'.format(datetime.now()))
@@ -321,6 +325,7 @@ def main():
 
     # NODAL COORDINATES:
     if 'NODE' in args.keywords:
+        logging.info('Writing model nodes to INP file')
         INP.write('** Node coordinates from input model\n')
         INP.write('*NODE\n')
         node_i = 0
@@ -334,7 +339,9 @@ def main():
                         INP.write('{0:10d}, {n[0]:12.6f}, {n[1]:12.6f}, {n[2]:12.6f}\n'.format(node_i, n=nodes_XYZ[node_i]))
 
     # ELEMENTS AND ELEMENT SETS:
+    n_els = 0
     if 'ELEMENT' in args.keywords:
+        logging.info('Writing model elements to INP file')
         INP.write('** Elements and Element sets from input model\n')
         i = 0
 
@@ -352,6 +359,7 @@ def main():
                 for el_nodes in elset_nodes[GV]:
                     el_i = el_nodes[0]
                     INP.write('{0},{n[0]},{n[1]},{n[2]},{n[3]},{n[4]},{n[5]},{n[6]},{n[7]}\n'.format(el_i, n=el_nodes[1]))
+                    n_els += 1
                     # update dictionary of existing nodes
                     for elnd in el_nodes[1]:
                         nodes[elnd] = 1
@@ -375,6 +383,7 @@ def main():
                     CR = 0
                 CR = CR + 1
             INP.write('\n')
+        logging.info('Additional node sets generated: NODES_S, NODES_N, NODES_E, NODES_W, NODES_T, NODES_B')
 
     # ELEMENT SETS:
     if 'ELSET' in args.keywords:
@@ -395,18 +404,19 @@ def main():
                     CR = 0
                 CR = CR + 1
             INP.write('\n')
+        logging.info('Additional element sets generated: ELEMS_S, ELEMS_N, ELEMS_E, ELEMS_W, ELEMS_T, ELEMS_B')
 
     # MATERIAL MAPPING:
     if 'PROPERTY' in args.keywords:
-        logging.info('User material properties defined.')
+        logging.info('User material properties defined. Writing material property section of INP file')
         INP.write('** User material property definition:\n')
         INP.write('** internal variables are: "SetName", "MatName", "GV"\n')
 
         n_propfile = 0
-        for property in args.property:
+        for input_property in args.property:
             # open material property template file
             try:
-                PROPfile = open(property, 'r')
+                PROPfile = open(input_property, 'r')
             except IOError('Material property file not found'):
                 exit(1)
 
@@ -452,18 +462,18 @@ def main():
 
     # copy line by line info on model solution and boundary conditions from Abaqus template file
     try:
-        BCfile = open(args.template, 'r')
+        bcfile = open(args.template, 'r')
     except IOError('Abaqus template file {} not found.'.format(args.template)):
         exit(1)
     logging.info('Reading Abaqus template file {}'.format(args.template))
 
-    for line in BCfile.readlines():
+    for line in bcfile.readlines():
         # copy line to output Abaqus file
         INP.write('{}'.format(line))
 
-    BCfile.close()
+    bcfile.close()
     INP.close()
-    logging.info('Data written to file {}'.format(args.fileout))
+    logging.info('Model with {0} nodes and {1} elements written to file {fname}'.format(len(nodes), n_els, fname=args.fileout))
     return
 
 if __name__ == '__main__':
