@@ -37,21 +37,33 @@ ___
 **Pre-processing:**
 - [x] add steel caps to the model
 - [ ] 3D dataset embedding
-- [ ] BMD-based material property calibration utilities
+- [ ] real BMD calibration 2 material properties example
+- [X] write midplanes images (.PNG)
 
-**Repo/functions:**
-- [ ] model embedding
-- [ ] BMD-based material property calibration methods
-- [ ] write midplanes images (.PNG)
-- [ ] move TIFF (or other image formats) reading methods to separate library
-- [ ] create module library
+**FE generation scripts:**
+- [X] write shell mesh
+- [X] write volume mesh
+- [X] GV-based material property mapping
+- [ ] CT2FE general script
+    - [ ] imresize
+    - [ ] 3D gaussian filter
+    - [ ] add caps
+    - [ ] binarize
+    - [ ] voxel FE (FLAG)
+    - [ ] tetrahedra FE (FLAG)
+    - [ ] const material property
+    - [ ] material property mapping (FLAG)
+    - [ ] beam FE
+    - [ ] input mat prop and analysis template as separate .INP files
+    
+- [ ] create module library (?)
 
 **Other:**
+- [ ] CalculiX postprocessing example
 - [x] linear elastic analysis
 - [x] non-linear analysis (Nlgeom)
 - [ ] bone failure analysis (bone damage with Pistoia model?)
 - [x] Calculix parallel (ccx_MT)
-- [ ] BC and FE solution parameters definition as command line input (?)
 - [x] output different file format (.VTK)
 - [ ] documentation pages (sphinx?)
 
