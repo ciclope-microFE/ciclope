@@ -51,8 +51,10 @@ ___
     - [ ] binarize
     - [ ] voxel FE (FLAG)
     - [ ] tetrahedra FE (FLAG)
-    - [ ] const material property
-    - [ ] material property mapping (FLAG)
+    - [ ] const material property (fast) (input image is binary)
+    - [ ] material property mapping (--mapping)
+        - [ ] if flag is not given assume that the material prop definition is in the analysis template file
+        - [ ] input sequence of matprop filenames followed by the corresponding GV range using 1 "--mapping" flag
     - [ ] beam FE
     - [ ] input mat prop and analysis template as separate .INP files
     
