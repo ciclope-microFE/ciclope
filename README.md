@@ -45,18 +45,18 @@ ___
 - [X] write volume mesh
 - [X] GV-based material property mapping
 - [ ] CT2FE general script
-    - [ ] imresize
-    - [ ] 3D gaussian filter
-    - [ ] add caps
-    - [ ] binarize
-    - [ ] voxel FE (FLAG)
+    - [X] imresize
+    - [X] 3D gaussian filter
+    - [X] add caps
+    - [X] binarize
+    - [X] voxel FE (FLAG)
+        - [X] constant material property (fast) (input image must be binary; mat. property definition in the template analysis file)
+        - [X] material property mapping (--mapping)
+            - [X] if flag is not given assume that image is binary and that the material prop definition is in the analysis template file
+            - [X] input sequence of matprop filenames followed by the corresponding GV range using 1 "--mapping" flag
     - [ ] tetrahedra FE (FLAG)
-    - [ ] const material property (fast) (input image is binary)
-    - [ ] material property mapping (--mapping)
-        - [ ] if flag is not given assume that the material prop definition is in the analysis template file
-        - [ ] input sequence of matprop filenames followed by the corresponding GV range using 1 "--mapping" flag
     - [ ] beam FE
-    - [ ] input mat prop and analysis template as separate .INP files
+    - [X] input mat prop and analysis template as separate .INP files
     
 - [ ] create module library (?)
 
