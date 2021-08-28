@@ -1,4 +1,9 @@
-# Reconstruction utilities
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+"""
+Some reconstruction image processing utilities.
+
+"""
 
 """
 2DO:
@@ -9,11 +14,11 @@
 
 __author__ = 'Gianluca Iori'
 __date_created__ = '2021-03-28'
-__date__ = '2021-08-10'
+__date__ = '2021-08-27'
 __copyright__ = 'Copyright (c) 2021, BEATS'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
-__version__ = "0.0.1"
+__version__ = "0.0.2"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -22,7 +27,7 @@ import png
 import os
 import dxchange
 import tifffile
-import matplotlib
+# import matplotlib
 import matplotlib.pyplot as plt
 
 def touint8(data, quantiles=None):
