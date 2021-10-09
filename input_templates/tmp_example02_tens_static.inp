@@ -18,7 +18,7 @@
 NODES_B, 1, 3, 0.0
 ** Vertical displacement imposed at top:
 *BOUNDARY
-NODES_T, 3, 3, +0.02
+NODES_T, 3, 3, +0.1
 ** ---------------------------------------------------
 ** Output request:
 *NODE FILE, OUTPUT=2D
