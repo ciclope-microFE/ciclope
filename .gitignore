@@ -1,6 +1,6 @@
 # ignore tmp and old stuff
-/tmp
-/CT2FE
+tmp/
+CT2FE/
 
 /scripts/old
 /scripts/gmsh
@@ -12,13 +12,13 @@
 /.idea
 
 # ignore heavy test data
-/test_data/example_01/pippo.*
-/test_data/example_01/spooles.out
-/test_data/example_01/bone_mask_8bit/
-/test_data/example_01/mask_8bit_cap/
-/test_data/example_01/masked_8bit_cap/
-/test_data/example_03/pippo.*
-/test_data/example_03/spooles.out
+/CT2FE/example_01/pippo.*
+/CT2FE/example_01/spooles.out
+/CT2FE/example_01/bone_mask_8bit/
+/CT2FE/example_01/mask_8bit_cap/
+/CT2FE/example_01/masked_8bit_cap/
+/CT2FE/example_03/pippo.*
+/CT2FE/example_03/spooles.out
 /test_data/steel_foam/*
 /test_data/trabecular_bone/spooles.out
 /test_data/trabecular_bone/*
