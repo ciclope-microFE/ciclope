@@ -1,7 +1,7 @@
 # ignore tmp and old stuff
 tmp/
-../../Desktop/tmp_ct2fe/CT2FE/
-../../Desktop/tmp_ct2fe/old/
+CT2FE/
+old/
 
 /scripts/old
 /scripts/gmsh

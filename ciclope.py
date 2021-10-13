@@ -14,7 +14,7 @@ For more information, call this script with the help option::
 
 __author__ = ['Gianluca Iori', 'Martino Pani']
 __date_created__ = '2021-08-06'
-__date__ = '2021-09-03'
+__date__ = '2021-10-13'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
@@ -874,7 +874,7 @@ def main():
     parser.add_argument('fileout', type=str, default=None, help='<Required> Output filename (Abaqus .INP).')
     parser.add_argument('-vs', '--voxelsize', type=float, default=[1., 1., 1.], nargs='+', help='Voxel size.')
     parser.add_argument('-r', '--resampling', type=float, default=1., help='Resampling factor.')
-    parser.add_argument('-t', '--threshold', type=int, default=None, help='Threshold.')
+    parser.add_argument('-t', '--threshold', type=int, default=None, help='Threshold value.')
     parser.add_argument('--smooth', dest='smooth', action='store_true', help='Smooth image with gaussian filter before thresholding.')
     parser.add_argument('--caps', type=int, default=None, help='Add caps of given thickness to the bottom and top of the model for mesh creation.')
     parser.add_argument('--caps_val', type=int, default=0, help='Caps grey value.')
