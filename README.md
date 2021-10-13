@@ -1,7 +1,7 @@
 # ciclope
 Computed Tomography to Finite Elements.
 
-ciclope processes micro Computed Tomography (microCT) to generate Finite Element (FE) models. <br />
+ciclope processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 ciclope can be run from the command line as a script. To view the help type
 ```
 python ciclope.py -h
