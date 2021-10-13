@@ -1,73 +1,67 @@
-# CT2FE
-#### (Computed Tomography to Finite Elements)
+# ciclope
+Computed Tomography to Finite Elements.
 
-Utilities, scripts and notebooks for the conversion of synchrotron computed tomography data to finite element models. <br />
-The folder [test_data](test_data) contains a test dataset for stress/displacement analysis. <br />
-For further CalculiX examples visit [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples) <br />
+ciclope processes micro Computed Tomography (microCT) to generate Finite Element (FE) models. <br />
+ciclope can be run from the command line as a script. To view the help type
+```
+python ciclope.py -h
+```
+
+To use ciclope within python, import the module with
+```
+import ciclope
+```
+---
+### Notes on ciclope
+* All mesh exports are performed with the [meshio](https://github.com/nschloe/meshio/blob/master/meshio/abaqus/_abaqus.py) and [pygalmesh](https://github.com/nschloe/pygalmesh) modules
+* ciclope handles the definition of material properties and FE analysis parameters (e.g. boundary conditions, simulation steps..) through separate template files. The folders [material_properties](/material_properties) and [input_templates](/input_templates) contain a library of template files that can be used to generate FE simulations.
 
 ___
 
-### Jupyter notebooks containing CT2FE examples:
-- [CT2FE_example01_voxelFE_static_CalculiX.ipynb](../../Desktop/tmp_ct2fe/CT2FE/CT2FE_example01_voxelFE_static_CalculiX.ipynb)
-![](../../Desktop/tmp_ct2fe/CT2FE/example_01/masked_8bit_cap1.png)
-    - [x] Load, inspect and write a 3D CT dataset
-    - [x] Convert 3D stack to voxel-FE model for simulation in CalculX or Abaqus
-        - [x] Local mapping of the dataset grey values to bone material properties
-    - [x] Run simulation in Calculix
-    - [x] Convert Calculix output to .VTK for visualization in Paraview
-    - [x] Visualize simulation results in Paraview
+### Examples:
+#### [example 1: voxel-FE model of trabecular bone](ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+![](test_data/trabecular_bone/U3.png)
+- [x] Load and inspect microCT volume data
+- [x] Apply Gaussian smooth
+- [x] Resample the dataset
+- [x] Segment the bone tissue
+- [x] Remove unconnected clusters of voxels
+- [x] Convert the 3D binary to a voxel-FE model for simulation in CalculX or Abaqus
+  - [x] Linear, static analysis; displacement-driven
+  - [ ] Local mapping of the dataset grey values to bone material properties
+- [x] Launch simulation in Calculix
+- [x] Convert Calculix output to .VTK for visualization in Paraview
+- [x] Visualize simulation results in Paraview
 
-- [CT2FE_example03_voxelFE_linear_CalculiX.ipynb](../../Desktop/tmp_ct2fe/CT2FE/CT2FE_example03_voxelFE_linear_CalculiX.ipynb)
-    <br /> Same test as example01 but with constant material properties assigned to the bone tissue
-
-- [CT2FE_example02_Slicer3Dmesher_Nlgeom_CalculiX.ipynb](tmp.ipynb)
-![](../../Desktop/tmp_ct2fe/CT2FE/example_02/D_single_tens_Nlgeom.png)
-    - [x] Load unstructured grid mesh preprocessed and generated with [3D Slicer](https://www.slicer.org/) <br />
-    Follow tutorial for mesh generation in 3D Slicer using the -> [SlicerSegmentMesher module](https://github.com/lassoan/SlicerSegmentMesher#tutorial) 
-    - [x] Read and modify mesh including:
-        - [x] Material property definition
-        - [x] Non-linear, quasi-static analysis definition: tensile test with material plasticity. Visit also [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples/blob/master/Drahtbiegen/Zug/Zug.inp)
-        - [x] Definition of boundary conditions
-    - [x] Export mesh using the [meshio module](https://github.com/nschloe/meshio/blob/master/meshio/abaqus/_abaqus.py)
-    - [x] Run simulation in Calculix
-    - [x] Convert Calculix output to .VTK for visualization in Paraview
-    - [x] Visualize simulation results in Paraview
+#### [example 2: tetrahedra-FE model of stainless steel foam](ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+![](test_data/steel_foam/B_matrix_tetraFE_Smises.png)
+- [x] Load and inspect synchrotron microCT volume data
+- [x] Apply Gaussian smooth
+- [x] Resample the dataset
+- [x] Segment the steel
+- [x] Remove unconnected clusters of voxels
+- [x] Generate volume mesh of tetrahedra
+- [ ] Generate high-resolution mesh of triangles of the model outer shell (for visualization)
+- [x] Convert the 3D binary to a tetrahedra-FE model for simulation in CalculX or Abaqus
+  - [x] Non-linear, quasi-static analysis definition: tensile test with material plasticity. For more info visit: [github.com/mkraska/CalculiX-Examples](https://github.com/mkraska/CalculiX-Examples/blob/master/Drahtbiegen/Zug/Zug.inp)
+  - [ ] Local mapping of the dataset grey values to bone material properties
+- [x] Launch simulation in Calculix
+- [x] Convert Calculix output to .VTK for visualization in Paraview
+- [x] Visualize simulation results in Paraview
+ 
 ___
 ### 2 DO:
 **Pre-processing:**
 - [x] add steel caps to the model
 - [ ] 3D dataset embedding
-- [ ] real BMD calibration 2 material properties example
 - [X] write midplanes images (.PNG)
 
-**FE generation scripts:**
-- [X] write shell mesh
-- [X] write volume mesh
-- [X] GV-based material property mapping
-- [ ] CT2FE general script
-    - [X] imresize
-    - [X] 3D gaussian filter
-    - [X] add caps
-    - [X] binarize
-    - [X] voxel FE (FLAG)
-        - [X] constant material property (fast) (input image must be binary; mat. property definition in the template analysis file)
-        - [X] material property mapping (--mapping)
-            - [X] if flag is not given assume that image is binary and that the material prop definition is in the analysis template file
-            - [X] input sequence of matprop filenames followed by the corresponding GV range using 1 "--mapping" flag
-    - [ ] tetrahedra FE (FLAG)
-    - [ ] beam FE
-    - [X] input mat prop and analysis template as separate .INP files
-    
-- [ ] create module library (?)
+**Postprocessing:**
+- [ ] CalculiX postprocessing
 
-**Other:**
-- [ ] CalculiX postprocessing example
-- [x] linear elastic analysis
-- [x] non-linear analysis (Nlgeom)
-- [ ] bone failure analysis (bone damage with Pistoia model?)
-- [x] Calculix parallel (ccx_MT)
-- [x] output different file format (.VTK)
-- [ ] documentation pages (sphinx?)
+**Examples:**
+- [ ] real BMD calibration 2 material properties example
+- [ ] CalculiX postprocessing
 
 
 
