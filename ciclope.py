@@ -1,15 +1,10 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-From 3D Computed Tomography (CT) images to ABAQUS Finite Element (FE) models.
-For more information, call this script with the help option::
+From 3D Computed Tomography (CT) images to Finite Element (FE) models.
+For more information, call this script with the help option:
     ciclope.py -h
 
-"""
-
-"""
-2DO:
-- tetra FE
 """
 
 __author__ = ['Gianluca Iori', 'Martino Pani']
