@@ -51,17 +51,30 @@ ___
  
 ___
 ### 2 DO:
-**Pre-processing:**
+#### Documentation
+- [ ] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
+- [ ] illustrate typical pipeline(s)
+- [ ] ciclope usage
+  - [ ] as a script
+  - [ ] as a module - ciclope.methods
+
+#### Pre-processing
 - [x] add steel caps to the model
 - [ ] 3D dataset embedding
 - [X] write midplanes images (.PNG)
 
-**Postprocessing:**
+#### Post-processing
 - [ ] CalculiX postprocessing
+  - [X] process CalculiX output with [`dat2txt.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
+  - [X] produce Force displacement plot with `pandas`
+  - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
 
-**Examples:**
-- [ ] real BMD calibration 2 material properties example
-- [ ] CalculiX postprocessing
+#### Examples
+- [X] CalculiX postprocessing
+- [ ] steel caps
+- [ ] embedding
+- [ ] matprop calibrate (voxelFE)
+- [ ] tetraFE with different materials
 
 
 
