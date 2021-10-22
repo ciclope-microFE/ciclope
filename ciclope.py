@@ -23,8 +23,6 @@ import logging
 import textwrap
 import numpy as np
 import recon_utils as ru
-# import png
-# import tifffile
 import meshio
 import mcubes
 from scipy import ndimage, misc
