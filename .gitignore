@@ -1,6 +1,5 @@
 # ignore tmp and old stuff
 tmp/
-CT2FE/
 old/
 
 /scripts/old
