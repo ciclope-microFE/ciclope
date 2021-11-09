@@ -21,8 +21,9 @@ python pyfabric.py -h
   - [X] peri mesh
   - [X] fabric pointset
   - [X] write fabric mesh
-  - [ ] 
-- [ ] anisotropy ratio
+  - [ ] Eigen-decomposition (get fabric tensor)
+  - [ ] write Fabric tensor. Symmetric tensor components are expected to have the following order: XX, YY, ZZ, XY, YZ, XZ (see [here](https://kitware.github.io/paraview-docs/latest/python/paraview.simple.TensorGlyph.html))
+  - [X] write anisotropy factor
 - [ ] example demonstration ACF method
 - [ ] test X, Y, Z orientations with known ellipsoid
 - [ ] fabric_worm
