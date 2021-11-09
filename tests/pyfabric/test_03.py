@@ -1,6 +1,6 @@
-import recon_utils as ru
+from ciclope import recon_utils as ru
 import numpy as np
-import pyfabric
+from pyfabric import pyfabric
 
 # I = ru.read_tiff_stack('/home/gianthk/Data/StefanFly_test/test_00__rec/test_00__rec_mini/recon_0000.tif')
 # I = ru.read_tiff_stack('/home/gianthk/Data/2019.001.coop_TUberlin_simulierte_Mensch.iorig/trabecular_sample_mini2/2000L_crop_imgaussfilt_60micron_uint8_0000.tif')
