@@ -1,8 +1,6 @@
-import ciclope
-import recon_utils as ru
+from src.ciclope import ciclope, recon_utils as ru
 from skimage import measure
 from skimage.filters import threshold_otsu, gaussian
-import napari
 from scipy import ndimage
 
 # resample factor

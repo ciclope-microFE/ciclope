@@ -19,7 +19,7 @@ import ciclope
 ___
 
 ### Examples:
-#### [example 1: voxel-FE model of trabecular bone](ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+#### [example 1: voxel-FE model of trabecular bone](src/ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 - [x] Load and inspect microCT volume data
 - [x] Apply Gaussian smooth
@@ -33,7 +33,7 @@ ___
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
 
-#### [example 2: tetrahedra-FE model of stainless steel foam](ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+#### [example 2: tetrahedra-FE model of stainless steel foam](src/ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Smises.png)
 - [x] Load and inspect synchrotron microCT volume data
 - [x] Apply Gaussian smooth
@@ -51,6 +51,8 @@ ___
  
 ___
 ### 2 DO:
+- [ ] PACKAGING!!!
+
 #### Documentation
 - [ ] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [ ] illustrate typical pipeline(s)
@@ -59,9 +61,15 @@ ___
   - [ ] as a module - ciclope.methods
 
 #### Pre-processing
-- [x] add steel caps to the model
-- [ ] 3D dataset embedding
+- [x] add caps
 - [X] write midplanes images (.PNG)
+- [ ] 3D dataset embedding
+
+#### pybonemorph
+- [X] Center Of Mass
+- [X] periosteum mask
+- [ ] endosteum contour
+- [ ] cortex mask
 
 #### Post-processing
 - [ ] CalculiX postprocessing
