@@ -17,21 +17,21 @@ __version__ = "1.0"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
-import os
-import argparse
+# import os
+# import argparse
 # import logging
-import textwrap
+# import textwrap
 import numpy as np
-import recon_utils as ru
-import ellipsoid_fit as ef
+import numexpr as ne
+from pyfabric import ellipsoid_fit as ef
 from tqdm import tqdm
-import meshio
+# import meshio
 import mcubes
 from scipy import ndimage
-from skimage.filters import threshold_otsu, gaussian
-from skimage import measure, morphology
+# from skimage.filters import threshold_otsu, gaussian
+# from skimage import measure, morphology
 import matplotlib.pyplot as plt
-from datetime import datetime
+# from datetime import datetime
 
 #################################################################################
 
@@ -166,6 +166,28 @@ def scatter_plot(coors):
 
     return ax
 
+def to01(I):
+    """Normalize data to 0-1 range.
+
+    Parameters
+    ----------
+    I
+        Input data.
+
+    Returns
+    -------
+    I : float32
+        Normalized data.
+    """
+
+    I = I.astype(np.float32, copy=False)
+    data_min = np.nanmin(I)
+    data_max = np.nanmax(I)
+    df = np.float32(data_max - data_min)
+    mn = np.float32(data_min)
+    scl = ne.evaluate('(I-mn)/df', truediv=True)
+    return scl.astype(np.float32)
+
 def fabric_pointset(I, pointset, ROIsize):
     """Fabric tensor at given set of points.
 
@@ -231,7 +253,7 @@ def fabric_pointset(I, pointset, ROIsize):
         ROIACF = zoom_center(ROIACF) # check if size of the zoom can be reduced
 
         # envelope of normalized ACF center
-        env_points = envelope(ru.to01(ROIACF)>0.5)
+        env_points = envelope(to01(ROIACF)>0.5)
 
         # ellipsoid fit
         center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points)
