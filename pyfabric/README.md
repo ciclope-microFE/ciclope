@@ -21,7 +21,9 @@ python pyfabric.py -h
   - [X] peri mesh
   - [X] fabric pointset
   - [X] write fabric mesh
-- [ ] example explaining ACF method
+  - [ ] 
+- [ ] anisotropy ratio
+- [ ] example demonstration ACF method
 - [ ] test X, Y, Z orientations with known ellipsoid
 - [ ] fabric_worm
 - [ ] ROI checker (needed?)
