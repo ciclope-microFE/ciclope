@@ -188,7 +188,7 @@ def to01(I):
     scl = ne.evaluate('(I-mn)/df', truediv=True)
     return scl.astype(np.float32)
 
-def fabric_pointset(I, pointset, ROIsize):
+def fabric_pointset(I, pointset, ROIsize, ROIzoom=False):
     """Fabric tensor at given set of points.
 
     Parameters
@@ -199,6 +199,8 @@ def fabric_pointset(I, pointset, ROIsize):
         (Nx3) Points coordinates [x, y, z].
     ROIsize
         Size of the Region Of Interest for the analysis.
+    ROIzoom : bool
+        Zoom center of ACF before ellipsoid fit.
 
     Returns
     -------
@@ -218,47 +220,90 @@ def fabric_pointset(I, pointset, ROIsize):
     evecs = np.zeros([n_points, 3, 3])
     radii = np.zeros([n_points, 3])
 
-    # loop all points in the set
-    for p in tqdm(pointset):
-        # ROI extreemes
-        x0 = round(p[0] - halfROIsize)
-        y0 = round(p[1] - halfROIsize)
-        z0 = round(p[2] - halfROIsize)
+    if ROIzoom:
+        # loop all points in the set
+        for p in tqdm(pointset):
+            # ROI extreemes
+            x0 = round(p[0] - halfROIsize)
+            y0 = round(p[1] - halfROIsize)
+            z0 = round(p[2] - halfROIsize)
 
-        x1 = x0 + ROIsize
-        y1 = y0 + ROIsize
-        z1 = z0 + ROIsize
+            x1 = x0 + ROIsize
+            y1 = y0 + ROIsize
+            z1 = z0 + ROIsize
 
-        # check if ROI exceeds image limits
-        if x0 < 0:
-            x0 = 0
-        if y0 < 0:
-            y0 = 0
-        if z0 < 0:
-            z0 = 0
-        if x1 > I_size[2]:
-            x1 = I_size[2]
-        if y1 > I_size[1]:
-            y1 = I_size[1]
-        if z1 > I_size[0]:
-            z1 = I_size[0]
+            # check if ROI exceeds image limits
+            if x0 < 0:
+                x0 = 0
+            if y0 < 0:
+                y0 = 0
+            if z0 < 0:
+                z0 = 0
+            if x1 > I_size[2]:
+                x1 = I_size[2]
+            if y1 > I_size[1]:
+                y1 = I_size[1]
+            if z1 > I_size[0]:
+                z1 = I_size[0]
 
-        # extract ROI around point p
-        ROI = I[z0:z1, y0:y1, x0:x1]
+            # extract ROI around point p
+            ROI = I[z0:z1, y0:y1, x0:x1]
 
-        # calculate ACF
-        ROIACF = ACF(ROI)
+            # calculate ACF
+            ROIACF = ACF(ROI)
 
-        # zoom ACF center
-        ROIACF = zoom_center(ROIACF) # check if size of the zoom can be reduced
+            # zoom ACF center
+            ROIACF = zoom_center(ROIACF) # check if size of the zoom can be reduced
 
-        # envelope of normalized ACF center
-        env_points = envelope(to01(ROIACF)>0.5)
+            # envelope of normalized ACF center
+            env_points = envelope(to01(ROIACF)>0.5)
 
-        # ellipsoid fit
-        center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points)
+            # ellipsoid fit
+            center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points)
 
-        point_count = point_count + 1
+            point_count = point_count + 1
+
+    else:
+        # loop all points in the set
+        for p in tqdm(pointset):
+            # ROI extreemes
+            x0 = round(p[0] - halfROIsize)
+            y0 = round(p[1] - halfROIsize)
+            z0 = round(p[2] - halfROIsize)
+
+            x1 = x0 + ROIsize
+            y1 = y0 + ROIsize
+            z1 = z0 + ROIsize
+
+            # check if ROI exceeds image limits
+            if x0 < 0:
+                x0 = 0
+            if y0 < 0:
+                y0 = 0
+            if z0 < 0:
+                z0 = 0
+            if x1 > I_size[2]:
+                x1 = I_size[2]
+            if y1 > I_size[1]:
+                y1 = I_size[1]
+            if z1 > I_size[0]:
+                z1 = I_size[0]
+
+            # extract ROI around point p
+            ROI = I[z0:z1, y0:y1, x0:x1]
+
+            # calculate ACF
+            ROIACF = ACF(ROI)
+
+            # envelope of normalized ACF
+            # the ACF intensity is normalized to the 0-1 range
+            env_points = envelope(to01(ROIACF) > 0.5)
+
+            # ellipsoid fit
+            # the ellipsoid envelope coordinates are scaled to 0-1
+            center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points/ROIsize)
+
+            point_count = point_count + 1
 
     return evecs, radii
 
