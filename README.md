@@ -4,12 +4,12 @@ Computed Tomography to Finite Elements.
 ciclope processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 ciclope can be run from the command line as a script. To view the help type
 ```
-python ciclope.py -h
+python ciclope/ciclope.py -h
 ```
 
 To use ciclope within python, import the module with
 ```
-import ciclope
+from ciclope import ciclope
 ```
 ---
 ### Notes on ciclope
@@ -19,7 +19,7 @@ import ciclope
 ___
 
 ### Examples:
-#### [example 1: voxel-FE model of trabecular bone](src/ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+#### [example 1: voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 - [x] Load and inspect microCT volume data
 - [x] Apply Gaussian smooth
@@ -33,7 +33,7 @@ ___
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
 
-#### [example 2: tetrahedra-FE model of stainless steel foam](src/ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+#### [example 2: tetrahedra-FE model of stainless steel foam](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Smises.png)
 - [x] Load and inspect synchrotron microCT volume data
 - [x] Apply Gaussian smooth

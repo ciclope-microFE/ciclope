@@ -1,4 +1,4 @@
-from src.ciclope import pybonemorph as pybm, recon_utils as ru
+from ciclope import recon_utils as ru, pybonemorph as pybm
 import pylab
 
 # import cv2
