@@ -1,4 +1,5 @@
-from src.ciclope import ciclope, recon_utils as ru
+from ciclope import ciclope
+from ciclope import recon_utils as ru
 from skimage import measure
 from skimage.filters import threshold_otsu, gaussian
 from scipy import ndimage
