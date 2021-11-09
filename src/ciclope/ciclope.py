@@ -27,7 +27,8 @@ import meshio
 import mcubes
 from scipy import ndimage, misc
 from skimage.filters import threshold_otsu, gaussian
-from skimage import measure, morphology
+# from skimage import measure, morphology
+from pybonemorph import remove_unconnected
 import matplotlib.pyplot as plt
 from datetime import datetime
 
@@ -193,33 +194,6 @@ def cgal_mesh(bwimage, voxelsize, meshtype='both', max_facet_distance=0.0, max_c
             raise IOError('{0} method type.', format(meshtype))
 
     return mesh
-
-def remove_unconnected(bwimage):
-    """Remove all unconnected voxels. Returns a binary of the largest connected cluster.
-
-    Parameters
-    ----------
-    bwimage
-        Binary image.
-
-    Returns
-    -------
-    bwcluster
-        Binary image of the largest connected cluster of voxels.
-    """
-
-    # label the BW image
-    # [labels, n_labels] = measure.label(bwimage, None, True)
-    [labels, n_labels] = measure.label(bwimage, None, True, 1)
-
-    # count occurrences of each label label
-    occurrences = np.bincount(labels.reshape(labels.size))
-
-    # find largest unconnected label
-    largest_label_id = occurrences[1:].argmax() + 1
-    bwcluster = labels == largest_label_id
-
-    return bwcluster
 
 def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 'ELSET'], voxelsize=[1, 1, 1], eltype='C3D8', matpropbits=8, verbose=False):
     """Generate ABAQUS voxel Finite Element (FE) input file from 3D volume data.
