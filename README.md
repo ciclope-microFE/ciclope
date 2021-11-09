@@ -36,7 +36,7 @@ ___
 - [x] Visualize simulation results in Paraview
 
 #### [example 2: tetrahedra-FE model of stainless steel foam](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
-![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.0015.png)
+![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
 - [x] Load and inspect synchrotron microCT volume data
 - [x] Apply Gaussian smooth
 - [x] Resample the dataset
