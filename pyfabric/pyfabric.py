@@ -66,7 +66,7 @@ def zoom_center(ACF, size=None, zoom_factor=None):
     ACF : ndarray
         ACF data.
     size : int
-        Half size of the zoomed center.
+        Size of the zoomed center.
     zoom_factor
         Zoom factor for imresize.
 
@@ -83,7 +83,7 @@ def zoom_center(ACF, size=None, zoom_factor=None):
     center = ACF.shape
 
     if size is None:
-        size = min(center)/4
+        size = min(center)/2
 
     size = round(size/2)
 
@@ -188,7 +188,7 @@ def to01(I):
     scl = ne.evaluate('(I-mn)/df', truediv=True)
     return scl.astype(np.float32)
 
-def fabric_pointset(I, pointset, ROIsize, ROIzoom=False):
+def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom_size=None, zoom_factor=None):
     """Fabric tensor at given set of points.
 
     Parameters
@@ -199,8 +199,14 @@ def fabric_pointset(I, pointset, ROIsize, ROIzoom=False):
         (Nx3) Points coordinates [x, y, z].
     ROIsize
         Size of the Region Of Interest for the analysis.
+    ACf_threshold : int
+        ACF threshold value (0-1 range).
     ROIzoom : bool
         Zoom center of ACF before ellipsoid fit.
+    zoom_size : int
+        Size of the zoomed center.
+    zoom_factor
+        Zoom factor for imresize.
 
     Returns
     -------
@@ -253,10 +259,10 @@ def fabric_pointset(I, pointset, ROIsize, ROIzoom=False):
             ROIACF = ACF(ROI)
 
             # zoom ACF center
-            ROIACF = zoom_center(ROIACF) # check if size of the zoom can be reduced
+            ROIACF = zoom_center(ROIACF, size=zoom_size, zoom_factor=zoom_factor) # check if size of the zoom can be reduced
 
             # envelope of normalized ACF center
-            env_points = envelope(to01(ROIACF)>0.5)
+            env_points = envelope(to01(ROIACF)>ACF_threshold)
 
             # ellipsoid fit
             center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points)
@@ -297,7 +303,7 @@ def fabric_pointset(I, pointset, ROIsize, ROIzoom=False):
 
             # envelope of normalized ACF
             # the ACF intensity is normalized to the 0-1 range
-            env_points = envelope(to01(ROIACF) > 0.5)
+            env_points = envelope(to01(ROIACF) > ACF_threshold)
 
             # ellipsoid fit
             # the ellipsoid envelope coordinates are scaled to 0-1
