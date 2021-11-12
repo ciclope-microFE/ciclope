@@ -3,14 +3,6 @@ Fabric tensor from 3D images.
 
 pyfabric extracts the local fabric tensor from 3D image data.
 pyfabric uses the 3D spatial Auto Correlation Function (ACF) to compute the local orientation and anisotropy of images.
-The ACF is computed as:
-
-![\Omega]
-
-![\sum_{\forall i}{x_i^{2}}]
-
-![\int_\Omega\nabla{ \cdot \nabla v~dx = \int_\Omega fv~dx]
-
 
 To view the help type
 ```
