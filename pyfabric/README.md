@@ -24,6 +24,8 @@ evecs, radii, evals, fabric_tensor_components, degree_anisotropy = pyfabric.fabr
 ```
 
 ## to do:
+- [ ] test fabric tensor orientation with known ellipsoid
+  - [ ] check transpose in `pyfabric.envelope`  
 - [X] fit ellipsoid to ACF
 - [X] fabric_pointset
 - [X] control ACF ROIsize
@@ -39,7 +41,6 @@ evecs, radii, evals, fabric_tensor_components, degree_anisotropy = pyfabric.fabr
   - [X] write Fabric tensor. Symmetric tensor components are expected to have the following order: XX, YY, ZZ, XY, YZ, XZ (see [here](https://kitware.github.io/paraview-docs/latest/python/paraview.simple.TensorGlyph.html))
   - [X] write anisotropy factor
 - [X] example demonstration ACF method
-- [ ] test X, Y, Z orientations with known ellipsoid
 - [ ] fabric_worm
 - [ ] ROI checker (needed?)
 
