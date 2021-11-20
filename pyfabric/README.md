@@ -15,14 +15,14 @@ python pyfabric.py -h
 - [X] control ACF ROIsize
 - [X] control ACF zoom
 - [X] control ACF threshold
-- [ ] `to01(ROIACF)>ACF_threshold` write with `numexpr`
-- [ ] example prox femur
+- [X] `to01(ROIACF)>ACF_threshold` write with `numexpr`
+- [X] example prox femur
   - [X] peri mask
   - [X] peri mesh
   - [X] fabric pointset
   - [X] write fabric mesh
   - [X] Eigen-decomposition (get fabric tensor)
-  - [ ] write Fabric tensor. Symmetric tensor components are expected to have the following order: XX, YY, ZZ, XY, YZ, XZ (see [here](https://kitware.github.io/paraview-docs/latest/python/paraview.simple.TensorGlyph.html))
+  - [X] write Fabric tensor. Symmetric tensor components are expected to have the following order: XX, YY, ZZ, XY, YZ, XZ (see [here](https://kitware.github.io/paraview-docs/latest/python/paraview.simple.TensorGlyph.html))
   - [X] write anisotropy factor
 - [ ] example demonstration ACF method
 - [ ] test X, Y, Z orientations with known ellipsoid

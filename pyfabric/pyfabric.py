@@ -9,11 +9,11 @@ For more information, call this script with the help option:
 
 __author__ = ['Gianluca Iori']
 __date_created__ = '2021-10-22'
-__date__ = '2021-10-25'
+__date__ = '2021-11-18'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
-__version__ = "1.0"
+__version__ = "1.1"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -188,8 +188,32 @@ def to01(I):
     scl = ne.evaluate('(I-mn)/df', truediv=True)
     return scl.astype(np.float32)
 
+def to01andbinary(I, t):
+    """Normalize data to 0-1 range and segment with given threshold.
+
+    Parameters
+    ----------
+    I
+        Input data.
+    t : float
+        Threshold in the 0-1 range.
+
+    Returns
+    -------
+    I_binary : bool
+        Data after normalization and thresholding.
+    """
+
+    I = I.astype(np.float32, copy=False)
+    data_min = np.nanmin(I)
+    data_max = np.nanmax(I)
+    df = np.float32(data_max - data_min)
+    mn = np.float32(data_min)
+    scl = ne.evaluate('(I-mn)/df > t', truediv=True)
+    return scl.astype(np.bool)
+
 def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom_size=None, zoom_factor=None):
-    """Fabric tensor at given set of points.
+    """Compute fabric tensor of an image at given set of points.
 
     Parameters
     ----------
@@ -211,9 +235,15 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
     Returns
     -------
     evecs : float
-        (Nx3x3) Fabric tensor eigenvectors as columns of a 3x3 matrix for each point in pointset.
+        (Nx3x3) Fabric tensor eigenvectors as the columns of a 3x3 matrix for each point in pointset.
     radii : float
         (Nx3) Ellipsoid radii.
+    evals : float
+        (Nx3) Ellipsoid eigenvalues.
+    fabric_comp : float
+        (Nx6) Ellipsoid tensor components with order: XX, YY, ZZ, XY, YZ, XZ
+    DA : float
+        Degree of Anisotropy (ratio between major and minor fabric ellipsoid axes)
     """
 
     # parameters
@@ -225,6 +255,8 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
     # initialize output variables
     evecs = np.zeros([n_points, 3, 3])
     radii = np.zeros([n_points, 3])
+    fabric_tens = np.ndarray(evecs.shape)
+    fabric_comp = np.ndarray([evecs.shape[0], 6])
 
     if ROIzoom:
         # loop all points in the set
@@ -262,7 +294,8 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
             ROIACF = zoom_center(ROIACF, size=zoom_size, zoom_factor=zoom_factor) # check if size of the zoom can be reduced
 
             # envelope of normalized ACF center
-            env_points = envelope(to01(ROIACF)>ACF_threshold)
+            # env_points = envelope(to01(ROIACF)>ACF_threshold)
+            env_points = envelope(to01andbinary(ROIACF, ACF_threshold))
 
             # ellipsoid fit
             center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points)
@@ -303,7 +336,8 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
 
             # envelope of normalized ACF
             # the ACF intensity is normalized to the 0-1 range
-            env_points = envelope(to01(ROIACF) > ACF_threshold)
+            # env_points = envelope(to01(ROIACF) > ACF_threshold)
+            env_points = envelope(to01andbinary(ROIACF, ACF_threshold))
 
             # ellipsoid fit
             # the ellipsoid envelope coordinates are scaled to 0-1
@@ -311,5 +345,26 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
 
             point_count = point_count + 1
 
-    return evecs, radii
+    # take abs value of the radii vector
+    radii = np.abs(radii)
+
+    # Remove potential outliers based on the ellipsoid radii:
+    # any ellipsoid with a radius > ROIsize/2 is removed
+    radii[np.any(radii > ROIsize * zoom_factor / 2, axis=1), :] = np.nan
+
+    # ellipsoid radii < 1 voxel are meaningless
+    radii[np.any(radii < 1, axis=1), :] = np.nan
+
+    # compute Degree of Anisotropy
+    DA = np.nanmax(radii, 1) / np.nanmin(radii, 1)
+
+    # Ellipsoid eigenvalues
+    evals = 1 / (radii ** 2)
+
+    # Symmetric ellipsoid tensor components
+    for cell in range(0, evecs.shape[0]):
+        fabric_tens[cell, :, :] = np.matmul(evecs[cell, :, :], np.matmul((evals[cell, :] * np.identity(3)),np.transpose(evecs[cell, :, :])))
+        fabric_comp[cell, :] = fabric_tens[cell, [0, 1, 2, 0, 1, 0], [0, 1, 2, 1, 2, 2]]
+
+    return evecs, radii, evals, fabric_comp, DA
 

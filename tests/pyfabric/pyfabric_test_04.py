@@ -17,7 +17,7 @@ mesh_trab = meshio.read(filename_mesh_out)
 # cells barycenter coordinates
 cells_bary = np.sum(mesh_trab.points[mesh_trab.cells[0][1][:]], 1)/mesh_trab.points[mesh_trab.cells[0][1][:]].shape[1]
 
-evecs, radii = pf.fabric_pointset(data_3D, cells_bary/vs[0], ROIsize=50, ACF_threshold=0.33, ROIzoom=True, zoom_size=20, zoom_factor=2)
+evecs, radii, evals, fabric_comp, DA = pf.fabric_pointset(data_3D, cells_bary/vs[0], ROIsize=50, ACF_threshold=0.33, ROIzoom=True, zoom_size=20, zoom_factor=2)
 
 
 
