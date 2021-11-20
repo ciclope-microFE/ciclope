@@ -17,13 +17,4 @@ mesh_trab = meshio.read(filename_mesh_out)
 # cells barycenter coordinates
 cells_bary = np.sum(mesh_trab.points[mesh_trab.cells[0][1][:]], 1)/mesh_trab.points[mesh_trab.cells[0][1][:]].shape[1]
 
-evecs, radii, evals, fabric_comp, DA = pf.fabric_pointset(data_3D, cells_bary/vs[0], ROIsize=50, ACF_threshold=0.33, ROIzoom=True, zoom_size=20, zoom_factor=2)
-
-
-
-##########################
-# plot the input image histogram
-import matplotlib.pyplot as plt
-fig2, ax2 = plt.subplots()
-plt.hist(to01(ROIACF).ravel(), bins=100)
-plt.show()
+evecs, radii, evals, fabric_comp, DA = pf.fabric_pointset(data_3D, cells_bary[0:100,:]/vs[0], ROIsize=40, ACF_threshold=0.33, ROIzoom=True, zoom_size=20, zoom_factor=2)

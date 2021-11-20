@@ -37,7 +37,7 @@ import matplotlib.pyplot as plt
 
 def ACF(I):
     """Calculate 3D Auto Correlation Function (ACF) of given image.
-    Taking advantage of the Wiener–Khintchine theorem (http://mathworld.wolfram.com/Wie-ner-KhinchinTheorem.html)
+    Taking advantage of the Wiener–Khintchine theorem (https://mathworld.wolfram.com/Wiener-KhinchinTheorem.html)
     the ACF is computed in the Fourier domain as:
     ACF = |ffti(fft(I) conj (fft(I)))|
     with fft() and ffti() being the discrete Fourier and discrete inverse Fourier transforms of the image I, respectively [1].
@@ -223,7 +223,7 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
         (Nx3) Points coordinates [x, y, z].
     ROIsize
         Size of the Region Of Interest for the analysis.
-    ACf_threshold : int
+    ACF_threshold : int
         ACF threshold value (0-1 range).
     ROIzoom : bool
         Zoom center of ACF before ellipsoid fit.
@@ -365,6 +365,61 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
     for cell in range(0, evecs.shape[0]):
         fabric_tens[cell, :, :] = np.matmul(evecs[cell, :, :], np.matmul((evals[cell, :] * np.identity(3)),np.transpose(evecs[cell, :, :])))
         fabric_comp[cell, :] = fabric_tens[cell, [0, 1, 2, 0, 1, 0], [0, 1, 2, 1, 2, 2]]
+
+    return evecs, radii, evals, fabric_comp, DA
+
+def fabric(I, ACF_threshold=0.5, zoom=False, zoom_size=None, zoom_factor=None):
+    """Compute fabric tensor of a given image.
+
+    Parameters
+    ----------
+    I
+        3D image data.
+    ACF_threshold : int
+        ACF threshold value (0-1 range).
+    zoom : bool
+        Zoom center of ACF before ellipsoid fit.
+    zoom_size : int
+        Size of the zoomed center.
+    zoom_factor
+        Zoom factor for imresize.
+
+    Returns
+    -------
+    evecs : float
+        (3x3) Fabric tensor eigenvectors as the columns of a 3x3 matrix.
+    radii : float
+        Ellipsoid radii.
+    evals : float
+        Ellipsoid eigenvalues.
+    fabric_comp : float
+        Ellipsoid tensor components with order: XX, YY, ZZ, XY, YZ, XZ
+    DA : float
+        Degree of Anisotropy (ratio between major and minor fabric ellipsoid axes)
+    """
+
+    # calculate ACF
+    ACF_I = ACF(I)
+
+    if zoom:
+        # zoom ACF center
+        ACF_I = zoom_center(ACF_I, size=zoom_size, zoom_factor=zoom_factor) # check if size of the zoom can be reduced
+
+    # envelope of normalized ACF center
+    env_points = envelope(to01andbinary(ACF_I, ACF_threshold))
+
+    # ellipsoid fit
+    center, evecs, radii, v = ef.ellipsoid_fit(env_points)
+
+    # compute Degree of Anisotropy
+    DA = np.max(radii) / np.min(radii)
+
+    # Ellipsoid eigenvalues
+    evals = 1 / (radii ** 2)
+
+    # Symmetric ellipsoid tensor components
+    fabric_tens = np.matmul(evecs, np.matmul((evals * np.identity(3)), np.transpose(evecs)))
+    fabric_comp = fabric_tens[[0, 1, 2, 0, 1, 0], [0, 1, 2, 1, 2, 2]]
 
     return evecs, radii, evals, fabric_comp, DA
 
