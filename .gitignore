@@ -6,9 +6,14 @@ old/
 /scripts/gmsh
 /scripts/matlab
 
+# ignore sphinx documentation
+/docs
+
+# ignore stuff being developed
+/pyfabric_tests.ipynb
+
 # ignore irrelevant things
 /pippo*
-/pyfabric_tests.ipynb
 /.ipynb_checkpoints/
 /.idea
 
