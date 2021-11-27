@@ -40,8 +40,7 @@ The following table shows a general pipeline for FE model generation from CT dat
 ___
 
 ### ciclope examples:
-#### [Example #1 - voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
-[![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+#### [Example #1 - voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 - [x] Load and inspect microCT volume data
 - [x] Apply Gaussian smooth
@@ -55,8 +54,7 @@ ___
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
 
-#### [example 2: tetrahedra-FE model of stainless steel foam](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
-[![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+#### [Example #2 - tetrahedra-FE model of stainless steel foam](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
 - [x] Load and inspect synchrotron microCT volume data
 - [x] Apply Gaussian smooth
