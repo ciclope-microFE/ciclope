@@ -43,12 +43,12 @@ ___
 #### [Example #1 - voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 
-The pipeline can be executed from the command line with the command:
-```
+The pipeline can be executed from the command line with:
+```commandline
 python ciclope/ciclope.py input.tif output.inp -vs 0.0606 0.0606 0.0606 --smooth -r 1.2 --vol_mesh --shell_mesh --voxelfe --template ./../input_templates/tmp_example01_comp_static_bone.inp -v
 ```
 
-This example shows how to:
+The example shows how to:
 - [x] Load and inspect microCT volume data
 - [x] Apply Gaussian smooth
 - [x] Resample the dataset
@@ -64,7 +64,12 @@ This example shows how to:
 #### [Example #2 - tetrahedra-FE model of stainless steel foam](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
 
-This example shows how to:
+The pipeline can be executed from the command line with:
+```commandline
+python ciclope/ciclope.py input.tif output.inp -vs 0.0065 0.0065 0.0065 --smooth -r 1.2 -t 90 --vol_mesh --tetrafe --template ./../input_templates/tmp_example02_tens_Nlgeom_steel.inp -v
+```
+
+The example shows how to:
 - [x] Load and inspect synchrotron microCT volume data
 - [x] Apply Gaussian smooth
 - [x] Resample the dataset
