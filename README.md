@@ -42,6 +42,13 @@ ___
 ### ciclope examples:
 #### [Example #1 - voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
+
+The pipeline can be executed from the command line with the command:
+```
+python ciclope/ciclope.py input.tif output.inp -vs 0.0606 0.0606 0.0606 --smooth -r 1.2 --vol_mesh --shell_mesh --voxelfe --template ./../input_templates/tmp_example01_comp_static_bone.inp -v
+```
+
+This example shows how to:
 - [x] Load and inspect microCT volume data
 - [x] Apply Gaussian smooth
 - [x] Resample the dataset
@@ -56,6 +63,8 @@ ___
 
 #### [Example #2 - tetrahedra-FE model of stainless steel foam](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
+
+This example shows how to:
 - [x] Load and inspect synchrotron microCT volume data
 - [x] Apply Gaussian smooth
 - [x] Resample the dataset
@@ -77,23 +86,8 @@ ___
 #### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [X] clean example notebooks
-- [ ] add picture of CT 2 FE `ciclope.main()` pipeline:
-  1. load data
-  2. pre-processing
-     1. gauss_smooth
-     2. imresize
-     3. add embedding
-     4. add caps
-  3. segmentation
-     1. Otsu threshold
-     2. remove_unconnected
-  4. (meshing) (voxel; tetra)
-  5. voxel-FE model generation
-     1. apply BCs
-     2. material mapping
-  6. solve CalculiX
-  7. post-processing (F-u curve)
-- [ ] list of features
+- [ ] add picture of CT 2 FE `ciclope.main()` pipeline
+- [ ] API reference
 - [ ] ciclope usage examples
   - [ ] as a script
   - [ ] as a module - ciclope.methods
