@@ -1,6 +1,8 @@
 # ciclope
 Computed Tomography to Finite Elements.
 
+[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+
 **ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 **ciclope** can be run from the command line as a script. To view the help type
 ```
