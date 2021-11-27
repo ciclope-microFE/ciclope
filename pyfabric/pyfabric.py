@@ -114,10 +114,12 @@ def envelope(bw, method='marching_cubes'):
         smoothed_L = mcubes.smooth(bw)
         # Extract the 0-levelset
         vertices, triangles = mcubes.marching_cubes(np.transpose(smoothed_L, [2, 1, 0]), 0)
+        # vertices, triangles = mcubes.marching_cubes(smoothed_L, 0)
 
     elif method == 'marching_cubes':
         from skimage.measure import marching_cubes
         vertices, triangles, tmp, tmp2 = marching_cubes(np.transpose(bw, [2, 1, 0]), level=None, step_size=1)
+        # vertices, triangles, tmp, tmp2 = marching_cubes(bw, level=None, step_size=1)
 
     else:
         raise IOError('{0} method unknown.', format(method))
@@ -299,6 +301,7 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
 
             # ellipsoid fit
             center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points)
+            # center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points*[1,-1,1])
 
             point_count = point_count + 1
 
@@ -342,31 +345,39 @@ def fabric_pointset(I, pointset, ROIsize, ACF_threshold=0.5, ROIzoom=False, zoom
             # ellipsoid fit
             # the ellipsoid envelope coordinates are scaled to 0-1
             center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit(env_points/ROIsize)
+            # center, evecs[point_count, :, :], radii[point_count, :], v = ef.ellipsoid_fit((env_points*[1,-1,1])/ROIsize)
 
             point_count = point_count + 1
 
     # take abs value of the radii vector
     radii = np.abs(radii)
 
+    # compute Degree of Anisotropy
+    DA = np.max(radii, 1) / np.min(radii, 1)
+
     # Remove potential outliers based on the ellipsoid radii:
     # any ellipsoid with a radius > ROIsize/2 is removed
-    radii[np.any(radii > ROIsize * zoom_factor / 2, axis=1), :] = np.nan
+    idx = np.any(radii > ROIsize * zoom_factor / 2, axis=1)
+    radii[idx, :] = np.nan
+    DA[idx] = np.nan
 
     # ellipsoid radii < 1 voxel are meaningless
-    radii[np.any(radii < 1, axis=1), :] = np.nan
-
-    # compute Degree of Anisotropy
-    DA = np.nanmax(radii, 1) / np.nanmin(radii, 1)
+    idx = np.any(radii < 1, axis=1)
+    radii[idx, :] = np.nan
+    DA[idx] = np.nan
 
     # Ellipsoid eigenvalues
     evals = 1 / (radii ** 2)
 
     # Symmetric ellipsoid tensor components
     for cell in range(0, evecs.shape[0]):
-        fabric_tens[cell, :, :] = np.matmul(evecs[cell, :, :], np.matmul((evals[cell, :] * np.identity(3)),np.transpose(evecs[cell, :, :])))
+        fabric_tens[cell, :, :] = np.matmul(evecs[cell, :, :], np.matmul((evals[cell, :] * np.identity(3)), np.transpose(evecs[cell, :, :])))
         fabric_comp[cell, :] = fabric_tens[cell, [0, 1, 2, 0, 1, 0], [0, 1, 2, 1, 2, 2]]
+        # fabric_comp[cell, :] = fabric_tens[cell, [2, 1, 0, 1, 0, 0], [2, 1, 0, 2, 1, 2]]
+        # evecs[cell, :, :] = np.flipud(evecs[cell, :, :])
 
     return evecs, radii, evals, fabric_comp, DA
+    # return evecs, np.flipud(radii), np.flipud(evals), fabric_comp, DA
 
 def fabric(I, ACF_threshold=0.5, zoom=False, zoom_size=None, zoom_factor=None):
     """Compute fabric tensor of a given image.
