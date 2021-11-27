@@ -8,6 +8,7 @@ old/
 
 # ignore irrelevant things
 /pippo*
+/pyfabric_tests.ipynb
 /.ipynb_checkpoints/
 /.idea
 
@@ -15,3 +16,4 @@ old/
 /test_data/steel_foam/*
 /test_data/trabecular_bone/spooles.out
 /test_data/trabecular_bone/*
+/pyfabric_tests.ipynb

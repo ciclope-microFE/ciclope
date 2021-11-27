@@ -4,6 +4,8 @@ Fabric tensor from 3D images.
 pyfabric extracts the local fabric tensor from 3D image data.
 pyfabric computes the 3D spatial Auto Correlation Function (ACF) to extract the local orientation and anisotropy of images.
 
+![](pyfabric.png)
+
 The ACF of an image I is computed in the Fourier domain as: \
 `ACF = |IFFT(FFT(I) conj(FFT(I)))|` 
 
@@ -24,8 +26,9 @@ evecs, radii, evals, fabric_tensor_components, degree_anisotropy = pyfabric.fabr
 ```
 
 ## to do:
+- [ ] move to separate repo
 - [ ] test fabric tensor orientation with known ellipsoid
-- [ ] check transpose in `pyfabric.envelope`  
+- [X] check transpose in `pyfabric.envelope`  
 - [X] fit ellipsoid to ACF
 - [X] fabric_pointset
 - [X] control ACF ROIsize
@@ -44,6 +47,9 @@ evecs, radii, evals, fabric_tensor_components, degree_anisotropy = pyfabric.fabr
 - [ ] fabric_worm
 - [ ] ROI checker (needed?)
 
+### Documentation:
+- [ ] pyfabric plot
+- [ ] clean demo notebook
 ____
 #### References:
 [1] [P. Varga et al., “Investigation of the three-dimensional orientation of mineralized collagen fibrils in human lamellar bone using synchrotron X-ray phase nano-tomography,” Acta Biomaterialia, vol. 9, no. 9, pp. 8118–8127, Sep. 2013, doi: 10.1016/j.actbio.2013.05.015.](http://dx.doi.org/10.1016/j.actbio.2013.05.015) \
