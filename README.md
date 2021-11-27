@@ -12,21 +12,20 @@ To use **ciclope** within python, import the module with
 from ciclope import ciclope
 ```
 
-The table below shows a typical pipeline for FE model generation from a CT dataset that can be executed with ciclope:
+The following table shows a general pipeline for FE model generation from CT data that can be executed with ciclope:
 
 | # | Step | Description | **ciclope** flag |
 |:-:|:-|:-|:-|
-| 1. | Load CT data | | |
-| 2. | Pre-processing | Gaussian smooth | `--smooth` |
-| | | Resize image | `-r 1.2` |
+| 1. | **Load CT data** | | |
+| 2. | **Pre-processing** | Gaussian smooth | `--smooth` |
+| | | Resize image | `-r` |
 | | | Add embedding | (not implemented yet) |
 | | | Add caps | `--caps` |
-| | | Add caps | `--caps` |
-| 3. | Segmentation | Otsu method if empty | `-t 142` |
+| 3. | **Segmentation** | Uses Otsu method if left empty | `-t` |
 | | | Remove unconnected voxels | |
-| 4. | Meshing | Outer shell mesh of triangles | `--shell_mesh` |
+| 4. | **Meshing** | Outer shell mesh of triangles | `--shell_mesh` |
 | | | Volume mesh of tetrahedra | `--vol_mesh` |
-| 5. | FE model generation | Apply Boundary Conditions | |
+| 5. | **FE model generation** | Apply Boundary Conditions | |
 | | | Material mapping | `-m`, `--mapping` |
 | | | Voxel FE | `--voxelfe` |
 | | | Tetrahedra FE | `--tetrafe` |
@@ -42,6 +41,8 @@ ___
 
 ### ciclope examples:
 #### [example 1: voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+[![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](https://jupyter.org/try)
+
 ![](test_data/trabecular_bone/U3.png)
 - [x] Load and inspect microCT volume data
 - [x] Apply Gaussian smooth
