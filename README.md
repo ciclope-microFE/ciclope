@@ -11,6 +11,34 @@ To use **ciclope** within python, import the module with
 ```
 from ciclope import ciclope
 ```
+
+The table below shows a typical pipeline for FE model generation from a CT dataset that can be executed with ciclope:
+
+| # | Step | Description | **ciclope** flag |
+|:-:|:-|:-|:-|
+| 1. | Load CT data | | |
+| 2. | pre-processing | | |
+| | Gaussian smooth | | |
+
+
+
+     2. imresize
+     3. add embedding
+     4. add caps
+  3. segmentation
+     1. Otsu threshold
+     2. remove_unconnected
+  4. (meshing) (voxel; tetra)
+  5. voxel-FE model generation
+     1. apply BCs
+     2. material mapping
+  6. solve CalculiX
+  7. post-processing (F-u curve)
+|Scanner|Scanco XtremeCT-II|
+|Sample|human femur head|
+|Voxel size|60.6 micron|
+|Preliminary operations|imgaussfilt; downsampled (2X; quadratic interpolation); to uint8|
+
 ---
 ### Notes on ciclope
 * Tetrahedra meshes are generated with [pygalmesh](https://github.com/nschloe/pygalmesh) (a Python frontend to [CGAL](https://www.cgal.org/))
@@ -57,11 +85,31 @@ ___
 
 #### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
-- [ ] add picture of Ct 2 FE ciclope pipeline
+- [X] clean example notebooks
+- [ ] add picture of CT 2 FE `ciclope.main()` pipeline:
+  1. load data
+  2. pre-processing
+     1. gauss_smooth
+     2. imresize
+     3. add embedding
+     4. add caps
+  3. segmentation
+     1. Otsu threshold
+     2. remove_unconnected
+  4. (meshing) (voxel; tetra)
+  5. voxel-FE model generation
+     1. apply BCs
+     2. material mapping
+  6. solve CalculiX
+  7. post-processing (F-u curve)
 - [ ] list of features
-- [ ] ciclope usage
+- [ ] ciclope usage examples
   - [ ] as a script
   - [ ] as a module - ciclope.methods
+    - [ ] `cgal_mesh`
+    - [ ] `shell_mesh`
+    - [ ] `vol2voxelfe`
+    - [ ] `mesh2tetrafe`
 
 #### Pre-processing
 - [x] add caps
@@ -85,6 +133,10 @@ ___
 - [ ] steel caps
 - [ ] embedding
 - [ ] material property mapping with voxel-FE
+- [ ] material property mapping with tetra-FE
+- [ ] pipeline automation
+  - [ ] launch from and write results to master table
+  - [ ] multiple load configurations (comp, tens, shear, torsion, bending)
 - [ ] multi-material tetrahedra-FE
 
 
