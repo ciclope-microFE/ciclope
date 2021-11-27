@@ -6,6 +6,8 @@ Computed Tomography to Finite Elements.
 [//]: # (more badges here: https://naereen.github.io/badges/)
 
 **ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
+
+### Usage
 **ciclope** can be run from the command line as a script. To view the help type
 ```
 python ciclope/ciclope.py -h
@@ -43,7 +45,7 @@ The following table shows a general pipeline for FE model generation from CT dat
   * Additional libraries of [CalculiX](https://github.com/calculix) examples and template files can be found [here](https://github.com/calculix/examples) and [here](https://github.com/calculix/mkraska)
 ___
 
-### ciclope examples:
+### Examples:
 #### [Example #1 - voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 
@@ -97,7 +99,7 @@ ___
 - [X] clean example notebooks
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
 - [ ] API reference
-- [ ] ciclope usage examples
+- [ ] Usage
   - [ ] as a script
   - [ ] as a module - ciclope.methods
     - [ ] `cgal_mesh`
