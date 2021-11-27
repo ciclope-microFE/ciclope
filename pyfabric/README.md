@@ -47,9 +47,6 @@ evecs, radii, evals, fabric_tensor_components, degree_anisotropy = pyfabric.fabr
 - [ ] fabric_worm
 - [ ] ROI checker (needed?)
 
-### Documentation:
-- [ ] pyfabric plot
-- [ ] clean demo notebook
 ____
 #### References:
 [1] [P. Varga et al., “Investigation of the three-dimensional orientation of mineralized collagen fibrils in human lamellar bone using synchrotron X-ray phase nano-tomography,” Acta Biomaterialia, vol. 9, no. 9, pp. 8118–8127, Sep. 2013, doi: 10.1016/j.actbio.2013.05.015.](http://dx.doi.org/10.1016/j.actbio.2013.05.015) \
