@@ -25,7 +25,7 @@ evecs, radii, evals, fabric_tensor_components, degree_anisotropy = pyfabric.fabr
 
 ## to do:
 - [ ] test fabric tensor orientation with known ellipsoid
-  - [ ] check transpose in `pyfabric.envelope`  
+- [ ] check transpose in `pyfabric.envelope`  
 - [X] fit ellipsoid to ACF
 - [X] fabric_pointset
 - [X] control ACF ROIsize
