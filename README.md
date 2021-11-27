@@ -17,27 +17,19 @@ The table below shows a typical pipeline for FE model generation from a CT datas
 | # | Step | Description | **ciclope** flag |
 |:-:|:-|:-|:-|
 | 1. | Load CT data | | |
-| 2. | pre-processing | | |
-| | Gaussian smooth | | |
-
-
-
-     2. imresize
-     3. add embedding
-     4. add caps
-  3. segmentation
-     1. Otsu threshold
-     2. remove_unconnected
-  4. (meshing) (voxel; tetra)
-  5. voxel-FE model generation
-     1. apply BCs
-     2. material mapping
-  6. solve CalculiX
-  7. post-processing (F-u curve)
-|Scanner|Scanco XtremeCT-II|
-|Sample|human femur head|
-|Voxel size|60.6 micron|
-|Preliminary operations|imgaussfilt; downsampled (2X; quadratic interpolation); to uint8|
+| 2. | Pre-processing | Gaussian smooth | `--smooth` |
+| | | Resize image | `-r 1.2` |
+| | | Add embedding | (not implemented yet) |
+| | | Add caps | `--caps` |
+| | | Add caps | `--caps` |
+| 3. | Segmentation | Otsu method if empty | `-t 142` |
+| | | Remove unconnected voxels | |
+| 4. | Meshing | Outer shell mesh of triangles | `--shell_mesh` |
+| | | Volume mesh of tetrahedra | `--vol_mesh` |
+| 5. | FE model generation | Apply Boundary Conditions | |
+| | | Material mapping | `-m`, `--mapping` |
+| | | Voxel FE | `--voxelfe` |
+| | | Tetrahedra FE | `--tetrafe` |
 
 ---
 ### Notes on ciclope
