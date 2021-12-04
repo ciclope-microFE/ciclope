@@ -22,15 +22,17 @@ import argparse
 import logging
 import textwrap
 import numpy as np
-import recon_utils as ru
+from ciclope import recon_utils as ru
 import meshio
 import mcubes
 from scipy import ndimage, misc
 from skimage.filters import threshold_otsu, gaussian
 # from skimage import measure, morphology
-from pybonemorph import remove_unconnected
+from ciclope.pybonemorph import remove_unconnected
 import matplotlib.pyplot as plt
 from datetime import datetime
+import prefect
+from prefect import task, Flow, Parameter
 
 #################################################################################
 
@@ -263,6 +265,12 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
 
     # get 3D dataset shape
     data_shape = voldata.shape
+
+    # voxelsize list if only one value is given
+    if type(voxelsize) is not list:
+        voxelsize = [voxelsize, voxelsize, voxelsize]
+    if len(voxelsize) == 1:
+        voxelsize = [voxelsize[0], voxelsize[0], voxelsize[0]]
 
     # variables initialization ##################################################
     # dictionaries (two) of GVs for each user-defined material property
@@ -770,9 +778,172 @@ def matpropdictionary(proplist):
 
             return matprop
 
+@task
+def load_tiff_stack_prefect(filein: str) -> np.ndarray:
+    logger = prefect.context.get("logger")
+    logger.info("Reading image: %s" % filein)
+    return ru.read_tiff_stack(filein)
+
+@task
+def smooth_prefect(image: np.ndarray, smooth: float) -> np.ndarray:
+    if smooth != 0:
+        logger = prefect.context.get("logger")
+        logger.info("Apply gaussian smooth")
+        image = gaussian(image, sigma=smooth, preserve_range=True)
+
+    return image
+
+def resample(image, voxelsize, resampling_factor):
+    # resize the 3D data using spline interpolation of order 2
+    image = ndimage.zoom(image, 1 / resampling_factor, output=None, order=2)
+
+    # correct voxelsize
+    voxelsize = voxelsize * resampling_factor
+
+    return image, voxelsize
+
+@task
+def resample_prefect(image: np.ndarray, voxelsize, resampling_factor=1):
+    if (resampling_factor != 0) & (resampling_factor != 1):
+        logger = prefect.context.get("logger")
+        logger.info("Resampling input dataset with factor 1/{}".format(resampling_factor))
+        image, voxelsize = resample(image, voxelsize, resampling_factor)
+        logger.info("New voxelsize: {}".format(voxelsize))
+
+    return image
+
+@task
+def update_voxelsize(voxelsize: float, resampling_factor: float) -> float:
+    if (resampling_factor != 0) & (resampling_factor != 1):
+        voxelsize*=resampling_factor
+    return voxelsize
+
+@task
+def add_cap_prefect(image: np.ndarray, cap_thickness: int, cap_val: int) -> np.ndarray:
+    if cap_thickness != 0:
+        # add cap so that the mesh is closed
+        logger = prefect.context.get("logger")
+        logger.info("Adding cap to image")
+        image = ru.add_cap(image, cap_thickness=cap_thickness, cap_val=cap_val)
+
+    return image
+
+def segment(image, threshold_value):
+    # we do want bone = 1 and background = 0;
+    if threshold_value is None:
+        # use Otsu if threshold input not specified
+        T = threshold_otsu(image)
+
+    else:
+        T = int(threshold_value)
+
+    # apply the threshold
+    return image > T, T
+
+@task
+def segment_prefect(image: np.ndarray, threshold_value: float) -> np.ndarray:
+    logger = prefect.context.get("logger")
+    logger.info("Segmenting the dataset...")
+    if threshold_value is None:
+        logger.info("Use Otsu's method.")
+    BW, T = segment(image, threshold_value)
+    return BW
+
+@task
+def remove_unconnected_prefect(bwimage: np.ndarray) -> np.ndarray:
+    logger = prefect.context.get("logger")
+    logger.info("Removing unconnected clusters of voxels...")
+    return remove_unconnected(bwimage)
+
+@task
+def generate_voxelfe_prefect(bwimage: np.ndarray, templatefile: str, filenameout: str, voxelsize: list):
+    """voxelFE of binary volume data; the material property definition is assumed to be in the analysis template file
+    """
+    logger = prefect.context.get("logger")
+    logger.info("Generating voxelFE model file with constant material property.")
+    vol2voxelfe(bwimage, templatefile, filenameout, keywords=['NSET', 'ELSET'], voxelsize=voxelsize)
+
+@task
+def generate_voxelfe_mapping_prefect(image: np.ndarray, bwimage: np.ndarray, templatefile: str, filenameout: str, voxelsize: list, mapping: list):
+    """
+    # voxelFE of greyscale volume data; material mapping on
+
+    :param bwimage:
+    :param bwimage:
+    :param templatefile:
+    :param filenameout:
+    :param voxelsize:
+    :return:
+    """
+    # build dictionary of material properties
+    matprop = matpropdictionary(mapping)
+
+    # mask the data (keep only the largest connected volume)
+    image[~bwimage] = 0
+
+    vol2voxelfe(image, templatefile, filenameout, matprop, keywords=['NSET', 'ELSET', 'PROPERTY'], voxelsize=voxelsize)
+
+def ciclope_voxelfe_flow(master_file: str):
+    """**ciclope** prefect flow for voxelFE model generation.
+    Maps and loops through a given list of voxelFE ciclopes.
+    :return:
+    """
+    import pandas as pd
+    with Flow("ciclope-voxelFE-flow") as flow:
+
+        # input parameters
+        filename = Parameter('filein', required=True)
+        fileout = Parameter('fileout', required=True)
+        s = Parameter('smooth')
+        vs = Parameter('vs')
+        r = Parameter('r')
+        t = Parameter('t')
+        cap_t = Parameter('cap_t')
+        cap_val = Parameter('cap_val')
+        template = Parameter('template')
+
+        # ciclope flow
+        I = load_tiff_stack_prefect.map(filename)
+        I = smooth_prefect.map(image=I, smooth=s)
+        I = resample_prefect.map(image=I, voxelsize=vs, resampling_factor=r)
+        vs = update_voxelsize.map(voxelsize=vs, resampling_factor=r)
+        I = add_cap_prefect.map(image=I, cap_thickness=cap_t, cap_val=cap_val)
+        BW = segment_prefect.map(image=I, threshold_value=t)
+        BW = remove_unconnected_prefect.map(bwimage=BW)
+        generate_voxelfe_prefect.map(bwimage=BW, templatefile=template, filenameout=fileout, voxelsize=vs)
+
+    # load master table
+    df = pd.read_csv(master_file)
+
+    # set all empty cells to None
+    df = df.where(pd.notnull(df), None)
+
+    # flow = ciclope_flow()
+
+    parameters = df[df['run'] == 1].to_dict('list')
+    del parameters['run']
+    # parameters2 = {'filein': df['filein'][df['run'] == 1].tolist(),
+    #                'smooth': df['smooth'][df['run'] == 1].tolist(),
+    #                'vs': df['vs'][df['run'] == 1].tolist(),
+    #                'r': df['r'][df['run'] == 1].tolist(),
+    #                't': df['t'][df['run'] == 1].tolist(),
+    #                'fileout': df['fileout'][df['run'] == 1].tolist(),
+    #                'cap_t': df['cap_t'][df['run'] == 1].tolist(),
+    #                'cap_val': df['cap_val'][df['run'] == 1].tolist(),
+    #                'template': df['template'][df['run'] == 1].tolist(),
+    #                }
+
+    state = flow.run(parameters)
+
+    type(state._result.value)
+    task_ref = flow.get_tasks()[1]
+    ru.plot_midplanes(state.result[task_ref]._result.value[0])
+
+    return flow
+
 def main():
     description = textwrap.dedent('''\
-                Script to generate ABAQUS Finite Element (FE) input files from 3D voxel data.
+                Ciclope generates CalculiX Finite Element (FE) input files from 3D voxel data.
 
                 The output of this script is an input file (.INP) in ABAQUS syntax
                 that can be solved using ABAQUS or CALCULIX.
@@ -781,7 +952,7 @@ def main():
                 3D voxel or tetrahedra FE input files can be generated.
                 Meshes for 3D rendering of the outer model shell and of the whole selected volume can be generated.
 
-                Only for voxel FE, the user can define a material mapping strategy
+                The user can define a material mapping strategy (implemented only for voxel FE)
                 for the direct conversion of local Grey Values (GVs) of the 3D image
                 to local material properties of the FE model.
 
@@ -842,7 +1013,7 @@ def main():
     parser.add_argument('-vs', '--voxelsize', type=float, default=[1., 1., 1.], nargs='+', help='Voxel size.')
     parser.add_argument('-r', '--resampling', type=float, default=1., help='Resampling factor.')
     parser.add_argument('-t', '--threshold', type=int, default=None, help='Threshold value.')
-    parser.add_argument('--smooth', dest='smooth', action='store_true', help='Smooth image with gaussian filter before thresholding.')
+    parser.add_argument('-s', '--smooth', type=float, nargs='?', const=1., default=0., help='Smooth image with gaussian filter of given Sigma before thresholding.')
     parser.add_argument('--caps', type=int, default=None, help='Add caps of given thickness to the bottom and top of the model for mesh creation.')
     parser.add_argument('--caps_val', type=int, default=0, help='Caps grey value.')
     parser.add_argument('--shell_mesh', dest='shell_mesh', action='store_true', help='Write VTK mesh of outer shell generated with PyMCubes.')
@@ -854,7 +1025,7 @@ def main():
     parser.add_argument('-m', '--mapping', default=None, nargs='+', help='Template file for material property mapping. If more than one property is given, each property filename must followed by the corresponding GV range.')
     parser.add_argument('--tetrafe', dest='tetrafe', action='store_true', help='Write linear tetrahedra FE model (.INP) file.')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose output.')
-    parser.set_defaults(smooth=False, shell_mesh=False, vol_mesh=False, voxelfe=False, tetrafe=False, verbose=False)
+    parser.set_defaults(shell_mesh=False, vol_mesh=False, voxelfe=False, tetrafe=False, verbose=False)
 
     args = parser.parse_args()
 
@@ -871,20 +1042,15 @@ def main():
     I = ru.read_tiff_stack(args.filein)
 
     # Gaussian smooth #######################################################
-    if args.smooth:
+    if args.smooth != 0:
         logging.info('Smoothing image with gaussian kernel')
-        I = gaussian(I, sigma=1, preserve_range=True)
+        I = gaussian(I, sigma=args.smooth, preserve_range=True)
 
     # Resize the dataset ####################################################
     # use scikit
-    if not args.resampling == 1:
+    if args.resampling != 1:
         logging.info("Resampling input dataset with factor 1/{}".format(args.resampling))
-
-        # resize the 3D data using spline interpolation of order 2
-        I = ndimage.zoom(I, 1/args.resampling, output=None, order=2)
-
-        # correct voxelsize
-        sp = sp * args.resampling
+        I, sp = resample(I, sp, args.resampling)
         logging.info("New voxelsize: {}".format(sp))
 
     if args.verbose:
@@ -899,27 +1065,21 @@ def main():
         I = ru.add_cap(I, cap_thickness=args.caps, cap_val=args.caps_val)
 
     # Binarise the dataset ##################################################
-    # we do want bone = 1 and background = 0;
+    BW, T = segment(I, args.threshold)
     if args.threshold is None:
-        # use Otsu if threshold input not specified
-        T = threshold_otsu(I)
         logging.info("Threshold value not given. Using Otsu method..")
-        logging.info("Threshold: {}".format(T))
 
         if args.verbose:
             # plot the input image histogram
             fig2, ax2 = plt.subplots()
             plt.hist(I.ravel(), bins=100)
             plt.show()
-            fig2.savefig(fileout_base+"_hist.png")
-    else:
-        T = int(args.threshold)
-        logging.info("Threshold: {}".format(T))
+            fig2.savefig(fileout_base + "_hist.png")
 
-    # apply the threshold
-    BW = I > T
+    logging.info("Threshold: {}".format(T))
 
-    # Detect the isolated cluster of voxels #################################
+    # Keep largest isolated cluster of voxels #################################
+    logging.info("Removing unconnected clusters of voxels..")
     L = remove_unconnected(BW)
 
     # Visualization with Napari #############################################

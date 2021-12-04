@@ -9,12 +9,12 @@ Computed Tomography to Finite Elements.
 
 ### Usage
 **ciclope** can be run from the command line as a script. To view the help type
-```
+```commandline
 python ciclope/ciclope.py -h
 ```
 
 To use **ciclope** within python, import the module with
-```
+```python
 from ciclope import ciclope
 ```
 
@@ -122,6 +122,7 @@ ___
 - [ ] CalculiX postprocessing
   - [X] process CalculiX output with [`dat2txt.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
   - [X] produce Force displacement plot with `pandas`
+  - [ ] cgx midplane plots
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
 
 #### Examples
@@ -130,10 +131,15 @@ ___
 - [ ] embedding
 - [ ] material property mapping with voxel-FE
 - [ ] material property mapping with tetra-FE
-- [ ] pipeline automation
+  - [ ] multi-material tetrahedra-FE (femure with trabecular and cortical masks)
+- [ ] **prefect** pipeline 1
   - [ ] launch from and write results to master table
+  - [ ] ciclope voxelFE pipeline
+  - [ ] execute calculix
   - [ ] multiple load configurations (comp, tens, shear, torsion, bending)
-- [ ] multi-material tetrahedra-FE
+  - [ ] postprocess results
+    - [ ] midplanes Smises plots
+    - [ ] generate report
 
 
 
