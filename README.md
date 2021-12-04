@@ -106,6 +106,7 @@ ___
     - [ ] `shell_mesh`
     - [ ] `vol2voxelfe`
     - [ ] `mesh2tetrafe`
+  - [ ] prefect flow 
 
 #### Pre-processing
 - [x] add caps
@@ -133,13 +134,14 @@ ___
 - [ ] material property mapping with tetra-FE
   - [ ] multi-material tetrahedra-FE (femure with trabecular and cortical masks)
 - [ ] **prefect** pipeline 1
-  - [ ] launch from and write results to master table
-  - [ ] ciclope voxelFE pipeline
+  - [X] launch pipeline from master CSV table
+  - [X] ciclope voxelFE pipeline
   - [ ] execute calculix
   - [ ] multiple load configurations (comp, tens, shear, torsion, bending)
   - [ ] postprocess results
     - [ ] midplanes Smises plots
     - [ ] generate report
+    - [ ] write results to master
 
 
 
