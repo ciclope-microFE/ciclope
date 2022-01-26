@@ -8,7 +8,7 @@ Computed Tomography to Finite Elements.
 **ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 
 ### Usage
-**ciclope** can be run from the command line as a script. To view the help type
+**ciclope** can be run from the command line as a script. See the [examples](###Examples) below of this type of use. To view the help type
 ```commandline
 python ciclope/ciclope.py -h
 ```
@@ -18,6 +18,68 @@ To use **ciclope** within python, import the module with
 from ciclope import ciclope
 ```
 
+#### voxel-FE
+![](test_data/trabecular_bone/trab_sample_mini3_UD3.png)
+Read and segment a 3D dataset (TIFF stack) of trabecular bone. Generate **voxel-FE** model of linear elastic compression
+```python
+import numpy as np
+from recon_utils import read_tiff_stack
+from ciclope import ciclope
+
+input_file = '/path/to/your/file.tiff'
+input_template = "./../input_templates/tmp_example01_comp_static_bone.inp"
+
+data_3D = read_tiff_stack(input_file)
+vs = np.ones(3)*0.06 # [mm]
+
+# segment and remove unconnected clusters
+BW = data_3D > 142
+L = ciclope.remove_unconnected(BW)
+
+# generate CalculiX input file
+ciclope.vol2voxelfe(L, input_template, 'test.inp', keywords=['NSET', 'ELSET'], voxelsize=vs)
+```
+
+#### tetrahedra-FE
+![](test_data/steel_foam/B_matrix_tetraFE_mesh.png)
+Read and segment 3D microCT dataset of steel foam sample
+```python
+import numpy as np
+from skimage import measure, morphology
+from recon_utils import read_tiff_stack
+from ciclope import ciclope
+
+input_file = '/your_path/steel_foam.tiff'
+
+data_3D = read_tiff_stack(input_file)
+vs = np.ones(3)*0.01625 # [mm]
+
+# segment and remove unconnected clusters
+BW = data_3D > 90
+BW = morphology.closing(BW, morphology.cube(5))
+L = ciclope.remove_unconnected(BW)
+```
+
+Generate mesh of tetrahedra with [pygalmesh](https://github.com/nschloe/pygalmesh)
+```python
+import pygalmesh
+mesh = pygalmesh.generate_from_array(np.transpose(L, [2, 1, 0]).astype('uint8'), tuple(vs), max_facet_distance=0.02, max_cell_circumradius=0.1)
+```
+You can do the same within ciclope with
+```python
+mesh = ciclope.cgal_mesh(L, vs, 'tetra', 0.02, 0.1)
+```
+
+Generate **tetrahedra-FE** model of non-linear tensile test
+
+```python
+input_template = "./../input_templates/tmp_example02_tens_static_steel.inp"
+
+# generate CalculiX input file
+ciclope.mesh2tetrafe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
+```
+
+### ciclope pipeline 
 The following table shows a general pipeline for FE model generation from CT data that can be executed with ciclope:
 
 | # | Step | Description | **ciclope** flag |
@@ -45,7 +107,7 @@ The following table shows a general pipeline for FE model generation from CT dat
   * Additional libraries of [CalculiX](https://github.com/calculix) examples and template files can be found [here](https://github.com/calculix/examples) and [here](https://github.com/calculix/mkraska)
 ___
 
-### Examples:
+### Examples
 #### [Example #1 - voxel-FE model of trabecular bone](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](ciclope/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 
@@ -100,18 +162,19 @@ ___
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
 - [ ] API reference
 - [ ] Usage
-  - [ ] as a script
-  - [ ] as a module - ciclope.methods
-    - [ ] `cgal_mesh`
+  - [X] as a script
+  - [X] as a module - ciclope.methods
+    - [X] `cgal_mesh`
     - [ ] `shell_mesh`
-    - [ ] `vol2voxelfe`
-    - [ ] `mesh2tetrafe`
+    - [X] `vol2voxelfe`
+    - [X] `mesh2tetrafe`
   - [ ] prefect flow 
 
 #### Pre-processing
 - [x] add caps
 - [X] write midplanes images (.PNG)
 - [ ] 3D dataset embedding
+- [ ] (line 598) custom copy of input_template with parameter substitution (driving node coordinates; displacement amplitude..)
 
 #### pybonemorph
 - [X] Center Of Mass
@@ -137,7 +200,9 @@ ___
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
   - [ ] execute calculix
-  - [ ] multiple load configurations (comp, tens, shear, torsion, bending)
+  - [ ] multiple load configurations
+    - [ ] (comp, tens, shear, torsion, bending)
+    - [ ] read input_template params from table (e.g. different displ amplitude)
   - [ ] postprocess results
     - [ ] midplanes Smises plots
     - [ ] generate report
