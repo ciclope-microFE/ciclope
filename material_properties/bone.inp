@@ -1,6 +1,6 @@
 ** ---------------------------------------------------
 ** bone.inp
-** material property definition with E=f(GV) and nu=0.3
+** material property definition with E=f(GrayValue) and nu=0.3
 ** ---------------------------------------------------
 ** Material definition:
 *SOLID SECTION, ELSET=SetName, MATERIAL=MatName
