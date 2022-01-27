@@ -1,0 +1,40 @@
+** ----------------------------------------------------
+** Material definition:
+*MATERIAL, NAME=BONE
+*ELASTIC
+18000, 0.3, 0
+*SOLID SECTION, ELSET=SET1, MATERIAL=BONE
+** ---------------------------------------------------
+** Analysis definition. The Step module defines the analysis steps and associated output requests.
+** More info at:
+** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** ---------------------------------------------------
+*STEP
+*STATIC
+** All displacements fixed at bottom:
+*BOUNDARY
+NODES_B, 1, 3, 0.0
+** Create driving ref. node:
+*NODE
+10000000, refnodeX, refnodeY, refnodeZ
+*NSET, NSET=REF_NODE
+10000000
+** Link nodes on the top to the driving node:
+*KINEMATIC COUPLING, REF NODE=REF_NODE
+NODES_T, 1, 6
+** Loading: bending in Y-Z plane imposed; free to rotate and translate otherwise
+*STEP, AMPLITUDE=RAMP, UNSYMM=YES, INC=1000, NLGEOM=YES
+*STATIC
+0.05, 1., 5e-04, 0.05
+*BOUNDARY, TYPE=DISPLACEMENT
+** REF_NODE, 1, 2, 0.0
+REF_NODE, 5, 5, 5.0
+** ---------------------------------------------------
+** Output request:
+*NODE FILE, OUTPUT=2D
+U
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_B
+RF
+*EL FILE, OUTPUT=2D
+S
+*END STEP
