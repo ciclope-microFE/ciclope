@@ -22,13 +22,14 @@ import argparse
 import logging
 import textwrap
 import numpy as np
-from ciclope import recon_utils as ru
+# from ciclope import recon_utils as ru
+import recon_utils as ru
 import meshio
 import mcubes
 from scipy import ndimage, misc
 from skimage.filters import threshold_otsu, gaussian
 # from skimage import measure, morphology
-from ciclope.pybonemorph import remove_unconnected
+from pybonemorph import remove_unconnected
 import matplotlib.pyplot as plt
 from datetime import datetime
 import prefect
@@ -197,7 +198,7 @@ def cgal_mesh(bwimage, voxelsize, meshtype='both', max_facet_distance=0.0, max_c
 
     return mesh
 
-def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 'ELSET'], voxelsize=[1, 1, 1], eltype='C3D8', matpropbits=8, verbose=False):
+def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 'ELSET'], voxelsize=[1, 1, 1], eltype='C3D8', matpropbits=8, refnode=None, verbose=False):
     """Generate ABAQUS voxel Finite Element (FE) input file from 3D volume data.
     The file written is an input file (.INP) in ABAQUS syntax that can be solved using ABAQUS or CALCULIX.
     The user can define a material mapping strategy for the conversion of local GVs to local material properties in the FE model.
@@ -232,22 +233,22 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
         * 'NSET':
                 Create boundary node sets. (Default = ON)
                 If 'NSET' is specified, the following node sets are created:
-                  - NODES_S: Nodes on SOUTH surface of 3D model.
-                  - NODES_N: Nodes on NORTH surface of 3D model.
-                  - NODES_E: Nodes on EAST surface of 3D model.
-                  - NODES_W: Nodes on WEST surface of 3D model.
-                  - NODES_T: Nodes on TOP surface of 3D model.
-                  - NODES_B: Nodes on BOTTOM surface of 3D model.
+                  - NODES_Y0: Nodes on SOUTH (Y-) surface of 3D model.
+                  - NODES_Y1: Nodes on NORTH (Y+) surface of 3D model.
+                  - NODES_X1: Nodes on EAST (X+) surface of 3D model.
+                  - NODES_X0: Nodes on WEST (X-) surface of 3D model.
+                  - NODES_Z1: Nodes on TOP (Z+) surface of 3D model.
+                  - NODES_Z0: Nodes on BOTTOM (Z-) surface of 3D model.
                 These node sets are available for boundary conditions definition.
         * 'ELSET':
                 Create boundary element sets. (Default = ON)
                 If 'ELSET' is specified, the following element sets are created:
-                  - ELEMS_S: Elements of SOUTH surface of 3D model.
-                  - ELEMS_N: Elements of NORTH surface of 3D model.
-                  - ELEMS_E: Elements of EAST surface of 3D model.
-                  - ELEMS_W: Elements of WEST surface of 3D model.
-                  - ELEMS_T: Elements of TOP surface of 3D model.
-                  - ELEMS_B: Elements of BOTTOM surface of 3D model.
+                  - ELEMS_Y0: Elements of SOUTH (Y-) surface of 3D model.
+                  - ELEMS_Y1: Elements of NORTH (Y+) surface of 3D model.
+                  - ELEMS_X1: Elements of EAST (X+) surface of 3D model.
+                  - ELEMS_X0: Elements of WEST (X-) surface of 3D model.
+                  - ELEMS_Z1: Elements of TOP (Z+) surface of 3D model.
+                  - ELEMS_Z0: Elements of BOTTOM (Z-) surface of 3D model.
         * 'PROPERTY':
                 Define an external material mapping law from template file. (Default = None)
                 Use in combination with 'matprop' dictionary of material property files and corresponding GV ranges for the material mapping.
@@ -257,6 +258,9 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
         FE element type. The default is eight-node brick element (C3D8 and F3D8). See CalculiX node convention (Par. 6.2.1) at: http://www.dhondt.de/ccx_2.15.pdf
     matpropbits : int
         Bit depth for material mapping.
+    refnode
+        Reference node coordinates [REF_NODE_x, REF_NODE_y, REF_NODE_z] for kinematic coupling.
+        Alternatively use one of the following args [X0, X1, Y0, Y1, Z0, Z1] to generate automatically a REF_NODE at a model boundary.
     """
 
     # verbose output
@@ -267,7 +271,7 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
     data_shape = voldata.shape
 
     # voxelsize list if only one value is given
-    if type(voxelsize) is not list:
+    if type(voxelsize) is not list and type(voxelsize) is not np.ndarray:
         voxelsize = [voxelsize, voxelsize, voxelsize]
     if len(voxelsize) == 1:
         voxelsize = [voxelsize[0], voxelsize[0], voxelsize[0]]
@@ -291,22 +295,29 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
 
     # dictionary of boundary node sets
     nset = {
-        'NODES_N': [],
-        'NODES_S': [],
-        'NODES_W': [],
-        'NODES_E': [],
-        'NODES_T': [],
-        'NODES_B': []
+        'NODES_Y1': [],
+        'NODES_Y0': [],
+        'NODES_X0': [],
+        'NODES_X1': [],
+        'NODES_Z1': [],
+        'NODES_Z0': []
     }
+
+    refnode_X0 = np.zeros(3)
+    refnode_X1 = np.zeros(3)
+    refnode_Y0 = np.zeros(3)
+    refnode_Y1 = np.zeros(3)
+    refnode_Z0 = np.zeros(3)
+    refnode_Z1 = np.zeros(3)
 
     # dictionary of boundary element sets
     elset = {
-        'ELEMS_N': [],
-        'ELEMS_S': [],
-        'ELEMS_W': [],
-        'ELEMS_E': [],
-        'ELEMS_T': [],
-        'ELEMS_B': []
+        'ELEMS_Y1': [],
+        'ELEMS_Y0': [],
+        'ELEMS_X0': [],
+        'ELEMS_X1': [],
+        'ELEMS_Z1': [],
+        'ELEMS_Z0': []
     }
 
     # initialize dictionaries of user material properties if given
@@ -393,65 +404,105 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
 
                     # compose lists of element indexes belonging to boundary sets
                     if slice == 0:
-                        elset['ELEMS_B'].append(el_i)
+                        elset['ELEMS_Z0'].append(el_i)
                     if slice == data_shape[0] - 1:
-                        elset['ELEMS_T'].append(el_i)
+                        elset['ELEMS_Z1'].append(el_i)
                     if col == 0:
-                        elset['ELEMS_S'].append(el_i)
+                        elset['ELEMS_Y0'].append(el_i)
                     if col == data_shape[2] - 1:
-                        elset['ELEMS_N'].append(el_i)
+                        elset['ELEMS_Y1'].append(el_i)
                     if row == 0:
-                        elset['ELEMS_W'].append(el_i)
+                        elset['ELEMS_X0'].append(el_i)
                     if row == data_shape[1] - 1:
-                        elset['ELEMS_E'].append(el_i)
+                        elset['ELEMS_X1'].append(el_i)
 
                     # store dictionary of existing nodes
                     for i in el_nodes:
                         nodes[i] = 1
 
-    # compose lists of node indexes belonging to boundary sets
-    logging.info('Detecting boundary nodes')
+    # node coordinates dict; boundary node sets
+    logging.info('Detecting node coordinates and boundary nodes')
     node_i = 0
     for slice in range(data_shape[0] + 1):
         for col in range(data_shape[2] + 1):
             for row in range(data_shape[1] + 1):
                 node_i = node_i + 1
                 if node_i in nodes:
-                    if slice == 0:
-                        nset['NODES_B'].append(node_i)
-                    if slice == data_shape[0]:
-                        nset['NODES_T'].append(node_i)
-                    if col == 0:
-                        nset['NODES_S'].append(node_i)
-                    if col == data_shape[2]:
-                        nset['NODES_N'].append(node_i)
-                    if row == 0:
-                        nset['NODES_W'].append(node_i)
-                    if row == data_shape[1]:
-                        nset['NODES_E'].append(node_i)
-
-    # compose dictionary of node coordinates
-    node_i = 0
-    for slice in range(data_shape[0] + 1):
-        for col in range(data_shape[2] + 1):
-            for row in range(data_shape[1] + 1):
-                node_i = node_i + 1
-                if node_i in nodes:
+                    # compose dictionary of node coordinates
                     nodes_XYZ[node_i] = (voxelsize[0] * row, voxelsize[1] * col, voxelsize[2] * slice)
+
+                    # compose dictionary of boundary node sets
+                    if slice == 0:
+                        nset['NODES_Z0'].append(node_i)
+                        refnode_Z0 += nodes_XYZ[node_i]
+                    if slice == data_shape[0]:
+                        nset['NODES_Z1'].append(node_i)
+                        refnode_Z1 += nodes_XYZ[node_i]
+                    if col == 0:
+                        nset['NODES_Y0'].append(node_i)
+                        refnode_Y0 += nodes_XYZ[node_i]
+                    if col == data_shape[2]:
+                        nset['NODES_Y1'].append(node_i)
+                        refnode_Y1 += nodes_XYZ[node_i]
+                    if row == 0:
+                        nset['NODES_X0'].append(node_i)
+                        refnode_X0 += nodes_XYZ[node_i]
+                    if row == data_shape[1]:
+                        nset['NODES_X1'].append(node_i)
+                        refnode_X1 += nodes_XYZ[node_i]
+
+    # barycenters of boundary node sets
+    refnode_X0 /= len(nset['NODES_X0'])
+    refnode_X1 /= len(nset['NODES_X1'])
+    refnode_Y0 /= len(nset['NODES_Y0'])
+    refnode_Y1 /= len(nset['NODES_Y1'])
+    refnode_Z0 /= len(nset['NODES_Z0'])
+    refnode_Z1 /= len(nset['NODES_Z1'])
+
+    # # compose dictionary of node coordinates
+    # node_i = 0
+    # for slice in range(data_shape[0] + 1):
+    #     for col in range(data_shape[2] + 1):
+    #         for row in range(data_shape[1] + 1):
+    #             node_i = node_i + 1
+    #             if node_i in nodes:
+    #                 nodes_XYZ[node_i] = (voxelsize[0] * row, voxelsize[1] * col, voxelsize[2] * slice)
+
+    # get REF_NODE coordinates
+    if refnode:
+        if type(refnode) is list:
+            if len(refnode) == 1:
+                refnode = refnode[0]
+            elif len(refnode) != 3:
+                logging.warning('Wrong REF_NODE input length. REF_NODE is ignored.')
+
+        if type(refnode) is str:
+            if refnode == 'X0':
+                refnode = refnode_X0
+            elif refnode == 'X1':
+                refnode = refnode_X1
+            elif refnode == 'Y0':
+                refnode = refnode_Y0
+            elif refnode == 'Y1':
+                refnode = refnode_Y1
+            elif refnode == 'Z0':
+                refnode = refnode_Z0
+            elif refnode == 'Z1':
+                refnode = refnode_Z1
 
     # write ABAQUS *.inp output file ############################################
     logging.info('Start writing INP file')
     # open ABAQUS *.INP output file
     INP = open(fileout, 'w')
 
-    # HEADER:
+    # HEADER
     INP.write('** ---------------------------------------------------------\n')
     INP.write('** Abaqus .INP file written by Voxel_FEM script on {}\n'.format(datetime.now()))
     INP.write('** ---------------------------------------------------------\n')
     # INP.write('*HEADING\n')
     # INP.write('main input {0}\n'.format(filename_in))
 
-    # NODAL COORDINATES:
+    # NODE COORDINATES
     logging.info('Writing model nodes to INP file')
     INP.write('** Node coordinates from input model\n')
     INP.write('*NODE\n')
@@ -463,10 +514,9 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
             for row in range(data_shape[1] + 1):
                 node_i = node_i + 1
                 if node_i in nodes:
-                    INP.write(
-                        '{0:10d}, {n[0]:12.6f}, {n[1]:12.6f}, {n[2]:12.6f}\n'.format(node_i, n=nodes_XYZ[node_i]))
+                    INP.write('{0:10d}, {n[0]:12.6f}, {n[1]:12.6f}, {n[2]:12.6f}\n'.format(node_i, n=nodes_XYZ[node_i]))
 
-    # ELEMENTS AND ELEMENT SETS:
+    # ELEMENTS AND ELEMENT SETS
     n_els = 0
     logging.info('Writing model elements to INP file')
     INP.write('** Elements and Element sets from input model\n')
@@ -492,10 +542,10 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
                 for elnd in el_nodes[1]:
                     nodes[elnd] = 1
 
-    # NODE SETS:
+    # NODE SETS
     if 'NSET' in keywords:
         INP.write('** Additional nset from voxel model. New generated nsets are:\n')
-        INP.write('** NODES_S, NODES_N, NODES_E, NODES_W, NODES_T, NODES_B\n')
+        INP.write('** NODES_Y0, NODES_Y1, NODES_X1, NODES_X0, NODES_Z1, NODES_Z0\n')
 
         # write node set string
         for nsetName in nset:
@@ -511,12 +561,12 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
                     CR = 0
                 CR = CR + 1
             INP.write('\n')
-        logging.info('Additional node sets generated: NODES_S, NODES_N, NODES_E, NODES_W, NODES_T, NODES_B')
+        logging.info('Additional node sets generated: NODES_Y0, NODES_Y1, NODES_X1, NODES_X0, NODES_Z1, NODES_Z0')
 
-    # ELEMENT SETS:
+    # ELEMENT SETS
     if 'ELSET' in keywords:
         INP.write('** Additional elset from voxel model. New generated elsets are:\n')
-        INP.write('** ELEMS_S, ELEMS_N, ELEMS_E, ELEMS_W, ELEMS_T, ELEMS_B\n')
+        INP.write('** ELEMS_Y0, ELEMS_Y1, ELEMS_X1, ELEMS_X0, ELEMS_Z1, ELEMS_Z0\n')
 
         # write element set string
         for elsetName in elset:
@@ -532,9 +582,9 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
                     CR = 0
                 CR = CR + 1
             INP.write('\n')
-        logging.info('Additional element sets generated: ELEMS_S, ELEMS_N, ELEMS_E, ELEMS_W, ELEMS_T, ELEMS_B')
+        logging.info('Additional element sets generated: ELEMS_Y0, ELEMS_Y1, ELEMS_X1, ELEMS_X0, ELEMS_Z1, ELEMS_Z0')
 
-    # MATERIAL MAPPING:
+    # MATERIAL MAPPING
     if 'PROPERTY' in keywords:
         logging.info('User material properties defined. Writing material property section of INP file')
         INP.write('** User material property definition:\n')
@@ -595,21 +645,29 @@ def vol2voxelfe(voldata, templatefile, fileout, matprop=None, keywords=['NSET', 
             PROPfile.close()
             n_propfile = n_propfile + 1
 
-    # copy line by line info on model solution and boundary conditions from Abaqus analysis template file
+    # BOUNDARY CONDITIONS AND ANALYSIS DEFINITION
+    # Open Abaqus analysis template file
     try:
         template = open(templatefile, 'r')
     except IOError('Abaqus template file {} not found.'.format(templatefile)):
         exit(1)
     logging.info('Reading Abaqus template file {}'.format(templatefile))
 
+    # copy line by line info on model solution and boundary conditions from Abaqus analysis template file
     for line in template.readlines():
-        # copy line to output Abaqus file
+
+        if refnode is not None:
+            # replace keywords 'refnodeX', 'refnodeY' and 'refnodeZ' with refnode coordinates
+            line = line.replace('refnodeX', str(round(refnode[0], 4)))
+            line = line.replace('refnodeY', str(round(refnode[1], 4)))
+            line = line.replace('refnodeZ', str(round(refnode[2], 4)))
+
+        # write line to output Abaqus file
         INP.write('{}'.format(line))
 
     template.close()
     INP.close()
-    logging.info(
-        'Model with {0} nodes and {1} elements written to file {fname}'.format(len(nodes), n_els, fname=fileout))
+    logging.info('Model with {0} nodes and {1} elements written to file {fname}'.format(len(nodes), n_els, fname=fileout))
 
 def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], float_fmt='.6e', verbose=False):
     """Generate ABAQUS tetrahedra Finite Element (FE) input file from 3D mesh. The output can be solved using ABAQUS or CalculiX.
@@ -641,70 +699,70 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
 
         # add dictionary of boundary point sets
         meshdata.point_sets = {
-            'NODES_N': np.where(meshdata.points[:, 1] == model_coors_max[1])[0],
-            'NODES_S': np.where(meshdata.points[:, 1] == model_coors_min[1])[0],
-            'NODES_E': np.where(meshdata.points[:, 0] == model_coors_max[0])[0],
-            'NODES_W': np.where(meshdata.points[:, 0] == model_coors_min[0])[0],
-            'NODES_T': np.where(meshdata.points[:, 2] >= (model_coors_max[2]-0.01*abs(extent[2])))[0],
-            'NODES_B': np.where(meshdata.points[:, 2] <= (model_coors_min[2]+0.01*abs(extent[2])))[0]
+            'NODES_Y1': np.where(meshdata.points[:, 1] == model_coors_max[1])[0],
+            'NODES_Y0': np.where(meshdata.points[:, 1] == model_coors_min[1])[0],
+            'NODES_X1': np.where(meshdata.points[:, 0] == model_coors_max[0])[0],
+            'NODES_X0': np.where(meshdata.points[:, 0] == model_coors_min[0])[0],
+            'NODES_Z1': np.where(meshdata.points[:, 2] >= (model_coors_max[2]-0.01*abs(extent[2])))[0],
+            'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2]+0.01*abs(extent[2])))[0]
         }
 
     if 'ELSET' in keywords:
         # dictionary of boundary element sets
         elset = {
-            'ELEMS_N': [],
-            'ELEMS_S': [],
-            'ELEMS_W': [],
-            'ELEMS_E': [],
-            'ELEMS_T': [],
-            'ELEMS_B': []
+            'ELEMS_Y1': [],
+            'ELEMS_Y0': [],
+            'ELEMS_X0': [],
+            'ELEMS_X1': [],
+            'ELEMS_Z1': [],
+            'ELEMS_Z0': []
         }
 
         # find boundary cells
-        ELEMS_E = np.array([]).astype('int')
-        ELEMS_W = np.array([]).astype('int')
-        ELEMS_S = np.array([]).astype('int')
-        ELEMS_N = np.array([]).astype('int')
-        ELEMS_T = np.array([]).astype('int')
-        ELEMS_B = np.array([]).astype('int')
+        ELEMS_X1 = np.array([]).astype('int')
+        ELEMS_X0 = np.array([]).astype('int')
+        ELEMS_Y0 = np.array([]).astype('int')
+        ELEMS_Y1 = np.array([]).astype('int')
+        ELEMS_Z1 = np.array([]).astype('int')
+        ELEMS_Z0 = np.array([]).astype('int')
 
-        for node_e in meshdata.point_sets['NODES_E']:
-            ELEMS_E = np.append(ELEMS_E, np.where(np.any(meshdata.cells[0][1] == node_e, axis=1)))
+        for node_e in meshdata.point_sets['NODES_X1']:
+            ELEMS_X1 = np.append(ELEMS_X1, np.where(np.any(meshdata.cells[0][1] == node_e, axis=1)))
 
-        for node_w in meshdata.point_sets['NODES_W']:
-            ELEMS_W = np.append(ELEMS_W, np.where(np.any(meshdata.cells[0][1] == node_w, axis=1)))
+        for node_w in meshdata.point_sets['NODES_X0']:
+            ELEMS_X0 = np.append(ELEMS_X0, np.where(np.any(meshdata.cells[0][1] == node_w, axis=1)))
 
-        for node_s in meshdata.point_sets['NODES_S']:
-            ELEMS_S = np.append(ELEMS_S, np.where(np.any(meshdata.cells[0][1] == node_s, axis=1)))
+        for node_s in meshdata.point_sets['NODES_Y0']:
+            ELEMS_Y0 = np.append(ELEMS_Y0, np.where(np.any(meshdata.cells[0][1] == node_s, axis=1)))
 
-        for node_n in meshdata.point_sets['NODES_N']:
-            ELEMS_N = np.append(ELEMS_N, np.where(np.any(meshdata.cells[0][1] == node_n, axis=1)))
+        for node_n in meshdata.point_sets['NODES_Y1']:
+            ELEMS_Y1 = np.append(ELEMS_Y1, np.where(np.any(meshdata.cells[0][1] == node_n, axis=1)))
 
-        for node_t in meshdata.point_sets['NODES_T']:
-            ELEMS_T = np.append(ELEMS_T, np.where(np.any(meshdata.cells[0][1] == node_t, axis=1)))
+        for node_t in meshdata.point_sets['NODES_Z1']:
+            ELEMS_Z1 = np.append(ELEMS_Z1, np.where(np.any(meshdata.cells[0][1] == node_t, axis=1)))
 
-        for node_b in meshdata.point_sets['NODES_B']:
-            ELEMS_B = np.append(ELEMS_B, np.where(np.any(meshdata.cells[0][1] == node_b, axis=1)))
+        for node_b in meshdata.point_sets['NODES_Z0']:
+            ELEMS_Z0 = np.append(ELEMS_Z0, np.where(np.any(meshdata.cells[0][1] == node_b, axis=1)))
 
         meshdata.cell_sets = {'SET1': [np.arange(0, len(meshdata.cells[0][1]))]}
 
-        if not ELEMS_N.size == 0:
-            meshdata.cell_sets['ELEMS_N'] = [np.unique(ELEMS_N)]
+        if not ELEMS_Y1.size == 0:
+            meshdata.cell_sets['ELEMS_Y1'] = [np.unique(ELEMS_Y1)]
 
-        if not ELEMS_S.size == 0:
-            meshdata.cell_sets['ELEMS_S'] = [np.unique(ELEMS_S)]
+        if not ELEMS_Y0.size == 0:
+            meshdata.cell_sets['ELEMS_Y0'] = [np.unique(ELEMS_Y0)]
 
-        if not ELEMS_W.size == 0:
-            meshdata.cell_sets['ELEMS_W'] = [np.unique(ELEMS_W)]
+        if not ELEMS_X0.size == 0:
+            meshdata.cell_sets['ELEMS_X0'] = [np.unique(ELEMS_X0)]
 
-        if not ELEMS_E.size == 0:
-            meshdata.cell_sets['ELEMS_E'] = [np.unique(ELEMS_E)]
+        if not ELEMS_X1.size == 0:
+            meshdata.cell_sets['ELEMS_X1'] = [np.unique(ELEMS_X1)]
 
-        if not ELEMS_T.size == 0:
-            meshdata.cell_sets['ELEMS_T'] = [np.unique(ELEMS_T)]
+        if not ELEMS_Z1.size == 0:
+            meshdata.cell_sets['ELEMS_Z1'] = [np.unique(ELEMS_Z1)]
 
-        if not ELEMS_B.size == 0:
-            meshdata.cell_sets['ELEMS_B'] = [np.unique(ELEMS_B)]
+        if not ELEMS_Z0.size == 0:
+            meshdata.cell_sets['ELEMS_Z0'] = [np.unique(ELEMS_Z0)]
 
     else:
         meshdata.cell_sets = {'SET1': [np.arange(0, len(meshdata.cells[0][1]))]}
@@ -737,7 +795,7 @@ def matpropdictionary(proplist):
     Parameters
     ----------
     proplist
-        List of material property files followed by the corresponding GC range for material mapping.
+        List of material property files followed by the corresponding Gray Value range for material mapping.
 
     Returns
     -------
@@ -1024,6 +1082,8 @@ def main():
     parser.add_argument('--template', type=str, default=None, help='<Required by --voxelfe> Abaqus analysis template file (.INP).')
     parser.add_argument('-m', '--mapping', default=None, nargs='+', help='Template file for material property mapping. If more than one property is given, each property filename must followed by the corresponding GV range.')
     parser.add_argument('--tetrafe', dest='tetrafe', action='store_true', help='Write linear tetrahedra FE model (.INP) file.')
+    parser.add_argument('--refnode', default=None, nargs='+', help='Reference node input. Used for kinematic coupling of Boundary Conditions in the analysis template file.'
+                                                                    'The REF_NODE coordinates [x,y,z] can be given. Alternatively use one of the following args [X0, X1, Y0, Y1, Z0, Z1] to generate a REF_NODE at a model boundary.')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose output.')
     parser.set_defaults(shell_mesh=False, vol_mesh=False, voxelfe=False, tetrafe=False, verbose=False)
 
@@ -1125,7 +1185,7 @@ def main():
 
         if args.mapping is None:
             # voxelFE of binary volume data; the material property definition is assumed to be in the analysis template file
-            vol2voxelfe(L, args.template, fileout_base + "_voxelFE.inp", keywords=['NSET', 'ELSET'], voxelsize=sp, verbose=args.verbose)
+            vol2voxelfe(L, args.template, fileout_base + "_voxelFE.inp", keywords=['NSET', 'ELSET'], voxelsize=sp, refnode=args.refnode, verbose=args.verbose)
 
         else:
             # mask the data (keep only the largest connected volume)
