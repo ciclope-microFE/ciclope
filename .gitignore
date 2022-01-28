@@ -1,6 +1,7 @@
 # ignore tmp, pippos and old stuff
 tmp/
 old/
+scripts/
 
 /scripts/old
 /scripts/gmsh
