@@ -10,6 +10,6 @@ I = ru.read_tiff_stack('/home/gianthk/Data/StefanFly_test/test_00__rec/test_00__
 pointset = np.array([[545, 542, 507], [649, 461, 522], [530, 301, 508]])
 
 # fabric of one image
-evecs, radii, evals, fabric_comp, DA = pyfabric.fabric(I[507-25:507+25,542-25:542+25,545-25:545+25])
+evecs, radii, evals, fabric_comp, DA = pyfabric.fabric(I[507 - 25:507 + 25, 542 - 25:542 + 25, 545 - 25:545 + 25])
 
 print("here")

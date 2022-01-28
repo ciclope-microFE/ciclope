@@ -1,7 +1,6 @@
 import numpy as np
-from scipy import ndimage, misc
 
-from ciclope.recon_utils import read_tiff_stack, plot_midplanes
+from ciclope.recon_utils import read_tiff_stack
 from pyfabric import pyfabric as pf
 import meshio
 

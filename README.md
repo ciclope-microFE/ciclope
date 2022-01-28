@@ -174,7 +174,7 @@ ___
 - [x] add caps
 - [X] write midplanes images (.PNG)
 - [ ] 3D dataset embedding
-- [ ] (line 598) custom copy of input_template with parameter substitution (driving node coordinates; displacement amplitude..)
+- [X] analysis template write with parameter substitution (driving node coordinates)
 
 #### pybonemorph
 - [X] Center Of Mass
@@ -186,7 +186,9 @@ ___
 - [ ] CalculiX postprocessing
   - [X] process CalculiX output with [`dat2txt.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
   - [X] produce Force displacement plot with `pandas`
-  - [ ] cgx midplane plots
+  - [ ] cgx or [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot) midplane plots
+    ```shell
+    export PYTHONPATH="/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib:/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages"```
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
 
 #### Examples
@@ -195,7 +197,7 @@ ___
 - [ ] embedding
 - [ ] material property mapping with voxel-FE
 - [ ] material property mapping with tetra-FE
-  - [ ] multi-material tetrahedra-FE (femure with trabecular and cortical masks)
+  - [ ] multi-material tetrahedra-FE (femur with trabecular and cortical masks)
 - [ ] **prefect** pipeline 1
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
@@ -204,8 +206,8 @@ ___
     - [ ] (comp, tens, shear, torsion, bending)
     - [ ] read input_template params from table (e.g. different displ amplitude)
   - [ ] postprocess results
-    - [ ] midplanes Smises plots
-    - [ ] generate report
+    - [ ] midplanes Smises plots with [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot)
+    - [ ] generate HTML report with [plotly](https://plotly.com/python/v3/html-reports/)
     - [ ] write results to master
 
 
