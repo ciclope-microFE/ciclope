@@ -1,7 +1,8 @@
-# ignore tmp, pippos and old stuff
+# ignore tmp, tests, pippos and old stuff
 tmp/
 old/
 scripts/
+tests/
 
 /scripts/old
 /scripts/gmsh
@@ -12,9 +13,6 @@ scripts/
 # ignore sphinx documentation
 /docs
 
-# ignore stuff being developed
-/pyfabric_tests.ipynb
-
 # ignore irrelevant things
 /pippo*
 /.ipynb_checkpoints/
@@ -24,7 +22,3 @@ scripts/
 /test_data/steel_foam/*
 /test_data/trabecular_bone/spooles.out
 /test_data/trabecular_bone/*
-/pyfabric_tests.ipynb
-/tests/ciclope/*.csv
-/tests/ciclope/*.inp
-/tests/ciclope/.~lock*
