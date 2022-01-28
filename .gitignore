@@ -26,3 +26,7 @@ tests/
 /test_data/steel_foam/*
 /test_data/trabecular_bone/spooles.out
 /test_data/trabecular_bone/*
+
+# ignore dist
+/dist/
+/src/ciclope.egg-info/
