@@ -8,7 +8,7 @@ tests/
 /scripts/gmsh
 /scripts/matlab
 
-/ciclope/pippo*
+/src/ciclope/pippo*
 
 # ignore sphinx documentation
 /docs
@@ -16,6 +16,7 @@ tests/
 # ignore irrelevant things
 /pippo*
 /.ipynb_checkpoints/
+/examples/.ipynb_checkpoints/
 /.idea
 
 # ignore test data
