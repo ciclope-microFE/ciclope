@@ -10,14 +10,13 @@ Computed Tomography to Finite Elements.
 ### Usage
 **ciclope** can be run from the command line as a script. See the [examples](###Examples) below of this type of use. To view the help type
 ```commandline
-python ciclope/ciclope.py -h
+python ciclope.py -h
 ```
 
 To use **ciclope** within python, import the module with
 
 ```python
-
-from src.ciclope import ciclope
+import ciclope
 ```
 
 #### voxel-FE
@@ -27,7 +26,7 @@ Read and segment a 3D dataset (TIFF stack) of trabecular bone. Generate **voxel-
 ```python
 import numpy as np
 from recon_utils import read_tiff_stack
-from src.ciclope import ciclope
+import ciclope
 
 input_file = '/path/to/your/file.tiff'
 input_template = "./../input_templates/tmp_example01_comp_static_bone.inp"
@@ -50,7 +49,7 @@ Read and segment 3D microCT dataset of steel foam sample
 import numpy as np
 from skimage import measure, morphology
 from recon_utils import read_tiff_stack
-from ciclope import ciclope
+import ciclope
 
 input_file = '/your_path/steel_foam.tiff'
 
@@ -116,7 +115,7 @@ ___
 
 The pipeline can be executed from the command line with:
 ```commandline
-python ciclope/ciclope.py input.tif output.inp -vs 0.0606 0.0606 0.0606 --smooth -r 1.2 --vol_mesh --shell_mesh --voxelfe --template ./../input_templates/tmp_example01_comp_static_bone.inp -v
+python3 ciclope.py input.tif output.inp -vs 0.0606 0.0606 0.0606 --smooth -r 1.2 --vol_mesh --shell_mesh --voxelfe --template ./../input_templates/tmp_example01_comp_static_bone.inp -v
 ```
 
 The example shows how to:
@@ -137,7 +136,7 @@ The example shows how to:
 
 The pipeline can be executed from the command line with:
 ```commandline
-python ciclope/ciclope.py input.tif output.inp -vs 0.0065 0.0065 0.0065 --smooth -r 1.2 -t 90 --vol_mesh --tetrafe --template ./../input_templates/tmp_example02_tens_Nlgeom_steel.inp -v
+python3 ciclope.py input.tif output.inp -vs 0.0065 0.0065 0.0065 --smooth -r 1.2 -t 90 --vol_mesh --tetrafe --template ./../input_templates/tmp_example02_tens_Nlgeom_steel.inp -v
 ```
 
 The example shows how to:
