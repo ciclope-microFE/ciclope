@@ -10,13 +10,16 @@ tests/
 
 /src/ciclope/pippo*
 
+# ignore examples under development
+/src/ciclope/*.ipynb
+/src/ciclope/.ipynb_checkpoints/
+
 # ignore sphinx documentation
 /docs
 
 # ignore irrelevant things
 /pippo*
 /.ipynb_checkpoints/
-/examples/.ipynb_checkpoints/
 /.idea
 
 # ignore test data
