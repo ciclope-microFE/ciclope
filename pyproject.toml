@@ -1,0 +1,35 @@
+[project]
+name = "ciclope"
+version = "1.1.0"
+description = "Computed Tomography to Finite Elements"
+readme = "README.md"
+requires-python = ">=3.7"
+license = {file = "LICENSE.txt"}
+keywords = ["scientific", "engineering", "tomography", "computed tomography", "fem", "finite elements"]
+authors = [
+  {email = "gianthk.iori@gmail.com"},
+  {name = "Gianluca Iori"}
+]
+
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Programming Language :: Python",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Topic :: Scientific/Engineering",
+  "Topic :: Utilities"
+]
+
+[project.urls]
+homepage = "https://github.com/gianthk/ciclope"
+issues = "https://github.com/gianthk/ciclope/issues"
+
+[build-system]
+requires = ["setuptools>=42", "wheel"]
+build-backend = "setuptools.build_meta"
