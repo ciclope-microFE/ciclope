@@ -156,8 +156,6 @@ The example shows how to:
  
 ___
 ### 2 DO:
-- [ ] PACKAGING!
-
 #### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [X] clean example notebooks
