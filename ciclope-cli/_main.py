@@ -22,22 +22,18 @@ import argparse
 import logging
 import textwrap
 import numpy as np
-from .. import recon_utils as ru
+import recon_utils as ru
 from ..pybonemorph import remove_unconnected
-from .. import preprocess
-from .. import voxelFE
-from .. import tetraFE
+import preprocess
+from ciclope import voxelFE
+import tetraFE
 # import recon_utils as ru
 import meshio
-import mcubes
-from scipy import ndimage, misc
-from skimage.filters import threshold_otsu, gaussian
+from skimage.filters import gaussian
 # from skimage import measure, morphology
 
 import matplotlib.pyplot as plt
-from datetime import datetime
-import prefect
-from prefect import task, Flow, Parameter
+
 
 #################################################################################
 

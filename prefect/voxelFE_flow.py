@@ -7,8 +7,8 @@ Module for prefect flow generation
 import numpy as np
 from ..preprocess import resample, segment
 from ..voxelFE import vol2voxelfe, matpropdictionary
-from .. import recon_utils as ru
-from skimage.filters import threshold_otsu, gaussian
+import recon_utils as ru
+from skimage.filters import gaussian
 from ..pybonemorph import remove_unconnected
 import prefect
 from prefect import task, Flow, Parameter
