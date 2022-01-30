@@ -13,7 +13,7 @@ __date__ = '2021-11-03'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
-__version__ = "0.1"
+__version__ = "1.0.2"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -22,10 +22,14 @@ import argparse
 import logging
 import textwrap
 import numpy as np
-import ciclope
 import meshio
 from skimage.filters import gaussian
 import matplotlib.pyplot as plt
+import preprocess
+import recon_utils
+import voxelFE
+import tetraFE
+import pybonemorph
 
 #################################################################################
 
@@ -138,7 +142,7 @@ def main():
     sp = np.array(args.voxelsize)
 
     # Read tiff stack #######################################################
-    I = ciclope.recon_utils.read_tiff_stack(args.filein)
+    I = recon_utils.read_tiff_stack(args.filein)
 
     # Gaussian smooth #######################################################
     if args.smooth != 0:
@@ -149,22 +153,22 @@ def main():
     # use scikit
     if args.resampling != 1:
         logging.info("Resampling input dataset with factor 1/{}".format(args.resampling))
-        I, sp = ciclope.preprocess.resample(I, sp, args.resampling)
+        I, sp = preprocess.resample(I, sp, args.resampling)
         logging.info("New voxelsize: {}".format(sp))
 
     if args.verbose:
         # plot the midplanes through the stack
-        ciclope.recon_utils.plot_midplanes(I)
+        recon_utils.plot_midplanes(I)
         # write midplanes as .PNG
-        ciclope.recon_utils.writemidplanes(I, fileout_base + ".png")
+        recon_utils.writemidplanes(I, fileout_base + ".png")
 
     # Add image caps before thresholding ####################################
     if args.caps is not None:
         # add cap so that the mesh is closed
-        I = ciclope.recon_utils.add_cap(I, cap_thickness=args.caps, cap_val=args.caps_val)
+        I = recon_utils.add_cap(I, cap_thickness=args.caps, cap_val=args.caps_val)
 
     # Binarise the dataset ##################################################
-    BW, T = ciclope.preprocess.segment(I, args.threshold)
+    BW, T = preprocess.segment(I, args.threshold)
     if args.threshold is None:
         logging.info("Threshold value not given. Using Otsu method..")
 
@@ -179,7 +183,7 @@ def main():
 
     # Keep largest isolated cluster of voxels #################################
     logging.info("Removing unconnected clusters of voxels..")
-    L = ciclope.pybonemorph.remove_unconnected(BW)
+    L = pybonemorph.remove_unconnected(BW)
 
     # Visualization with Napari #############################################
     # import napari
@@ -189,7 +193,7 @@ def main():
     if args.shell_mesh:
         logging.info("Writing triangle mesh of outer shell")
         # shell mesh using pymcubes (high resolution mesh; caps excluded)
-        vertices, triangles, shellmesh = ciclope.tetraFE.shell_mesh(L, method='pymcubes')
+        vertices, triangles, shellmesh = tetraFE.shell_mesh(L, method='pymcubes')
 
         # write VTK mesh with meshio
         meshio.write_points_cells(fileout_base + "_shell.vtk", vertices.tolist(), [("triangle", triangles.tolist())])
@@ -204,11 +208,11 @@ def main():
     # Generate volume mesh ##################################################
     if args.vol_mesh:
         # check CGAL parameters
-        max_facet_distance, max_cell_circumradius = ciclope.tetraFE.check_cgal_params(args.max_facet_distance,
+        max_facet_distance, max_cell_circumradius = tetraFE.check_cgal_params(args.max_facet_distance,
                                                                               args.max_cell_circumradius, sp)
 
         # generate mesh with CGAL
-        volmesh = ciclope.tetraFE.cgal_mesh(L, sp, 'tetra', max_facet_distance, max_cell_circumradius)
+        volmesh = tetraFE.cgal_mesh(L, sp, 'tetra', max_facet_distance, max_cell_circumradius)
 
         # write the mesh to file
         logging.info("Writing tetrahedra volume mesh")
@@ -221,19 +225,19 @@ def main():
             raise IOError('Analysis template file (--template) required with --voxelfe.')
 
         # build dictionary of material properties
-        matprop = ciclope.voxelFE.matpropdictionary(args.mapping)
+        matprop = voxelFE.matpropdictionary(args.mapping)
 
         if args.mapping is None:
-            # ciclope.voxelFE of binary volume data; the material property definition is assumed to be in the analysis template file
-            ciclope.voxelFE.vol2voxelfe(L, args.template, fileout_base + "_ciclope.voxelFE.inp", keywords=['NSET', 'ELSET'],
+            # voxelFE of binary volume data; the material property definition is assumed to be in the analysis template file
+            voxelFE.vol2voxelfe(L, args.template, fileout_base + "_voxelFE.inp", keywords=['NSET', 'ELSET'],
                                 voxelsize=sp, refnode=args.refnode, verbose=args.verbose)
 
         else:
             # mask the data (keep only the largest connected volume)
             masked = I
             masked[~L] = 0
-            # ciclope.voxelFE of greyscale volume data; material mapping on
-            ciclope.voxelFE.vol2voxelfe(masked, args.template, fileout_base + "_ciclope.voxelFE.inp", matprop,
+            # voxelFE of greyscale volume data; material mapping on
+            voxelFE.vol2voxelfe(masked, args.template, fileout_base + "_voxelFE.inp", matprop,
                                 keywords=['NSET', 'ELSET', 'PROPERTY'], voxelsize=sp, verbose=args.verbose)
 
     # Generate tetrahedra FE model #############################################
@@ -248,22 +252,22 @@ def main():
         if args.mapping is None:
             if 'volmesh' not in locals():
                 # check CGAL parameters
-                max_facet_distance, max_cell_circumradius = ciclope.tetraFE.ccheck_cgal_params(args.max_facet_distance,
+                max_facet_distance, max_cell_circumradius = tetraFE.ccheck_cgal_params(args.max_facet_distance,
                                                                                        args.max_cell_circumradius, sp)
 
                 # generate volume mesh
-                volmesh = ciclope.tetraFE.ccgal_mesh(L, sp, 'tetra', max_facet_distance, max_cell_circumradius)
+                volmesh = tetraFE.ccgal_mesh(L, sp, 'tetra', max_facet_distance, max_cell_circumradius)
 
             elif volmesh is None:
                 # check CGAL parameters
-                max_facet_distance, max_cell_circumradius = ciclope.tetraFE.ccheck_cgal_params(args.max_facet_distance,
+                max_facet_distance, max_cell_circumradius = tetraFE.ccheck_cgal_params(args.max_facet_distance,
                                                                                        args.max_cell_circumradius, sp)
 
                 # generate volume mesh
-                volmesh = ciclope.tetraFE.ccgal_mesh(L, sp, 'tetra', max_facet_distance, max_cell_circumradius)
+                volmesh = tetraFE.ccgal_mesh(L, sp, 'tetra', max_facet_distance, max_cell_circumradius)
 
-            # ciclope.tetraFE of the already meshed volume; the material property definition is assumed to be in the analysis template file
-            ciclope.tetraFE.cmesh2tetrafe(volmesh, args.template, fileout_base + "_ciclope.tetraFE.inp", keywords=['NSET', 'ELSET'],
+            # tetraFE of the already meshed volume; the material property definition is assumed to be in the analysis template file
+            tetraFE.cmesh2tetrafe(volmesh, args.template, fileout_base + "_tetraFE.inp", keywords=['NSET', 'ELSET'],
                                   verbose=args.verbose)
 
         else:
