@@ -8,18 +8,14 @@ tests/
 /scripts/gmsh
 /scripts/matlab
 
-/src/ciclope/pippo*
-
-# ignore examples under development
-/src/ciclope/*.ipynb
-/src/ciclope/.ipynb_checkpoints/
+/ciclope/pippo*
 
 # ignore sphinx documentation
 /docs
 
 # ignore irrelevant things
 /pippo*
-/.ipynb_checkpoints/
+/examples/.ipynb_checkpoints/
 /.idea
 
 # ignore test data
@@ -29,4 +25,6 @@ tests/
 
 # ignore dist
 /dist/
-/src/ciclope.egg-info/
+/packaging_files/
+/ciclope-cli/
+/.ipynb_checkpoints/ciclope_ex01_voxelFE_CalculiX-checkpoint.ipynb
