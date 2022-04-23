@@ -7,7 +7,7 @@ Bone histomorphometry and image processing methods.
 
 __author__ = ['Gianluca Iori']
 __date_created__ = '2021-11-03'
-__date__ = '2021-11-03'
+__date__ = '2022-04-22'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
@@ -86,9 +86,34 @@ def remove_unconnected(bwimage):
 
     # find largest unconnected label
     largest_label_id = occurrences[1:].argmax() + 1
-    bwcluster = labels == largest_label_id
 
-    return bwcluster
+    return labels == largest_label_id
+
+def remove_largest(bwimage):
+    """Remove largest cluster of voxels in binary image.
+
+    Parameters
+    ----------
+    bwimage
+        Binary image.
+
+    Returns
+    -------
+    bwcluster
+        Binary image in which the largest cluster of voxels is removed.
+    """
+
+    # label the BW image
+    [labels, n_labels] = measure.label(bwimage, None, True, 1)
+
+    # count occurrences of each label
+    occurrences = np.bincount(labels.reshape(labels.size))
+
+    # find largest unconnected label
+    largest_label_id = occurrences[1:].argmax() + 1
+    labels[labels == largest_label_id] = 0
+
+    return labels != 0
 
 def periosteummask(bwimage, closepixels=10, closevoxels=0, remove_objects_smaller_than=None, removeunconn=True, verbose=False):
     """Binary mask of periosteum (whole bone).
