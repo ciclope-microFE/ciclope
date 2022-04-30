@@ -20,6 +20,7 @@ from scipy import ndimage
 from skimage import measure, morphology
 import logging
 from tqdm import tqdm
+import recon_utils as ru
 
 def centerofmass(bwimage):
     """Center Of Mass (COM) of binary image.
@@ -114,6 +115,128 @@ def remove_largest(bwimage):
     labels[labels == largest_label_id] = 0
 
     return labels != 0
+
+def add_cap(data_3D, cap_thickness, cap_val):
+    # Add caps of voxels with given GV to the input 3D data.
+    # Caps are added on both ends along the Z-direction (first dataset dimension).
+    data_3D_cap = np.ones([data_3D.shape[0]+2*cap_thickness, data_3D.shape[1], data_3D.shape[2]], data_3D.dtype)*cap_val
+    data_3D_cap[cap_thickness:-cap_thickness, :, :] = data_3D
+    return data_3D_cap
+
+def embed(I, embed_depth, embed_dir, embed_val=None):
+    """Add embedding to 3D image.
+    Direction and depth of the embedded region should be given. Zeroes in the input image is considered to be background.
+
+    Parameters
+    ----------
+    I
+        3D data. Zeroes as background.
+    embed_depth : int
+        Embedding depth in pixels.
+    embed_dir : str
+        Embedding direction. Can be "-x", "+x", "-y", "+y", "-z", or "+z".
+    embed_val : float
+        Embedding grey value.
+
+    Returns
+    ----------
+    I
+        Embedded image. Same size as the input one.
+    BW_embedding
+        BW mask of the embedding area.
+    """
+
+    if embed_val is None:
+        embed_val = I.max() + 1
+
+    # binarize the input image
+    BW_I = np.zeros(I.shape, dtype='bool')
+    BW_I[I>0] = True
+
+    # init embedding mask
+    BW_embedding = np.zeros(BW_I.shape, dtype='bool')
+
+    if embed_dir == "-z":
+        dir = -1
+
+        # start the embedding at first non-zero voxel
+        embed_start = np.where(np.max(BW_I.max(1), 1) == True)[-1][-1]
+
+        # project embedded area and find size of embedding
+        bbox_origin, bbox_size = ru.bbox(BW_I[embed_start + (dir * embed_depth):, :, :])
+
+        # create embedding mask
+        BW_embedding[embed_start + (dir * embed_depth):, bbox_origin[0]:bbox_origin[0] + bbox_size[0], bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
+
+    elif embed_dir == "+z":
+        dir = 1
+
+        # start the embedding at first non-zero voxel
+        embed_start = np.where(np.max(BW_I.max(1), 1) == True)[0][0]
+
+        # project embedded area and find size of embedding
+        bbox_origin, bbox_size = ru.bbox(BW_I[:embed_start + (dir * embed_depth), :, :])
+
+        # create embedding mask
+        BW_embedding[:embed_start + (dir * embed_depth), bbox_origin[0]:bbox_origin[0] + bbox_size[0], bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
+
+    elif embed_dir == "-x":
+        dir = -1
+
+        # start the embedding at first non-zero voxel
+        embed_start = np.where(np.max(BW_I.max(0), 0) == True)[-1][-1]
+
+        # project embedded area and find size of embedding
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, :, embed_start + (dir * embed_depth):])
+
+        # create embedding mask
+        BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], bbox_origin[0]:bbox_origin[0] + bbox_size[0], embed_start + (dir * embed_depth):] = True
+
+    elif embed_dir == "+x":
+        dir = +1
+
+        # start the embedding at first non-zero voxel
+        embed_start = np.where(np.max(BW_I.max(0), 0) == True)[0][0]
+
+        # project embedded area and find size of embedding
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, :, :embed_start + (dir * embed_depth)])
+
+        # create embedding mask
+        BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], bbox_origin[0]:bbox_origin[0] + bbox_size[0], :embed_start + (dir * embed_depth)] = True
+
+    elif embed_dir == "+y":
+        dir = -1
+
+        # start the embedding at first non-zero voxel
+        embed_start = np.where(np.max(BW_I.max(0), 1) == True)[-1][-1]
+
+        # project embedded area and find size of embedding
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, embed_start + (dir * embed_depth):, :])
+
+        # create embedding mask
+        BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], embed_start + (dir * embed_depth):, bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
+
+    elif embed_dir == "-y":
+        dir = +1
+
+        # start the embedding at first non-zero voxel
+        embed_start = np.where(np.max(BW_I.max(0), 1) == True)[0][0]
+
+        # project embedded area and find size of embedding
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, :embed_start + (dir * embed_depth), :])
+
+        # create embedding mask
+        BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], :embed_start + (dir * embed_depth), bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
+
+    else:
+        raise IOError("EMBED_DIR parameter unknown. Valid entries are -x, +x, -y, +y, -z, and +z.")
+
+    # emboss embedding mask with the masked input image
+    BW_embedding = remove_unconnected(BW_embedding & ~BW_I)
+
+    # assign embedding val to input image
+    I[BW_embedding] = embed_val
+    return I, BW_embedding
 
 def periosteummask(bwimage, closepixels=10, closevoxels=0, remove_objects_smaller_than=None, removeunconn=True, verbose=False):
     """Binary mask of periosteum (whole bone).
