@@ -186,7 +186,6 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
     if verbose is True:
         logging.basicConfig(level=logging.INFO)
 
-    # load 3D mesh using meshio module
     logging.info('Converting mesh with fields:\n')
     logging.info(vars(meshdata))
 

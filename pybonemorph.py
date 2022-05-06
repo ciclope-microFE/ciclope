@@ -90,6 +90,45 @@ def remove_unconnected(bwimage):
 
     return labels == largest_label_id
 
+def fill_voids(I, fill_val=None, makecopy=False):
+    """Fill voids within color image with given value.
+
+    Parameters
+    ----------
+    I
+        Input color image.
+    fill_val
+        Filling value.
+    makecopy : bool
+        Make copy of input image.
+
+    Returns
+    -------
+    I_filled
+        Filled image.
+    """
+
+    if fill_val is None:
+        fill_val = I.max()
+
+    # binarize and label inverse of the input image
+    [labels, n_labels] = measure.label(~(I>0), None, True, 1)
+
+    # count occurrences of each label
+    occurrences = np.bincount(labels.reshape(labels.size))
+
+    # find and delete largest label (background)
+    largest_label_id = occurrences[1:].argmax() + 1
+    labels[labels == largest_label_id] = 0
+
+    if makecopy:
+        I_filled = I.copy()
+        I_filled[labels != 0] = fill_val
+        return I_filled
+    else:
+        I[labels != 0] = fill_val
+        return I
+
 def remove_largest(bwimage):
     """Remove largest cluster of voxels in binary image.
 
@@ -123,7 +162,7 @@ def add_cap(data_3D, cap_thickness, cap_val):
     data_3D_cap[cap_thickness:-cap_thickness, :, :] = data_3D
     return data_3D_cap
 
-def embed(I, embed_depth, embed_dir, embed_val=None):
+def embed(I, embed_depth, embed_dir, embed_val=None, pad=0, makecopy=False):
     """Add embedding to 3D image.
     Direction and depth of the embedded region should be given. Zeroes in the input image is considered to be background.
 
@@ -137,6 +176,10 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
         Embedding direction. Can be "-x", "+x", "-y", "+y", "-z", or "+z".
     embed_val : float
         Embedding grey value.
+    pad = int
+        Padding around bounding box of embedded area.
+    makecopy : bool
+        Make copy of the input image.
 
     Returns
     ----------
@@ -163,7 +206,7 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
         embed_start = np.where(np.max(BW_I.max(1), 1) == True)[-1][-1]
 
         # project embedded area and find size of embedding
-        bbox_origin, bbox_size = ru.bbox(BW_I[embed_start + (dir * embed_depth):, :, :])
+        bbox_origin, bbox_size = ru.bbox(BW_I[embed_start + (dir * embed_depth):, :, :], pad)
 
         # create embedding mask
         BW_embedding[embed_start + (dir * embed_depth):, bbox_origin[0]:bbox_origin[0] + bbox_size[0], bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
@@ -175,7 +218,7 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
         embed_start = np.where(np.max(BW_I.max(1), 1) == True)[0][0]
 
         # project embedded area and find size of embedding
-        bbox_origin, bbox_size = ru.bbox(BW_I[:embed_start + (dir * embed_depth), :, :])
+        bbox_origin, bbox_size = ru.bbox(BW_I[:embed_start + (dir * embed_depth), :, :], pad)
 
         # create embedding mask
         BW_embedding[:embed_start + (dir * embed_depth), bbox_origin[0]:bbox_origin[0] + bbox_size[0], bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
@@ -187,7 +230,7 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
         embed_start = np.where(np.max(BW_I.max(0), 0) == True)[-1][-1]
 
         # project embedded area and find size of embedding
-        bbox_origin, bbox_size = ru.bbox(BW_I[:, :, embed_start + (dir * embed_depth):])
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, :, embed_start + (dir * embed_depth):], pad)
 
         # create embedding mask
         BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], bbox_origin[0]:bbox_origin[0] + bbox_size[0], embed_start + (dir * embed_depth):] = True
@@ -199,7 +242,7 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
         embed_start = np.where(np.max(BW_I.max(0), 0) == True)[0][0]
 
         # project embedded area and find size of embedding
-        bbox_origin, bbox_size = ru.bbox(BW_I[:, :, :embed_start + (dir * embed_depth)])
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, :, :embed_start + (dir * embed_depth)], pad)
 
         # create embedding mask
         BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], bbox_origin[0]:bbox_origin[0] + bbox_size[0], :embed_start + (dir * embed_depth)] = True
@@ -211,7 +254,7 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
         embed_start = np.where(np.max(BW_I.max(0), 1) == True)[-1][-1]
 
         # project embedded area and find size of embedding
-        bbox_origin, bbox_size = ru.bbox(BW_I[:, embed_start + (dir * embed_depth):, :])
+        bbox_origin, bbox_size = ru.bbox(BW_I[:, embed_start + (dir * embed_depth):, :], pad)
 
         # create embedding mask
         BW_embedding[bbox_origin[2]:bbox_origin[2] + bbox_size[2], embed_start + (dir * embed_depth):, bbox_origin[1]:bbox_origin[1] + bbox_size[1]] = True
@@ -235,8 +278,13 @@ def embed(I, embed_depth, embed_dir, embed_val=None):
     BW_embedding = remove_unconnected(BW_embedding & ~BW_I)
 
     # assign embedding val to input image
-    I[BW_embedding] = embed_val
-    return I, BW_embedding
+    if makecopy:
+        I_output = I.copy()
+        I_output[BW_embedding] = embed_val
+        return I_output, BW_embedding
+    else:
+        I[BW_embedding] = embed_val
+        return I, BW_embedding
 
 def periosteummask(bwimage, closepixels=10, closevoxels=0, remove_objects_smaller_than=None, removeunconn=True, verbose=False):
     """Binary mask of periosteum (whole bone).
