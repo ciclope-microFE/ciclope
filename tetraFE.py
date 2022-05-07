@@ -249,18 +249,13 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
         # if cell data exists create element sets based on it
         if hasattr(meshdata, 'cell_data'):
 
-            print('here')
-
             # find unique cell data
             cell_data_unique = np.unique(meshdata.cell_data['medit:ref'])
-            print('unique_vals: ')
-            print(cell_data_unique)
 
             # for each unique cell scalar find indexes of the corresponding cells and create element set of them
             for val in cell_data_unique:
-                print(val)
-                # meshdata.cell_sets = {'SET' + str(val): [np.where(meshdata.cell_data['medit:ref'] == val)]}
                 meshdata.cell_sets['SET' + str(val)] = [np.where(meshdata.cell_data['medit:ref'] == val)[0]]
+                # print(val)
 
         if not ELEMS_Y1.size == 0:
             meshdata.cell_sets['ELEMS_Y1'] = [np.unique(ELEMS_Y1)]

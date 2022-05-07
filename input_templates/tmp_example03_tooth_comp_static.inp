@@ -1,0 +1,49 @@
+** User material property definition:
+** ---------------------------------------------------
+** DENTIN - https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3924884/
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET1, MATERIAL=DENTIN
+1.
+*MATERIAL,NAME=DENTIN
+*ELASTIC
+1653.7, 0.3
+** ---------------------------------------------------
+** ENAMEL
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET2, MATERIAL=ENAMEL
+1.
+*MATERIAL,NAME=ENAMEL
+*ELASTIC
+1338.2, 0.3
+** ---------------------------------------------------
+** CEMENT H poly - https://brieflands.com/articles/zjrms-94390.html
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET3, MATERIAL=CEMENT
+1.
+*MATERIAL,NAME=CEMENT
+*ELASTIC
+2200., 0.3
+** ---------------------------------------------------
+** ENAMEL
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET4, MATERIAL=STEEL
+1.
+*MATERIAL,NAME=STEEL
+*ELASTIC
+210000., 0.333
+** ---------------------------------------------------
+** Analysis definition. The Step module defines the analysis steps and associated output requests.
+** More info at:
+** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** ---------------------------------------------------
+*STEP
+*STATIC
+*BOUNDARY
+NODES_Z0, 1, 3, 0.0
+*BOUNDARY
+NODES_Z1, 3, 3, -4
+*NODE FILE
+U
+*EL FILE
+S
+*END STEP
