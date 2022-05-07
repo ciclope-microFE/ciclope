@@ -244,7 +244,23 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
         for node_b in meshdata.point_sets['NODES_Z0']:
             ELEMS_Z0 = np.append(ELEMS_Z0, np.where(np.any(meshdata.cells[0][1] == node_b, axis=1)))
 
-        meshdata.cell_sets = {'SET1': [np.arange(0, len(meshdata.cells[0][1]))]}
+        meshdata.cell_sets = {'SETALL': [np.arange(0, len(meshdata.cells[0][1]))]}
+
+        # if cell data exists create element sets based on it
+        if hasattr(meshdata, 'cell_data'):
+
+            print('here')
+
+            # find unique cell data
+            cell_data_unique = np.unique(meshdata.cell_data['medit:ref'])
+            print('unique_vals: ')
+            print(cell_data_unique)
+
+            # for each unique cell scalar find indexes of the corresponding cells and create element set of them
+            for val in cell_data_unique:
+                print(val)
+                # meshdata.cell_sets = {'SET' + str(val): [np.where(meshdata.cell_data['medit:ref'] == val)]}
+                meshdata.cell_sets['SET' + str(val)] = [np.where(meshdata.cell_data['medit:ref'] == val)[0]]
 
         if not ELEMS_Y1.size == 0:
             meshdata.cell_sets['ELEMS_Y1'] = [np.unique(ELEMS_Y1)]
@@ -265,7 +281,7 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
             meshdata.cell_sets['ELEMS_Z0'] = [np.unique(ELEMS_Z0)]
 
     else:
-        meshdata.cell_sets = {'SET1': [np.arange(0, len(meshdata.cells[0][1]))]}
+        meshdata.cell_sets = {'SETALL': [np.arange(0, len(meshdata.cells[0][1]))]}
 
     # write Abaqus mesh using meshio
     meshio.abaqus.write(fileout, meshdata, float_fmt)

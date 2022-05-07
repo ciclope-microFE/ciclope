@@ -8,7 +8,7 @@
 *PLASTIC
 2000, 0, 0
 3000, 1, 0
-*SOLID SECTION, ELSET=SET1, MATERIAL=STEEL_4301
+*SOLID SECTION, ELSET=SETALL, MATERIAL=STEEL_4301
 ** ---------------------------------------------------
 ** Analysis definition:
 *TIME POINTS, NAME=t10, GENERATE

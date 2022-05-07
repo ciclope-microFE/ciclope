@@ -2,7 +2,7 @@
 ** ---------------------------------------------------
 ** STEEL
 ** ---------------------------------------------------
-*SOLID SECTION, ELSET=SET1, MATERIAL=STEEL
+*SOLID SECTION, ELSET=SETALL, MATERIAL=STEEL
 1.
 *MATERIAL,NAME=STEEL
 *ELASTIC
