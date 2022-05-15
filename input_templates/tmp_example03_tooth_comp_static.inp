@@ -35,13 +35,14 @@
 ** Analysis definition. The Step module defines the analysis steps and associated output requests.
 ** More info at:
 ** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** Impose vertical displacement on NODES_Z0; NODES_Z1 completely constrained.
 ** ---------------------------------------------------
 *STEP
 *STATIC
 *BOUNDARY
-NODES_Z0, 1, 3, 0.0
+NODES_Z1, 1, 3, 0.0
 *BOUNDARY
-NODES_Z1, 3, 3, -4
+NODES_Z0, 3, 3, 4.0
 *NODE FILE
 U
 *EL FILE

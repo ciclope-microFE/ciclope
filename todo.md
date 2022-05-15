@@ -1,4 +1,11 @@
 # ciclope 2 DO:
+- [ ] check meshio stack2ugrid
+- [ ] meshio clone
+- [ ] voxelFE.vol2voxelfe split into vol2mesh (meshio) and mesh2voxelFE
+  - [ ] Matprops 2 regit:mat
+  - [ ] check performance
+- [ ] reinstall ccx2paraview
+
 ### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [X] clean example notebooks
@@ -17,7 +24,7 @@
 - [x] add caps
 - [X] write midplanes images (.PNG)
 - [ ] purge_mesh
-- [ ] 3D dataset embedding
+- [X] 3D dataset embedding
 - [X] analysis template write with parameter substitution (driving node coordinates)
 
 ### pybonemorph
@@ -36,12 +43,14 @@
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
 
 ### Examples
+- [ ] ex03: material property mapping with tetra-FE
+  - [ ] multi-material tetrahedra-FE (tooth+embedding)
+  - [ ] rotate tooth before embedding
+  - [ ] plot section of stress field with paraview
 - [X] CalculiX postprocessing
-- [ ] steel caps
-- [ ] embedding
+- [X] steel caps
+- [X] embedding
 - [ ] material property mapping with voxel-FE
-- [ ] material property mapping with tetra-FE
-  - [ ] multi-material tetrahedra-FE (femur with trabecular and cortical masks)
 - [ ] **prefect** pipeline 1
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
