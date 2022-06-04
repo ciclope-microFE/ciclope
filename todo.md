@@ -1,9 +1,6 @@
 # ciclope 2 DO:
-- [ ] check meshio stack2ugrid
-- [ ] meshio clone
-- [ ] voxelFE.vol2voxelfe split into vol2mesh (meshio) and mesh2voxelFE
-  - [ ] Matprops 2 regit:mat
-  - [ ] check performance
+- [X] voxelFE: vol2mesh (meshio standard)
+- [X] voxelFE: mesh2voxelFE
 
 ### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
