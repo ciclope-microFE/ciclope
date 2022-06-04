@@ -26,6 +26,7 @@ Read and segment a 3D dataset (TIFF stack) of trabecular bone. Generate **voxel-
 ```python
 import numpy as np
 from recon_utils import read_tiff_stack
+from pybonemorph import remove_unconnected
 import ciclope
 
 input_file = '/path/to/your/file.tiff'
@@ -36,10 +37,13 @@ vs = np.ones(3) * 0.06  # [mm]
 
 # segment and remove unconnected clusters
 BW = data_3D > 142
-L = ciclope.remove_unconnected(BW)
+L = remove_unconnected(BW)
+
+# generate unstructured grid mesh
+mesh = ciclope.voxelFE.vol2ugrid(data_3D, vs)
 
 # generate CalculiX input file
-ciclope.vol2voxelfe(L, input_template, 'test.inp', keywords=['NSET', 'ELSET'], voxelsize=vs)
+ciclope.voxelFE.mesh2voxelfe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
 ```
 
 #### tetrahedra-FE
@@ -47,9 +51,9 @@ ciclope.vol2voxelfe(L, input_template, 'test.inp', keywords=['NSET', 'ELSET'], v
 Read and segment 3D microCT dataset of steel foam sample
 ```python
 import numpy as np
-from skimage import measure, morphology
+from skimage import morphology
 from recon_utils import read_tiff_stack
-import ciclope
+from pybonemorph import remove_unconnected
 
 input_file = '/your_path/steel_foam.tiff'
 
@@ -59,7 +63,7 @@ vs = np.ones(3)*0.01625 # [mm]
 # segment and remove unconnected clusters
 BW = data_3D > 90
 BW = morphology.closing(BW, morphology.cube(5))
-L = ciclope.remove_unconnected(BW)
+L = remove_unconnected(BW)
 ```
 
 Generate mesh of tetrahedra with [pygalmesh](https://github.com/nschloe/pygalmesh)
@@ -69,7 +73,8 @@ mesh = pygalmesh.generate_from_array(np.transpose(L, [2, 1, 0]).astype('uint8'),
 ```
 You can do the same within ciclope with
 ```python
-mesh = ciclope.cgal_mesh(L, vs, 'tetra', 0.02, 0.1)
+import ciclope
+mesh = ciclope.tetraFE.cgal_mesh(L, vs, 'tetra', 0.02, 0.1)
 ```
 
 Generate **tetrahedra-FE** model of non-linear tensile test
@@ -78,7 +83,7 @@ Generate **tetrahedra-FE** model of non-linear tensile test
 input_template = "./../input_templates/tmp_example02_tens_static_steel.inp"
 
 # generate CalculiX input file
-ciclope.mesh2tetrafe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
+ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
 ```
 
 ### ciclope pipeline 
