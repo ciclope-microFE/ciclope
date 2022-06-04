@@ -4,7 +4,6 @@
 - [ ] voxelFE.vol2voxelfe split into vol2mesh (meshio) and mesh2voxelFE
   - [ ] Matprops 2 regit:mat
   - [ ] check performance
-- [ ] reinstall ccx2paraview
 
 ### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
