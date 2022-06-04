@@ -1,20 +1,24 @@
 # ciclope 2 DO:
-- [X] voxelFE: vol2mesh (meshio standard)
+- [ ] packaging!!
+  - [ ] allow usage of ciclope as a script and as module
+- [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
 ### Documentation
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [X] clean example notebooks
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
-- [ ] API reference
 - [ ] Usage
   - [X] as a script
   - [X] as a module - ciclope.methods
     - [X] `cgal_mesh`
     - [ ] `shell_mesh`
-    - [X] `vol2voxelfe`
+    - [X] `vol2ugrid` and `mesh2voxelfe`
     - [X] `mesh2tetrafe`
+    - [ ] voxelFE: material mapping
+    - [ ] tetraFE: material mapping
   - [ ] prefect flow 
+- [ ] API reference
 
 ### Pre-processing
 - [x] add caps
@@ -37,16 +41,17 @@
     ```shell
     export PYTHONPATH="/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib:/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages"```
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
-
+  - [ ] automate stress field midplanes plotting with PARAVIEW macro
 ### Examples
 - [ ] ex03: material property mapping with tetra-FE
   - [ ] multi-material tetrahedra-FE (tooth+embedding)
   - [ ] rotate tooth before embedding
-  - [ ] plot section of stress field with paraview
+  - [ ] plot stress field midplane with paraview
 - [X] CalculiX postprocessing
 - [X] steel caps
 - [X] embedding
 - [ ] material property mapping with voxel-FE
+- [ ] material property mapping with tetra-FE
 - [ ] **prefect** pipeline 1
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
@@ -58,4 +63,3 @@
     - [ ] midplanes Smises plots with [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot)
     - [ ] generate HTML report with [plotly](https://plotly.com/python/v3/html-reports/)
     - [ ] write results to master
-    
