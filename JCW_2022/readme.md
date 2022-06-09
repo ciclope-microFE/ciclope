@@ -15,7 +15,19 @@ where conda
 path %PATH%;C:\ProgramData\Anaconda3\Scripts\
 ```
 
+- Install packages
+``` 
+conda install numpy
+conda install matplotlib
+conda install scikit-image
+```
+
 - Install packages from conda-forge channel
 ```commandline
 conda install -c conda-forge dxchange
+```
+
+- Install packages with pip installer
+```
+pip install --upgrade PyMCubes
 ```
