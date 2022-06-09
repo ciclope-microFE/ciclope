@@ -5,6 +5,17 @@
 ### Install conda env on your Jupyter
 https://stackoverflow.com/questions/39604271/conda-environments-not-showing-up-in-jupyter-notebook
 ```commandline
-source activate myenv
+source activate ciclope
 python -m ipykernel install --user --name ciclope --display-name "conda (ciclope)"
+```
+
+- Link to conda executable from within console
+```commandline
+where conda
+path %PATH%;C:\ProgramData\Anaconda3\Scripts\
+```
+
+- Install packages from conda-forge channel
+```commandline
+conda install -c conda-forge dxchange
 ```
