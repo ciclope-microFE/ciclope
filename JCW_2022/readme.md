@@ -20,14 +20,17 @@ path %PATH%;C:\ProgramData\Anaconda3\Scripts\
 conda install numpy
 conda install matplotlib
 conda install scikit-image
+conda install tqdm
 ```
 
 - Install packages from conda-forge channel
 ```commandline
 conda install -c conda-forge dxchange
+conda install -c conda-forge meshio
 ```
 
 - Install packages with pip installer
 ```
 pip install --upgrade PyMCubes
+pip install --upgrade pypng
 ```
