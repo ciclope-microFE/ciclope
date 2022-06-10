@@ -27,6 +27,7 @@ conda install tqdm
 ```commandline
 conda install -c conda-forge dxchange
 conda install -c conda-forge meshio
+conda install -c conda-forge itk
 ```
 
 - Install packages with pip installer
