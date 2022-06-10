@@ -368,7 +368,7 @@ def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'E
     # for each existing model Grey Value
     for GV in existing_GV:
         # compose element SET definition string and write to output file
-        elset_str = 'SET' + str(GV)
+        elset_str = 'SET' + str(int(GV))
         INP.write('*ELEMENT, TYPE={0}, ELSET={1}\n'.format(eltype, elset_str))
 
         # for each cell with that Grey Value
