@@ -2,6 +2,7 @@
 - [ ] voxel and tetraFE models are flippedud
 - [ ] packaging!!
   - [ ] allow usage of ciclope as a script and as module
+- [ ] check bone mass after material mapping vs ashing data 
 - [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
