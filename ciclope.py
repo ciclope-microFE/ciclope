@@ -216,7 +216,7 @@ def main():
 
         # write the mesh to file
         logging.info("Writing tetrahedra volume mesh")
-        volmesh.write(fileout_base + "_vol.vtk")
+        volmesh.write(fileout_base + "_tetramesh.vtk")
 
     # Generate voxel FE model ##################################################
     if args.voxelfe:
