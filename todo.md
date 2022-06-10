@@ -1,4 +1,5 @@
 # ciclope 2 DO:
+- [ ] voxel and tetraFE models are flippedud
 - [ ] packaging!!
   - [ ] allow usage of ciclope as a script and as module
 - [X] voxelFE: vol2ugrid (in meshio format!)
