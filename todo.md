@@ -7,6 +7,11 @@
 - [X] voxelFE: mesh2voxelFE
 
 ### Documentation
+- [ ] comment FULL notebooks
+- [ ] installation notes
+- [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
+- [ ] add E=f(GV) explanation and plotting
+- [ ] add refs to material heterogeneity
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [X] clean example notebooks
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
