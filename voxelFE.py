@@ -290,7 +290,10 @@ def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'E
     else:
         binary_model = False
         keys = list(mesh.cell_data)
-        cell_GV = mesh.cell_data.get(keys[0])[0]
+        cell_GV = mesh.cell_data.get(keys[0])
+        if type(cell_GV) is list:
+            cell_GV = cell_GV[0]
+        # cell_GV = mesh.cell_data.get(keys[0])[0]
         logging.info('Found cell_data: {keyname}. cell_data range: {0} - {1}.'.format(min(cell_GV), max(cell_GV), keyname=keys[0]))
         if (min(cell_GV) == 0) & (max(cell_GV) == 1) & (issubclass(cell_GV.dtype.type, np.integer)):
             logging.warning('cell_data is binary. Material property mapping disabled.')
