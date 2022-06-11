@@ -35,5 +35,6 @@ pip install --upgrade PyMCubes
 pip install --upgrade pypng
 pip intsall itkwidgets
 pip install vtk
+pip install pygalmesh==0.9.4
 ```
 
