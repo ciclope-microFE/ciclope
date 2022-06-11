@@ -26,7 +26,7 @@ conda install tqdm
 - Install packages from conda-forge channel
 ```commandline
 conda install -c conda-forge dxchange
-conda install -c conda-forge meshio
+conda install -c conda-forge meshio=5.0.0
 ```
 
 - Install packages with pip installer
