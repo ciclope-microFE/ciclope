@@ -27,13 +27,13 @@ conda install tqdm
 ```commandline
 conda install -c conda-forge dxchange
 conda install -c conda-forge meshio
-conda install -c conda-forge itk
-conda install -c conda-forge itkwidgets
 ```
 
 - Install packages with pip installer
 ```
 pip install --upgrade PyMCubes
 pip install --upgrade pypng
+pip intsall itkwidgets
+pip install vtk
 ```
 
