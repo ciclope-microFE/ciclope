@@ -27,6 +27,8 @@ conda install tqdm
 ```commandline
 conda install -c conda-forge dxchange
 conda install -c conda-forge meshio=5.0.0
+conda install -c conda-forge pygalmesh
+conda install -c conda-forge ccx2paraview
 ```
 
 - Install packages with pip installer
@@ -35,6 +37,5 @@ pip install --upgrade PyMCubes
 pip install --upgrade pypng
 pip intsall itkwidgets
 pip install vtk
-pip install pygalmesh==0.9.4
 ```
 
