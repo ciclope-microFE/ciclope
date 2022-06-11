@@ -28,6 +28,7 @@ conda install tqdm
 conda install -c conda-forge dxchange
 conda install -c conda-forge meshio
 conda install -c conda-forge itk
+conda install -c conda-forge itkwidgets
 ```
 
 - Install packages with pip installer
