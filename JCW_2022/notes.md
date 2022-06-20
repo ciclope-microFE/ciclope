@@ -15,7 +15,7 @@ Continuous testing:
 ## Saturday morning
 - [fsantini/python-e3dc](https://github.com/fsantini/python-e3dc) from Francesco Santini contains auto push tagged commits to pypi
 - see [muscle-bits](https://github.com/fsantini/muscle-bids/tree/main/src) repo for running as script
-- [pyMSK ISQdata](https://github.com/JCMSK/pymsk/blob/master/pymsk/scanco_read_files.py) 2 Katrin group
+- [pyMSK ISQdata](https://github.com/JCMSK/pymsk/blob/master/pymsk/scanco_read_files.py) 2 Pholpat
 - [neuroconductor tutorials](https://neuroconductor.org/tutorials)
 
 ### SPECTRA:
@@ -24,7 +24,6 @@ Continuous testing:
 ### General chat
 - github issues + forum
 - team campus: metadata about the community.. documentation to navigate the community
-
 
 ### QUESTIONS - common code
 - collection of i/o for different biomedical imaging files

@@ -1,18 +1,23 @@
 # ciclope 2 DO:
-- [ ] voxel and tetraFE models are flippedud
-- [ ] packaging!!
-  - [ ] allow usage of ciclope as a script and as module
+- [X] fix voxel and tetraFE models flippedlr
+- [ ] packaging
+  - [ ] allow usage of ciclope as a script and as module:
+```editorconfig
+[options.entry_points]
+console_scripts =
+    ciclope = ciclope.ciclope:main
+```
 - [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
 ### Documentation
+- [ ] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [ ] comment FULL notebooks
-- [ ] installation notes
+- [ ] add installation notes 2 readme
 - [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
 - [ ] add E=f(GV) explanation and plotting
 - [ ] add refs to material heterogeneity
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
-- [X] clean example notebooks
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
 - [ ] Usage
   - [X] as a script
