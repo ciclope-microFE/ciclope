@@ -2,7 +2,6 @@
 - [ ] voxel and tetraFE models are flippedud
 - [ ] packaging!!
   - [ ] allow usage of ciclope as a script and as module
-- [ ] check bone mass after material mapping vs ashing data 
 - [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
@@ -49,6 +48,7 @@
     export PYTHONPATH="/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib:/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages"```
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
   - [ ] automate stress field midplanes plotting with PARAVIEW macro
+
 ### Examples
 - [ ] ex03: material property mapping with tetra-FE
   - [ ] multi-material tetrahedra-FE (tooth+embedding)
@@ -70,3 +70,6 @@
     - [ ] midplanes Smises plots with [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot)
     - [ ] generate HTML report with [plotly](https://plotly.com/python/v3/html-reports/)
     - [ ] write results to master
+
+### Validation
+- [ ] check bone mass after material mapping vs ashing data
