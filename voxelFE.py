@@ -142,7 +142,7 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
         for col in range(data_shape[2] + 1):
             for row in range(data_shape[1] + 1):
                 # store node coordinates
-                node_coors = [voxelsize[0] * row, voxelsize[1] * col, voxelsize[2] * slice]
+                node_coors = [voxelsize[0] * col, voxelsize[1] * row, voxelsize[2] * slice]
                 nodes.append(node_coors)
 
                 if existing_nodes[node_i]:
