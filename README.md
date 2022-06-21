@@ -115,7 +115,7 @@ The following table shows a general pipeline for FE model generation from CT dat
 ___
 
 ### Examples
-#### [Example #1 - voxel-FE model of trabecular bone](examples/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+#### [Example #1 - voxel-FE model of trabecular bone](examples/old/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/old/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
 ![](test_data/trabecular_bone/U3.png)
 
 The pipeline can be executed from the command line with:
