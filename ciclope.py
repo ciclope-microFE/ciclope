@@ -238,6 +238,8 @@ def main():
             else:
                 logging.warning('Refnode not recognized. Option deactivated.')
                 refnode = None
+        else:
+            refnode = args.refnode
 
         if args.mapping is None:
             # voxelFE of binary volume data; the material property definition is assumed to be in the analysis template file

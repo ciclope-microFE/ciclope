@@ -123,13 +123,13 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
                     if slice == data_shape[0] - 1:
                         cells_set['CELLS_Z1'].append(cell_i)
                     if col == 0:
-                        cells_set['CELLS_Y0'].append(cell_i)
-                    if col == data_shape[2] - 1:
-                        cells_set['CELLS_Y1'].append(cell_i)
-                    if row == 0:
                         cells_set['CELLS_X0'].append(cell_i)
-                    if row == data_shape[1] - 1:
+                    if col == data_shape[2] - 1:
                         cells_set['CELLS_X1'].append(cell_i)
+                    if row == 0:
+                        cells_set['CELLS_Y0'].append(cell_i)
+                    if row == data_shape[1] - 1:
+                        cells_set['CELLS_Y1'].append(cell_i)
 
                     # store if the cell nodes exist
                     for i in cell_nodes:
@@ -139,8 +139,8 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
     logging.info('Detecting node coordinates and boundary nodes')
     node_i = 0
     for slice in range(data_shape[0] + 1):
-        for col in range(data_shape[2] + 1):
-            for row in range(data_shape[1] + 1):
+        for row in range(data_shape[1] + 1):
+            for col in range(data_shape[2] + 1):
                 # store node coordinates
                 node_coors = [voxelsize[0] * col, voxelsize[1] * row, voxelsize[2] * slice]
                 nodes.append(node_coors)
@@ -154,16 +154,16 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
                         nodes_set['NODES_Z1'].append(node_i)
                         refnode_Z1 += node_coors
                     if col == 0:
-                        nodes_set['NODES_Y0'].append(node_i)
+                        nodes_set['NODES_X0'].append(node_i)
                         refnode_Y0 += node_coors
                     if col == data_shape[2]:
-                        nodes_set['NODES_Y1'].append(node_i)
+                        nodes_set['NODES_X1'].append(node_i)
                         refnode_Y1 += node_coors
                     if row == 0:
-                        nodes_set['NODES_X0'].append(node_i)
+                        nodes_set['NODES_Y0'].append(node_i)
                         refnode_X0 += node_coors
                     if row == data_shape[1]:
-                        nodes_set['NODES_X1'].append(node_i)
+                        nodes_set['NODES_Y1'].append(node_i)
                         refnode_X1 += node_coors
 
                 node_i = node_i + 1
