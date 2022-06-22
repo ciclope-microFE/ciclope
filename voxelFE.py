@@ -86,14 +86,14 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
     }
 
     # cell data ##################################################
-    col_nodes = data_shape[1] + 1  # n nodes in 1 row
+    row_nodes = data_shape[1] + 1  # n nodes along y
     slice_nodes = (data_shape[2] + 1) * (data_shape[1] + 1)  # n nodes in 1 slice
     cell_i = 0
 
     logging.info('Calculating cell array')
     for slice in range(data_shape[0]):
-        for col in range(data_shape[2]):
-            for row in range(data_shape[1]):
+        for row in range(data_shape[1]):
+            for col in range(data_shape[2]):
 
                 # get cell GV
                 GV = voldata[(slice, row, col)]
@@ -102,14 +102,14 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
                     cell_i = cell_i + 1
                     # cell nodes indexes
                     # See eight-node brick cell (C3D8 and F3D8) node convention (Par. 6.2.1) at: http://www.dhondt.de/ccx_2.15.pdf
-                    cell_nodes = [slice_nodes * slice + col_nodes * col + row,
-                                  slice_nodes * slice + col_nodes * col + row + 1,
-                                  slice_nodes * slice + col_nodes * (col + 1) + row + 1,
-                                  slice_nodes * slice + col_nodes * (col + 1) + row,
-                                  slice_nodes * (slice + 1) + col_nodes * col + row,
-                                  slice_nodes * (slice + 1) + col_nodes * col + row + 1,
-                                  slice_nodes * (slice + 1) + col_nodes * (col + 1) + row + 1,
-                                  slice_nodes * (slice + 1) + col_nodes * (col + 1) + row]
+                    cell_nodes = [slice_nodes * slice + row_nodes * row + col,
+                                  slice_nodes * slice + row_nodes * row + col + 1,
+                                  slice_nodes * slice + row_nodes * (row + 1) + col + 1,
+                                  slice_nodes * slice + row_nodes * (row + 1) + col,
+                                  slice_nodes * (slice + 1) + row_nodes * row + col,
+                                  slice_nodes * (slice + 1) + row_nodes * row + col + 1,
+                                  slice_nodes * (slice + 1) + row_nodes * (row + 1) + col + 1,
+                                  slice_nodes * (slice + 1) + row_nodes * (row + 1) + col]
 
                     # append to cell list
                     cells.append(cell_nodes)
