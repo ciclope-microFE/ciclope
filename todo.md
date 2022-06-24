@@ -11,7 +11,7 @@ console_scripts =
 - [X] voxelFE: mesh2voxelFE
 
 ### Documentation
-- [ ] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
+- [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [ ] comment FULL notebooks
 - [ ] add installation notes 2 readme
 - [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
