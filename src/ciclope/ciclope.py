@@ -9,11 +9,11 @@ For more information, call this script with the help option:
 
 __author__ = ['Gianluca Iori', 'Martino Pani']
 __date_created__ = '2021-08-06'
-__date__ = '2021-11-03'
+__date__ = '2022-06-24'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
-__version__ = "1.0.2"
+__version__ = "1.1.0"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -278,13 +278,12 @@ def main():
 
             # tetraFE of the already meshed volume; the material property definition is assumed to be in the analysis template file
             tetraFE.mesh2tetrafe(volmesh, args.template, fileout_base + "_tetraFE.inp", keywords=['NSET', 'ELSET'],
-                                  verbose=args.verbose)
+                                 verbose=args.verbose)
 
         else:
             logging.exception("--tetrafe with mapping option not implemented yet.")
 
     return
-
 
 if __name__ == '__main__':
     main()

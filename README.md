@@ -16,7 +16,8 @@ python ciclope.py -h
 To use **ciclope** within python, import the module with
 
 ```python
-import ciclope
+
+from src.ciclope import ciclope
 ```
 
 #### voxel-FE
@@ -26,8 +27,8 @@ Read and segment a 3D dataset (TIFF stack) of trabecular bone. Generate **voxel-
 ```python
 import numpy as np
 from recon_utils import read_tiff_stack
-from pybonemorph import remove_unconnected
-import ciclope
+from src.ciclope.pybonemorph import remove_unconnected
+from src.ciclope import ciclope
 
 input_file = '/path/to/your/file.tiff'
 input_template = "./../input_templates/tmp_example01_comp_static_bone.inp"
@@ -40,25 +41,26 @@ BW = data_3D > 142
 L = remove_unconnected(BW)
 
 # generate unstructured grid mesh
-mesh = ciclope.voxelFE.vol2ugrid(data_3D, vs)
+mesh = src.ciclope.voxelFE.vol2ugrid(data_3D, vs)
 
 # generate CalculiX input file
-ciclope.voxelFE.mesh2voxelfe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
+src.ciclope.voxelFE.mesh2voxelfe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
 ```
 
 #### tetrahedra-FE
 ![](test_data/steel_foam/B_matrix_tetraFE_mesh.png)
 Read and segment 3D microCT dataset of steel foam sample
+
 ```python
 import numpy as np
 from skimage import morphology
 from recon_utils import read_tiff_stack
-from pybonemorph import remove_unconnected
+from src.ciclope.pybonemorph import remove_unconnected
 
 input_file = '/your_path/steel_foam.tiff'
 
 data_3D = read_tiff_stack(input_file)
-vs = np.ones(3)*0.01625 # [mm]
+vs = np.ones(3) * 0.01625  # [mm]
 
 # segment and remove unconnected clusters
 BW = data_3D > 90
@@ -72,9 +74,11 @@ import pygalmesh
 mesh = pygalmesh.generate_from_array(np.transpose(L, [2, 1, 0]).astype('uint8'), tuple(vs), max_facet_distance=0.02, max_cell_circumradius=0.1)
 ```
 You can do the same within ciclope with
+
 ```python
 import ciclope
-mesh = ciclope.tetraFE.cgal_mesh(L, vs, 'tetra', 0.02, 0.1)
+
+mesh = src.ciclope.tetraFE.cgal_mesh(L, vs, 'tetra', 0.02, 0.1)
 ```
 
 Generate **tetrahedra-FE** model of non-linear tensile test
