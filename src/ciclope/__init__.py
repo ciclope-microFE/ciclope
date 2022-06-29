@@ -1,6 +1,6 @@
 """Computed Tomography to Finite Elements"""
 
-__version__ = "0.0.4"
+__version__ = "0.1.0"
 
-# import preprocess
-from .core import voxelFE
+from .core import voxelFE, tetraFE
+# from .utils import preprocess
