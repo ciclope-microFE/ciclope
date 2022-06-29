@@ -1,18 +1,13 @@
 [build-system]
-requires = [
-    "setuptools>=61.0",
-    "wheel"
-]
-build-backend = "setuptools.build_meta"
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
 
 [project]
 name = "ciclope"
-version = "0.0.2"
 authors = [
   { name="Gianluca Iori", email="gianthk.iori@gmail.com" },
   { name="Martino Pani", email="martino.pani@port.ac.uk" },
 ]
-description = "Computed Tomography to Finite Elements"
 keywords = [
     "computed tomography",
     "finite elements",
@@ -22,16 +17,30 @@ keywords = [
     "biomechanics"
 ]
 readme = "README.md"
-requires-python = ">=3.8"
-classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+license = {file = "LICENSE"}
+classifiers = ["License :: OSI Approved :: MIT License"]
+dynamic = ["version", "description"]
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "scikit-image",
+    "tqdm",
+    "dxchange",
+    "meshio >=5.0.0",
+    "pygalmesh",
+    "ccx2paraview",
+    "PyMCubes",
+    "pypng"
+]
+
+[project.optional-dependencies]
+test = [
+    "itkwidgets",
+    "vtk",
 ]
 
 [project.urls]
-"Homepage" = "https://github.com/gianthk/ciclope"
-"Bug Tracker" = "https://github.com/gianthk/ciclope/issues"
+Home = "https://github.com/gianthk/ciclope"
 
 [project.scripts]
-ciclope = "ciclope:ciclope"
+ciclope = "ciclope:pipeline.main"

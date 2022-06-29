@@ -25,11 +25,8 @@ import numpy as np
 import meshio
 from skimage.filters import gaussian
 import matplotlib.pyplot as plt
-import preprocess
-import recon_utils
-import voxelFE
-import tetraFE
-import pybonemorph
+from .core import voxelFE, tetraFE
+from .utils import pybonemorph, preprocess, recon_utils
 
 #################################################################################
 

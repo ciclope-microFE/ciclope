@@ -20,7 +20,7 @@ from scipy import ndimage
 from skimage import measure, morphology
 import logging
 from tqdm import tqdm
-import recon_utils as ru
+from . import recon_utils as ru
 
 def centerofmass(bwimage):
     """Center Of Mass (COM) of binary image.

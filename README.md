@@ -27,7 +27,7 @@ Read and segment a 3D dataset (TIFF stack) of trabecular bone. Generate **voxel-
 ```python
 import numpy as np
 from recon_utils import read_tiff_stack
-from src.ciclope.pybonemorph import remove_unconnected
+from src.ciclope.utils.pybonemorph import remove_unconnected
 from src.ciclope import ciclope
 
 input_file = '/path/to/your/file.tiff'
@@ -55,7 +55,7 @@ Read and segment 3D microCT dataset of steel foam sample
 import numpy as np
 from skimage import morphology
 from recon_utils import read_tiff_stack
-from src.ciclope.pybonemorph import remove_unconnected
+from src.ciclope.utils.pybonemorph import remove_unconnected
 
 input_file = '/your_path/steel_foam.tiff'
 
