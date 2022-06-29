@@ -3,21 +3,46 @@ Computed Tomography to Finite Elements.
 
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
+[//]: # [![PyPi Version](https://img.shields.io/pypi/v/meshio.svg?style=flat-square)](https://pypi.org/project/meshio/)
+[//]: # [![Anaconda Cloud](https://anaconda.org/conda-forge/meshio/badges/version.svg?=style=flat-square)](https://anaconda.org/conda-forge/meshio/)
+[//]: # [![PyPI pyversions](https://img.shields.io/pypi/pyversions/meshio.svg?style=flat-square)](https://pypi.org/project/meshio/)
 [//]: # (more badges here: https://naereen.github.io/badges/)
 
 **ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 
-### Usage
-**ciclope** can be run from the command line as a script. See the [examples](###Examples) below of this type of use. To view the help type
+---
+### Installation
+Install with pip using:
 ```commandline
-python ciclope.py -h
+pip install ciclope[all]
+```
+The flag `[all]` will install optional dependencies needed for running full pipelines and examples.
+
+#### Development installation
+Clone the git repository:
+```commandline
+git clone https://github.com/gianthk/ciclope.git
+```
+Navigate to the repo folder and install the package using pip:
+```commandline
+cd ciclope
+pip install .
+```
+Or install the package locally for development with [Flit](https://flit.pypa.io/en/latest/index.html):
+```commandline
+flit install --symlink
+```
+---
+### Usage
+**ciclope** pipelines can be run from the command line as a script. Scroll down and take a look at the [Examples](###Examples) folder for this type of use.
+To view the command line script help run:
+```commandline
+ciclope -h
 ```
 
-To use **ciclope** within python, import the module with
-
+To use **ciclope** within python, import the package with
 ```python
-
-from src.ciclope import ciclope
+import ciclope
 ```
 
 #### voxel-FE

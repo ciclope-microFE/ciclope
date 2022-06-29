@@ -31,16 +31,15 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-pipeline = [
+all = [
     "matplotlib",
     "scikit-image",
     "tqdm",
     "dxchange",
     "pypng",
     "textwrap",
-    ]
-test = [
     "itkwidgets",
+    "itk",
     "vtk",
     "ccx2paraview",
 ]
