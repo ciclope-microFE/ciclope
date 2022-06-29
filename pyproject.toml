@@ -22,21 +22,27 @@ classifiers = ["License :: OSI Approved :: MIT License"]
 dynamic = ["version", "description"]
 dependencies = [
     "numpy",
+    "logging",
+    "datetime",
+    "os",
+    "meshio >=5.0.0",
+    "pygalmesh",
+    "PyMCubes",
+]
+
+[project.optional-dependencies]
+pipeline = [
     "matplotlib",
     "scikit-image",
     "tqdm",
     "dxchange",
-    "meshio >=5.0.0",
-    "pygalmesh",
-    "ccx2paraview",
-    "PyMCubes",
-    "pypng"
-]
-
-[project.optional-dependencies]
+    "pypng",
+    "textwrap",
+    ]
 test = [
     "itkwidgets",
     "vtk",
+    "ccx2paraview",
 ]
 
 [project.urls]
