@@ -1,19 +1,14 @@
 # ciclope 2 DO:
 - [X] fix voxel and tetraFE models flippedlr
-- [ ] packaging
-  - [ ] allow usage of ciclope as a script and as module:
-```editorconfig
-[options.entry_points]
-console_scripts =
-    ciclope = ciclope.ciclope:main
-```
+- [X] packaging
+  - [X] allow usage of ciclope as a script and as module:
 - [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
 ### Documentation
 - [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [ ] comment FULL notebooks
-- [ ] add installation notes 2 readme
+- [X] add installation notes 2 readme
 - [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
 - [ ] add E=f(GV) explanation and plotting
 - [ ] add refs to material heterogeneity
@@ -59,11 +54,10 @@ console_scripts =
   - [ ] multi-material tetrahedra-FE (tooth+embedding)
   - [ ] rotate tooth before embedding
   - [ ] plot stress field midplane with paraview
+- [ ] ex05: material property mapping with voxel-uFE
 - [X] CalculiX postprocessing
 - [X] steel caps
 - [X] embedding
-- [ ] material property mapping with voxel-FE
-- [ ] material property mapping with tetra-FE
 - [ ] **prefect** pipeline 1
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
