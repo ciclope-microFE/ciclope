@@ -1,0 +1,63 @@
+[build-system]
+requires = ["flit_core >=3.2,<4"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "ciclope"
+authors = [
+  { name="Gianluca Iori", email="gianthk.iori@gmail.com" },
+  { name="Martino Pani", email="martino.pani@port.ac.uk" },
+]
+keywords = [
+    "computed tomography",
+    "finite elements",
+    "image processing",
+    "engineering",
+    "simulation",
+    "biomechanics"
+]
+readme = "README.md"
+license = {file = "LICENSE"}
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Utilities"]
+requires-python = ">=3.7"
+dynamic = ["version", "description"]
+dependencies = [
+    "numpy",
+    "logging",
+    "datetime",
+    "os",
+    "meshio >=5.0.0",
+    "pygalmesh",
+    "PyMCubes",
+]
+
+[project.optional-dependencies]
+all = [
+    "matplotlib",
+    "scikit-image",
+    "tqdm",
+    "dxchange",
+    "pypng",
+    "textwrap",
+    "itkwidgets",
+    "itk",
+    "vtk",
+    "ccx2paraview",
+]
+
+[project.urls]
+Home = "https://github.com/gianthk/ciclope"
+
+[project.scripts]
+ciclope = "ciclope:pipeline.main"

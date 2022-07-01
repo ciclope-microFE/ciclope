@@ -3,89 +3,83 @@ Computed Tomography to Finite Elements.
 
 [![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
 
-[//]: # (more badges here: https://naereen.github.io/badges/)
+[![PyPi Version](https://img.shields.io/pypi/v/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/1.1.0/)
+[![PyPI pyversions](https://img.shields.io/pypi/pyversions/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/1.1.0/)
 
 **ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 
-### Usage
-**ciclope** can be run from the command line as a script. See the [examples](###Examples) below of this type of use. To view the help type
+---
+### Installation
+Install using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
+For development installation see the [development guide](development.md).
 ```commandline
-python ciclope.py -h
+pip install ciclope[all]
+```
+---
+### Usage
+**ciclope** pipelines can be run from the command line as a script. Scroll down and take a look at the [Examples](###Examples) folder for this type of use.
+To view the command line script help run:
+```commandline
+ciclope -h
 ```
 
-To use **ciclope** within python, import the module with
-
+To use **ciclope** within python, import the package with
 ```python
 import ciclope
 ```
+#### Image pre-processing
+`ciclope.utils` contain functions that help you read and pre-process a 3D image for FE model generation. You can skip this and use `ciclope` with 3D data as [`numpy.ndarray`](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html), or directly with a 3D [`meshio`](https://github.com/nschloe/meshio) object.
+
+Read 3D CT dataset stored as stack of TIFFs:
+```python
+from ciclope.utils.recon_utils import read_tiff_stack
+
+input_file = '/path_to_your_file/slice_0000.tiff'
+
+data_3D = read_tiff_stack(input_file)
+vs = np.ones(3) * 0.06  # voxelsize [mm]
+```
+Segment and remove unconnected voxels:
+```python
+from skimage import morphology
+from ciclope.utils.pybonemorph import remove_unconnected
+
+BW = data_3D > 142 # fixed global threshold
+BW = morphology.closing(BW, morphology.ball(2)) # optional step
+L = remove_unconnected(BW)
+```
+The image is now ready for FE model generation.
 
 #### voxel-FE
 ![](test_data/trabecular_bone/trab_sample_mini3_UD3.png)
-Read and segment a 3D dataset (TIFF stack) of trabecular bone. Generate **voxel-FE** model of linear elastic compression
-
+Generate **voxel-FE** model of linear elastic compression test:
 ```python
-import numpy as np
-from recon_utils import read_tiff_stack
-from pybonemorph import remove_unconnected
 import ciclope
 
-input_file = '/path/to/your/file.tiff'
-input_template = "./../input_templates/tmp_example01_comp_static_bone.inp"
-
-data_3D = read_tiff_stack(input_file)
-vs = np.ones(3) * 0.06  # [mm]
-
-# segment and remove unconnected clusters
-BW = data_3D > 142
-L = remove_unconnected(BW)
+input_template = "./input_templates/tmp_example01_comp_static_bone.inp"
 
 # generate unstructured grid mesh
 mesh = ciclope.voxelFE.vol2ugrid(data_3D, vs)
 
 # generate CalculiX input file
-ciclope.voxelFE.mesh2voxelfe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
+ciclope.voxelFE.mesh2voxelfe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
 
 #### tetrahedra-FE
 ![](test_data/steel_foam/B_matrix_tetraFE_mesh.png)
-Read and segment 3D microCT dataset of steel foam sample
+Generate mesh of tetrahedra. `ciclope` uses [`pygalmesh`](https://github.com/nschloe/pygalmesh) for tetrahedra mesh generation:
 ```python
-import numpy as np
-from skimage import morphology
-from recon_utils import read_tiff_stack
-from pybonemorph import remove_unconnected
-
-input_file = '/your_path/steel_foam.tiff'
-
-data_3D = read_tiff_stack(input_file)
-vs = np.ones(3)*0.01625 # [mm]
-
-# segment and remove unconnected clusters
-BW = data_3D > 90
-BW = morphology.closing(BW, morphology.cube(5))
-L = remove_unconnected(BW)
-```
-
-Generate mesh of tetrahedra with [pygalmesh](https://github.com/nschloe/pygalmesh)
-```python
-import pygalmesh
-mesh = pygalmesh.generate_from_array(np.transpose(L, [2, 1, 0]).astype('uint8'), tuple(vs), max_facet_distance=0.02, max_cell_circumradius=0.1)
-```
-You can do the same within ciclope with
-```python
-import ciclope
-mesh = ciclope.tetraFE.cgal_mesh(L, vs, 'tetra', 0.02, 0.1)
+mesh = ciclope.tetraFE.cgal_mesh(L, vs, 'tetra', max_facet_distance=0.2, max_cell_circumradius=0.1)
 ```
 
 Generate **tetrahedra-FE** model of non-linear tensile test
-
 ```python
-input_template = "./../input_templates/tmp_example02_tens_static_steel.inp"
+input_template = "./input_templates/tmp_example02_tens_static_steel.inp"
 
 # generate CalculiX input file
-ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'test.inp', keywords=['NSET', 'ELSET'])
+ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
-
+---
 ### ciclope pipeline 
 The following table shows a general pipeline for FE model generation from CT data that can be executed with ciclope:
 
@@ -115,12 +109,12 @@ The following table shows a general pipeline for FE model generation from CT dat
 ___
 
 ### Examples
-#### [Example #1 - voxel-FE model of trabecular bone](examples/old/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/old/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
-![](test_data/trabecular_bone/U3.png)
+#### [Example 1: voxel-uFE model of trabecular bone; linear compression test](examples/ciclope_ex01_voxeluFE_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/old/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
+![](test_data/LHDL/3155_D_4_bc/results/LHDL_voxelFE_U3.png)
 
 The pipeline can be executed from the command line with:
 ```commandline
-python3 ciclope.py input.tif output.inp -vs 0.0606 0.0606 0.0606 --smooth -r 1.2 --vol_mesh --shell_mesh --voxelfe --template ./../input_templates/tmp_example01_comp_static_bone.inp -v
+ciclope test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif test_data/LHDL/3155_D_4_bc/results/3155_D_4_bc_voxelFE.inp -vs 0.0195 0.0195 0.0195 -r 2 -t 63 --smooth 1 --voxelfe --template input_templates/tmp_example01_comp_static_bone.inp --verbose
 ```
 
 The example shows how to:
@@ -136,12 +130,20 @@ The example shows how to:
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
 
-#### [Example #2 - tetrahedra-FE model of stainless steel foam](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+#### [Example 2: tetrahedra-uFE model of trabecular bone; linear compression test](examples/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetrauFE_CalculiX.ipynb)
+![](test_data/LHDL/3155_D_4_bc/results/LHDL_tetraFE_U3.png)
+
+The pipeline can be executed from the command line with:
+```commandline
+ciclope test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif test_data/LHDL/3155_D_4_bc/results/3155_D_4_bc.inp -vs 0.0195 0.0195 0.0195 -r 2 -t 63 --smooth 1 --tetrafe --max_facet_distance 0.025 --max_cell_circumradius 0.05 --vol_mesh --template input_templates/tmp_example01_comp_static_bone.inp
+```
+
+#### [Example #4 - non-linear tetrahedra-FE model of stainless steel foam](examples/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
 
 The pipeline can be executed from the command line with:
 ```commandline
-python3 ciclope.py input.tif output.inp -vs 0.0065 0.0065 0.0065 --smooth -r 1.2 -t 90 --vol_mesh --tetrafe --template ./../input_templates/tmp_example02_tens_Nlgeom_steel.inp -v
+ciclope input.tif output.inp -vs 0.0065 0.0065 0.0065 --smooth -r 1.2 -t 90 --vol_mesh --tetrafe --template ./../input_templates/tmp_example02_tens_Nlgeom_steel.inp -v
 ```
 
 The example shows how to:
