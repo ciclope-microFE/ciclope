@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Image preprocessing Module
+ciclope - Image preprocessing Module
 """
 
 from scipy import ndimage, misc
