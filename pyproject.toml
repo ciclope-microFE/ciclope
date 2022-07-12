@@ -46,7 +46,6 @@ all = [
     "tqdm",
     "dxchange",
     "pypng",
-    "textwrap",
     "itkwidgets",
     "itk",
     "vtk",

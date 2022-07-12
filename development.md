@@ -17,3 +17,17 @@ Or install the package locally for development with [Flit](https://flit.pypa.io/
 ```commandline
 flit install --symlink
 ```
+
+#### Build instructions
+Build package:
+```commandline
+python3 -m build
+```
+Upload to pypi:
+```commandline
+python3 -m twine upload --repository pypi dist/*
+```
+Uninstall the existing build:
+```commandline
+python -m pip uninstall ciclope
+```
