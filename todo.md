@@ -1,4 +1,6 @@
 # ciclope 2 DO:
+- [ ] voxel uFE with heterogeneous material mapping
+- [ ] plot stress mid-planes with Paraview
 - [X] fix voxel and tetraFE models flippedlr
 - [X] packaging
   - [X] allow usage of ciclope as a script and as module:
@@ -8,11 +10,11 @@
 ### Documentation
 - [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [ ] comment FULL notebooks
-- [X] add installation notes 2 readme
+- [ ] Read The Docs page
+  - [ ] API reference
 - [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
 - [ ] add E=f(GV) explanation and plotting
 - [ ] add refs to material heterogeneity
-- [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
 - [ ] Usage
   - [X] as a script
@@ -24,7 +26,8 @@
     - [ ] voxelFE: material mapping
     - [ ] tetraFE: material mapping
   - [ ] prefect flow 
-- [ ] API reference
+- [X] add installation notes 2 readme
+- [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 
 ### Pre-processing
 - [x] add caps

@@ -30,10 +30,6 @@ def paraview_plot(filein,
 
     Returns
     -------
-    BWimage
-        Binary image after thresholding.
-    T
-        Threshold value.
     """
 
     # read vtk file
@@ -59,26 +55,76 @@ def paraview_plot(filein,
     # slice.SliceType.Origin = [2., 2., 1.4]
     slice.SliceType.Origin = center
 
-    if slicenormal == "X":
+    if fileout is None:
+        import os
+        filename_out_base, ext_out = os.path.splitext(filein)
+
+    if 'x' in slicenormal.lower():
         slice.SliceType.Normal = [1.0, 0.0, 0.0]
-    elif slicenormal == "Y":
+
+        if crinkle:
+            slice.Crinkleslice = 1
+
+        # reset view to fit data
+        renderView1.ResetCamera()
+
+        # changing interaction mode based on data extents
+        renderView1.InteractionMode = '2D'
+        renderView1.CameraPosition = [10000, center[1], center[2]]
+        renderView1.CameraFocalPoint = center
+
+        plot_slice(renderView1, slice1Display, filename_out_base+'_'+colorby+'_YZ.png', RepresentationType, colorby, Roll, ImageResolution, TransparentBackground)
+
+    if 'y' in slicenormal.lower():
         slice.SliceType.Normal = [0.0, 1.0, 0.0]
-    elif slicenormal == "Z":
+
+        if crinkle:
+            slice.Crinkleslice = 1
+
+        # reset view to fit data
+        renderView1.ResetCamera()
+
+        # changing interaction mode based on data extents
+        renderView1.InteractionMode = '2D'
+        renderView1.CameraPosition = [center[0], 10000, center[2]]
+        renderView1.CameraFocalPoint = center
+
+        plot_slice(renderView1, slice1Display, filename_out_base + '_' + colorby + '_XZ.png', RepresentationType, colorby, (-90+Roll), ImageResolution, TransparentBackground)
+
+    if 'z' in slicenormal.lower():
         slice.SliceType.Normal = [0.0, 0.0, 1.0]
-    else:
+
+        if crinkle:
+            slice.Crinkleslice = 1
+
+        # reset view to fit data
+        renderView1.ResetCamera()
+
+        # changing interaction mode based on data extents
+        renderView1.InteractionMode = '2D'
+        renderView1.CameraPosition = [center[0], center[1], 10000]
+        renderView1.CameraFocalPoint = center
+
+        plot_slice(renderView1, slice1Display, filename_out_base + '_' + colorby + '_XY.png', RepresentationType, colorby, Roll, ImageResolution, TransparentBackground)
+
+    if not ('x' in slicenormal.lower()) | ('y' in slicenormal.lower()) | ('z' in slicenormal.lower()):
         raise IOError('Invalid Slice Normal.')
 
-    if crinkle:
-        # crinckle the slice
-        slice.Crinkleslice = 1
+    return
 
-    # reset view to fit data
-    renderView1.ResetCamera()
+def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby, Roll, ImageResolution, TransparentBackground):
+    """Save plot of field data using Paraview.
 
-    # changing interaction mode based on data extents
-    renderView1.InteractionMode = '2D'
-    renderView1.CameraPosition = [10000, center[1], center[2]]
-    renderView1.CameraFocalPoint = center
+    Parameters
+    ----------
+    image
+        Image data.
+    threshold_value (optional)
+        Threshold value. If empty an Otsu threshold is calculated.
+
+    Returns
+    -------
+    """
 
     # change representation type
     # slice1Display.SetRepresentationType('Surface')
@@ -153,15 +199,10 @@ def paraview_plot(filein,
 
     camera = GetActiveCamera()
     # camera.Elevation(45)
-    camera.Roll(-90+Roll)
+    camera.Roll(Roll)
     Render()
 
     # save screenshot
-    if fileout is None:
-        import os
-        filename_out_base, ext_out = os.path.splitext(filein)
-        fileout = filename_out_base + '_' + colorby + '_' + slicenormal + '.png'
-
     if TransparentBackground:
         SaveScreenshot(fileout, ImageResolution=ImageResolution, TransparentBackground=1)
     else:
