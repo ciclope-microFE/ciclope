@@ -1,6 +1,6 @@
 # ciclope 2 DO:
 - [ ] voxel uFE with heterogeneous material mapping
-- [ ] plot stress mid-planes with Paraview
+- [ ] plot field mid-planes with Paraview
 - [X] fix voxel and tetraFE models flippedlr
 - [X] packaging
   - [X] allow usage of ciclope as a script and as module:
@@ -8,7 +8,6 @@
 - [X] voxelFE: mesh2voxelFE
 
 ### Documentation
-- [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [ ] comment FULL notebooks
 - [ ] Read The Docs page
   - [ ] API reference
@@ -26,6 +25,7 @@
     - [ ] voxelFE: material mapping
     - [ ] tetraFE: material mapping
   - [ ] prefect flow 
+- [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [X] add installation notes 2 readme
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 
@@ -43,6 +43,7 @@
 - [ ] cortical bone mask
 
 ### Post-processing
+- [ ] Field mid-planes plotting with PARAVIEW script
 - [ ] CalculiX postprocessing
   - [X] process CalculiX output with [`dat2txt.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
   - [X] produce Force displacement plot with `pandas`
@@ -50,17 +51,15 @@
     ```shell
     export PYTHONPATH="/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib:/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages"```
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
-  - [ ] automate stress field midplanes plotting with PARAVIEW macro
 
 ### Examples
+- [ ] ex01: material property mapping with voxel-uFE
+  - [ ] GV -> BMD -> E
 - [ ] ex03: material property mapping with tetra-FE
-  - [ ] multi-material tetrahedra-FE (tooth+embedding)
-  - [ ] rotate tooth before embedding
-  - [ ] plot stress field midplane with paraview
-- [ ] ex05: material property mapping with voxel-uFE
-- [X] CalculiX postprocessing
-- [X] steel caps
-- [X] embedding
+  - [X] multi-material tetrahedra-FE (tooth+embedding)
+  - [ ] plot displacement field midplanes with paraview
+  - [ ] rescale U3 to reach 2 kN
+  - [ ] (?) rotate tooth before embedding
 - [ ] **prefect** pipeline 1
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
@@ -72,6 +71,9 @@
     - [ ] midplanes Smises plots with [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot)
     - [ ] generate HTML report with [plotly](https://plotly.com/python/v3/html-reports/)
     - [ ] write results to master
+- [X] CalculiX postprocessing
+- [X] steel caps
+- [X] embedding
 
 ### Validation
 - [ ] check bone mass after material mapping vs ashing data
