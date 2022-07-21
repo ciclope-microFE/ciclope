@@ -59,10 +59,11 @@
 - [ ] ex01: material property mapping with voxel-uFE
   - [ ] GV -> BMD -> E
 - [ ] ex03: material property mapping with tetra-FE
-  - [X] multi-material tetrahedra-FE (tooth+embedding)
   - [ ] plot displacement field midplanes with paraview
   - [ ] rescale U3 to reach 2 kN
   - [ ] (?) rotate tooth before embedding
+  - [X] multi-material tetrahedra-FE (tooth+embedding)
+- [ ] exXX: nano-bone OC lacuna after [Varga et. al 2015](https://link.springer.com/article/10.1007/s10237-014-0601-9)
 - [ ] **prefect** pipeline 1
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
