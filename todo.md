@@ -18,13 +18,16 @@
 - [ ] Usage
   - [X] as a script
   - [X] as a module - ciclope.methods
-    - [X] `cgal_mesh`
     - [ ] `shell_mesh`
-    - [X] `vol2ugrid` and `mesh2voxelfe`
-    - [X] `mesh2tetrafe`
     - [ ] voxelFE: material mapping
     - [ ] tetraFE: material mapping
-  - [ ] prefect flow 
+    - [ ] post-processing of results
+      - [ ] `ccx2paraview`
+      - [ ] PARAVIEW plot midplanes 
+    - [X] `cgal_mesh`
+    - [X] `vol2ugrid` and `mesh2voxelfe`
+    - [X] `mesh2tetrafe`
+- [ ] prefect flow 
 - [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [X] add installation notes 2 readme
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
