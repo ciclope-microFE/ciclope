@@ -1,6 +1,6 @@
 # ciclope 2 DO:
-- [ ] voxel uFE with heterogeneous material mapping
 - [ ] plot field mid-planes with Paraview
+- [X] voxel uFE with heterogeneous material mapping
 - [X] fix voxel and tetraFE models flippedlr
 - [X] packaging
   - [X] allow usage of ciclope as a script and as module:
@@ -56,11 +56,12 @@
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
 
 ### Examples
-- [ ] ex01: material property mapping with voxel-uFE
-  - [ ] GV -> BMD -> E
+- [x] ex01: material property mapping with voxel-uFE
+  - [x] GV -> BMD -> E
 - [ ] ex03: material property mapping with tetra-FE
   - [ ] plot displacement field midplanes with paraview
   - [ ] rescale U3 to reach 2 kN
+  - [ ] comment NB
   - [ ] (?) rotate tooth before embedding
   - [X] multi-material tetrahedra-FE (tooth+embedding)
 - [ ] exXX: nano-bone OC lacuna after [Varga et. al 2015](https://link.springer.com/article/10.1007/s10237-014-0601-9)

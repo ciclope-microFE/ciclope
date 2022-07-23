@@ -124,7 +124,7 @@ The example shows how to:
 - [x] Remove unconnected clusters of voxels
 - [x] Convert the 3D binary to a voxel-FE model for simulation in CalculX or Abaqus
   - [x] Linear, static analysis; displacement-driven
-  - [ ] Local material mapping (dataset grey values to bone material properties)
+  - [X] Local material mapping (dataset Grey Values to bone Tissue Elastic Modulus)
 - [x] Launch simulation in Calculix
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview

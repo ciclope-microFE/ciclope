@@ -1,0 +1,10 @@
+** ---------------------------------------------------
+** bone.inp
+** material property definition with heterogeneous E and nu=0.3
+** ---------------------------------------------------
+** Material definition:
+*SOLID SECTION, ELSET=SetName, MATERIAL=MatName
+1.
+*MATERIAL,NAME=MatName
+*ELASTIC
+1.*GV, 0.3
