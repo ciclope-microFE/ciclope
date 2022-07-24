@@ -31,6 +31,9 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
             - NODES_Y1: Nodes on NORTH (Y+) surface of 3D model.
             - NODES_Z0: Nodes on BOTTOM (Z-) surface of 3D model.
             - NODES_Z1: Nodes on TOP (Z+) surface of 3D model.
+            - NODES_X0Y0Z0: 2 nodes on (0,0,0) model corner.
+            - NODES_X0Y0Z1: 2 nodes on (0,0,1) model corner.
+
             - ELEMS_X0: Elements of WEST (X-) surface of 3D model.
             - ELEMS_X1: Elements of EAST (X+) surface of 3D model.
             - ELEMS_Y0: Elements of SOUTH (Y-) surface of 3D model.
@@ -77,7 +80,9 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
         'NODES_X0': [],
         'NODES_X1': [],
         'NODES_Z1': [],
-        'NODES_Z0': []
+        'NODES_Z0': [],
+        'NODES_X0Y0Z0': [],
+        'NODES_X0Y0Z1': []
     }
 
     # reference nodes coordinates (one refnode per boundary)
@@ -180,6 +185,9 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
                         refnode_X1 += node_coors
 
                 node_i = node_i + 1
+
+    nodes_set['NODES_X0Y0Z0'] = nodes_set['NODES_Z0'][0:2]
+    nodes_set['NODES_X0Y0Z1'] = nodes_set['NODES_Z1'][0:2]
 
     # reference nodes are the barycenters of boundary node sets
     refnode_X0 /= len(nodes_set['NODES_X0'])
