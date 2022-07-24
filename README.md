@@ -139,18 +139,7 @@ ciclope test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif test_data/LHDL/3
 
 #### [Example #3 - tetrahedra-FE model of embedded tooth](examples/ciclope_ex03_tetraFE_tooth_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/tooth/results/Tooth_TAU_3_scaled_2_Smises2.png)
-
-The example shows how to:
-- [x] Segment different tissue types (enamel, dentin)
-- [X] Map different scalars to the 3D image to represent different tissues
-- [X] Add embedding material (dental cement) with given Grey Value
-- [X] Add end-caps (steel) with given Grey Value
-- [x] Convert 3D dataset to a tetrahedra-FE model for simulation in CalculX or Abaqus
-  - [X] Linear, static analysis; displacement-driven
-  - [X] Material mapping (assign one material card to each dataset grey value)
-- [x] Launch simulation in Calculix
-- [x] Convert Calculix output to .VTK for visualization in Paraview
-- [x] Visualize simulation results in Paraview
+Compression test of embedded human tooth.
 
 #### [Example #4 - non-linear tetrahedra-FE model of stainless steel foam](examples/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
