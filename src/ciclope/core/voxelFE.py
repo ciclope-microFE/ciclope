@@ -23,7 +23,20 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
     GVmin
         Minimum Grey Value considered for meshing. By default, GVmin=0: all zeroes are considered background.
     refnodes : bool
-        Return reference nodes on the model boundaries.
+        Return dictionary of reference nodes on the model boundaries. Even if this option is not activated, the returned
+        mesh will contain the following nodes and elements sets:
+            - NODES_X0: Nodes on WEST (X-) surface of 3D model.
+            - NODES_X1: Nodes on EAST (X+) surface of 3D model.
+            - NODES_Y0: Nodes on SOUTH (Y-) surface of 3D model.
+            - NODES_Y1: Nodes on NORTH (Y+) surface of 3D model.
+            - NODES_Z0: Nodes on BOTTOM (Z-) surface of 3D model.
+            - NODES_Z1: Nodes on TOP (Z+) surface of 3D model.
+            - ELEMS_X0: Elements of WEST (X-) surface of 3D model.
+            - ELEMS_X1: Elements of EAST (X+) surface of 3D model.
+            - ELEMS_Y0: Elements of SOUTH (Y-) surface of 3D model.
+            - ELEMS_Y1: Elements of NORTH (Y+) surface of 3D model.
+            - ELEMS_Z0: Elements of BOTTOM (Z-) surface of 3D model.
+            - ELEMS_Z1: Elements of TOP (Z+) surface of 3D model.
     verbose : bool
         Activate verbose output.
 
