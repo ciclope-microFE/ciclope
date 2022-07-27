@@ -207,6 +207,9 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
             'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2]+0.01*abs(extent[2])))[0]
         }
 
+    meshdata.point_sets['NODES_X0Y0Z0'] = meshdata.point_sets['NODES_Z0'][0:2]
+    meshdata.point_sets['NODES_X0Y0Z1'] = meshdata.point_sets['NODES_Z1'][0:2]
+
     if 'ELSET' in keywords:
         # dictionary of boundary element sets
         elset = {
