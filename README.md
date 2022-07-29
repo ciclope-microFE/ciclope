@@ -83,16 +83,23 @@ ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 
 `ciclope.utils.postprocess.paraviewplot` calls [ParaView](https://www.paraview.org/) to generate and save plots of a chosen model scalar field:
 
 Plot midplanes of the vertical displacement field `UD3`:
+
 ```python
-ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_2.vtk', slicenormal="xyz", RepresentationType="Surface", crinkle=True, colorby=['U', 'D2'], Roll=90, ImageResolution=[1024, 1024], TransparentBackground=True, colormap='Cool to Warm')
+ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_2.vtk', slicenormal="xyz",
+                                        RepresentationType="Surface", Crinkle=True, ColorBy=['U', 'D2'], Roll=90,
+                                        ImageResolution=[1024, 1024], TransparentBackground=True,
+                                        colormap='Cool to Warm')
 ```
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_YZ.png) |
 
 Plot midplanes of the Von Mises stress `S_Mises`:
+
 ```python
-ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_2.vtk", slicenormal="xyz", RepresentationType="Surface", crinkle=False, colorby="S_Mises", Roll=90, ImageResolution=[1024, 1024])
+ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_2.vtk", slicenormal="xyz",
+                                        RepresentationType="Surface", Crinkle=False, ColorBy="S_Mises", Roll=90,
+                                        ImageResolution=[1024, 1024])
 ```
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
