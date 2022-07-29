@@ -1,5 +1,5 @@
 # ciclope 2 DO:
-- [ ] plot field mid-planes with Paraview
+- [X] plot field mid-planes with Paraview
 - [ ] BCs as in [Cox, Jason M., Joshua D. Smith, Marjolein C. H. van der Meulen, and Jacqueline H. Cole. 2022. “Heterogeneous Tissue Modulus Improved Prediction of Mechanical Behavior in Osteoporotic Vertebral Cancellous Bone.”](https://www.biorxiv.org/content/10.1101/2021.11.30.470675v2)
 - [X] voxel uFE with heterogeneous material mapping
 - [X] fix voxel and tetraFE models flippedlr
@@ -24,7 +24,7 @@
     - [ ] tetraFE: material mapping
     - [ ] post-processing of results
       - [ ] `ccx2paraview`
-      - [ ] PARAVIEW plot midplanes 
+      - [X] PARAVIEW plot midplanes 
     - [X] `cgal_mesh`
     - [X] `vol2ugrid` and `mesh2voxelfe`
     - [X] `mesh2tetrafe`
@@ -48,7 +48,7 @@
 - [ ] cortical bone mask
 
 ### Post-processing
-- [ ] Field mid-planes plotting with PARAVIEW script
+- [X] Field mid-planes plotting with PARAVIEW
 - [ ] CalculiX postprocessing
   - [X] process CalculiX output with [`dat2txt.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
   - [X] produce Force displacement plot with `pandas`
@@ -62,23 +62,22 @@
   - [x] GV -> BMD -> E
 - [ ] ex03: material property mapping with tetra-FE
   - [ ] plot displacement field midplanes with paraview
-  - [ ] rescale U3 to reach 2 kN
-  - [ ] comment NB
-  - [ ] (?) rotate tooth before embedding
+  - [X] rescale U3 to reach 2 kN
+  - [X] comment NB
   - [X] multi-material tetrahedra-FE (tooth+embedding)
-- [ ] exXX: nano-bone OC lacuna after [Varga et. al 2015](https://link.springer.com/article/10.1007/s10237-014-0601-9)
-- [ ] **prefect** pipeline 1
+  - [ ] (?) rotate tooth before embedding
+- [ ] Example **prefect** pipeline
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
   - [ ] execute calculix
   - [ ] multiple load configurations
     - [ ] (comp, tens, shear, torsion, bending)
     - [ ] read input_template params from table (e.g. different displ amplitude)
-  - [ ] postprocess results
-    - [ ] midplanes Smises plots with [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot)
-    - [ ] generate HTML report with [plotly](https://plotly.com/python/v3/html-reports/)
-    - [ ] write results to master
-- [X] CalculiX postprocessing
+- [ ] Example postprocessing of results
+  - [ ] midplanes Smises plots with [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot)
+  - [ ] generate HTML report with [plotly](https://plotly.com/python/v3/html-reports/)
+  - [ ] write results to master
+  - [X] CalculiX postprocessing
 - [X] steel caps
 - [X] embedding
 

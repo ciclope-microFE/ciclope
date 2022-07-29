@@ -27,7 +27,7 @@ To use **ciclope** within python, import the package with
 import ciclope
 ```
 #### Image pre-processing
-`ciclope.utils` contain functions that help you read and pre-process a 3D image for FE model generation. You can skip this and use `ciclope` with 3D data as [`numpy.ndarray`](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html), or directly with a 3D [`meshio`](https://github.com/nschloe/meshio) object.
+`ciclope.utils` contains functions that help you read and pre-process 3D datasets for FE model generation. You can skip this and use `ciclope` with 3D data as [`numpy.ndarray`](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html), or directly with a 3D [`meshio`](https://github.com/nschloe/meshio) object.
 
 Read 3D CT dataset stored as stack of TIFFs:
 ```python
@@ -78,6 +78,26 @@ input_template = "./input_templates/tmp_example02_tens_static_steel.inp"
 # generate CalculiX input file
 ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
+
+#### Postprocessing
+`ciclope.utils.postprocess.paraviewplot` calls [ParaView](https://www.paraview.org/) to generate and save plots of a chosen model scalar field:
+
+Plot midplanes of the vertical displacement field `UD3`:
+```python
+ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_2.vtk', slicenormal="xyz", RepresentationType="Surface", crinkle=True, colorby=['U', 'D2'], Roll=90, ImageResolution=[1024, 1024], TransparentBackground=True, colormap='Cool to Warm')
+```
+| | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|
+|![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_YZ.png) |
+
+Plot midplanes of the Von Mises stress `S_Mises`:
+```python
+ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_2.vtk", slicenormal="xyz", RepresentationType="Surface", crinkle=False, colorby="S_Mises", Roll=90, ImageResolution=[1024, 1024])
+```
+| | | |
+|:-------------------------:|:-------------------------:|:-------------------------:|
+|![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_YZ.png) |
+
 ---
 ### ciclope pipeline 
 The following table shows a general pipeline for FE model generation from CT data that can be executed with ciclope:

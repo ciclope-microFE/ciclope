@@ -10,15 +10,7 @@ sys.path.append('/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3
 
 from paraview.simple import *
 
-def paraview_plot(filein,
-                  fileout=None,
-                  slicenormal="X",
-                  RepresentationType="SurfaceWithEdges",
-                  crinkle=False,
-                  colorby="S_Mises",
-                  Roll=0,
-                  ImageResolution=[1280, 960],
-                  TransparentBackground=True):
+def paraview_plot(filein, fileout=None, slicenormal="X", RepresentationType="SurfaceWithEdges", crinkle=False, colorby="S_Mises", Roll=0, ImageResolution=[1280, 960], TransparentBackground=True, colormap='Viridis (matplotlib)'):
     """Save plot of field data using Paraview.
 
     Parameters
@@ -55,6 +47,8 @@ def paraview_plot(filein,
     # slice.SliceType.Origin = [2., 2., 1.4]
     slice.SliceType.Origin = center
 
+    colorby_string = ''.join(colorby)
+
     if fileout is None:
         import os
         filename_out_base, ext_out = os.path.splitext(filein)
@@ -73,7 +67,7 @@ def paraview_plot(filein,
         renderView1.CameraPosition = [10000, center[1], center[2]]
         renderView1.CameraFocalPoint = center
 
-        plot_slice(renderView1, slice1Display, filename_out_base+'_'+colorby+'_YZ.png', RepresentationType, colorby, Roll, ImageResolution, TransparentBackground)
+        plot_slice(renderView1, slice1Display, filename_out_base+'_'+colorby_string+'_YZ.png', RepresentationType, colorby, Roll, ImageResolution, TransparentBackground, colormap)
 
     if 'y' in slicenormal.lower():
         slice.SliceType.Normal = [0.0, 1.0, 0.0]
@@ -89,7 +83,7 @@ def paraview_plot(filein,
         renderView1.CameraPosition = [center[0], 10000, center[2]]
         renderView1.CameraFocalPoint = center
 
-        plot_slice(renderView1, slice1Display, filename_out_base + '_' + colorby + '_XZ.png', RepresentationType, colorby, (-90+Roll), ImageResolution, TransparentBackground)
+        plot_slice(renderView1, slice1Display, filename_out_base + '_' + colorby_string + '_XZ.png', RepresentationType, colorby, (-90+Roll), ImageResolution, TransparentBackground, colormap)
 
     if 'z' in slicenormal.lower():
         slice.SliceType.Normal = [0.0, 0.0, 1.0]
@@ -105,14 +99,14 @@ def paraview_plot(filein,
         renderView1.CameraPosition = [center[0], center[1], 10000]
         renderView1.CameraFocalPoint = center
 
-        plot_slice(renderView1, slice1Display, filename_out_base + '_' + colorby + '_XY.png', RepresentationType, colorby, Roll, ImageResolution, TransparentBackground)
+        plot_slice(renderView1, slice1Display, filename_out_base + '_' + colorby_string + '_XY.png', RepresentationType, colorby, Roll, ImageResolution, TransparentBackground, colormap)
 
     if not ('x' in slicenormal.lower()) | ('y' in slicenormal.lower()) | ('z' in slicenormal.lower()):
         raise IOError('Invalid Slice Normal.')
 
     return
 
-def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby, Roll, ImageResolution, TransparentBackground):
+def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby, Roll, ImageResolution, TransparentBackground, colormap):
     """Save plot of field data using Paraview.
 
     Parameters
@@ -126,12 +120,17 @@ def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby,
     -------
     """
 
+    import time
+
     # change representation type
     # slice1Display.SetRepresentationType('Surface')
     slice1Display.SetRepresentationType(RepresentationType)
 
     # set scalar coloring
-    ColorBy(slice1Display, ('POINTS', colorby, colorby))
+    if len(colorby) == 2:
+        ColorBy(slice1Display, ('POINTS', colorby[0], colorby[1]))
+    else:
+        ColorBy(slice1Display, ('POINTS', colorby, colorby))
 
     # rescale color and/or opacity maps used to include current data range
     slice1Display.RescaleTransferFunctionToDataRange(True, False)
@@ -140,13 +139,19 @@ def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby,
     slice1Display.SetScalarBarVisibility(renderView1, True)
 
     # get color transfer function/color map
-    LUT = GetColorTransferFunction(colorby)
+    if len(colorby) == 2:
+        LUT = GetColorTransferFunction(colorby[0])
+    else:
+        LUT = GetColorTransferFunction(colorby)
 
     # get opacity transfer function/opacity map
-    PWF = GetOpacityTransferFunction(colorby)
+    if len(colorby) == 2:
+        PWF = GetOpacityTransferFunction(colorby[0])
+    else:
+        PWF = GetOpacityTransferFunction(colorby)
 
     # Apply a preset using its name. Note this may not work as expected when presets have duplicate names.
-    LUT.ApplyPreset('Viridis (matplotlib)', True)
+    LUT.ApplyPreset(colormap, True)
 
     # get color legend/bar for LUT in view renderView1
     LUTColorBar = GetScalarBar(LUT, renderView1)
@@ -207,5 +212,7 @@ def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby,
         SaveScreenshot(fileout, ImageResolution=ImageResolution, TransparentBackground=1)
     else:
         SaveScreenshot(fileout, ImageResolution=ImageResolution)
+
+    time.sleep(1)
 
     return
