@@ -34,14 +34,12 @@
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 
 ### Pre-processing
+- [ ] purge_mesh
 - [x] add caps
 - [X] write midplanes images (.PNG)
-- [ ] purge_mesh
 - [X] 3D dataset embedding
 - [X] analysis template write with parameter substitution (driving node coordinates)
-
-### pybonemorph
-- [ ] merge to `ciclope.utils.preprocess`
+- [X] merge `pybonemorph` to `ciclope.utils.preprocess`
 - [X] Center Of Mass
 - [X] periosteum mask
 - [ ] endosteum contour

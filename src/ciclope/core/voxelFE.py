@@ -251,10 +251,6 @@ def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'E
         For a list of all Abaqus keywords and their description visit:
         https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-c-gen-kwbrowser.htm#simacae-c-gen-kwbrowser__simacae-gen-xsl-U
 
-        * 'NODE':
-                Specify nodal coordinates. (This cannot be turned off)
-        * 'ELEMENT':
-                Define elements by giving their nodes. (This cannot be turned off)
         * 'NSET':
                 Create boundary node sets. (Default = ON)
                 If 'NSET' is specified, the following node sets are created:
@@ -264,6 +260,8 @@ def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'E
                   - NODES_Y1: Nodes on NORTH (Y+) surface of 3D model.
                   - NODES_Z0: Nodes on BOTTOM (Z-) surface of 3D model.
                   - NODES_Z1: Nodes on TOP (Z+) surface of 3D model.
+                  - NODES_X0Y0Z0: 2 nodes on (0,0,0) model corner.
+                  - NODES_X0Y0Z1: 2 nodes on (0,0,1) model corner.
                 These node sets are available for boundary conditions definition.
         * 'ELSET':
                 Create boundary element sets. (Default = ON)

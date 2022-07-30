@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-ciclope - Postprocessing Module
+Ciclope postprocessing module
 """
 
 import sys

@@ -202,12 +202,28 @@ def remove_largest(bwimage):
 
     return labels != 0
 
-def add_cap(data_3D, cap_thickness, cap_val):
-    # Add caps of voxels with given GV to the input 3D data.
-    # Caps are added on both ends along the Z-direction (first dataset dimension).
-    data_3D_cap = np.ones([data_3D.shape[0]+2*cap_thickness, data_3D.shape[1], data_3D.shape[2]], data_3D.dtype)*cap_val
-    data_3D_cap[cap_thickness:-cap_thickness, :, :] = data_3D
-    return data_3D_cap
+def add_cap(I, cap_thickness, cap_val):
+    """Add caps to 3D image.
+    Caps are added on both ends along the Z-direction (first dataset dimension). The thickness and color (Grey Value) of the added caps can be specified.
+
+    Parameters
+    ----------
+    I
+        3D data. Zeroes as background.
+    cap_thickness : int
+        Cap thickness in pixels.
+    cap_val : float
+        Cap grey value.
+
+    Returns
+    ----------
+    I_cap
+        Image with caps added.
+    """
+
+    I_cap = np.ones([I.shape[0]+2*cap_thickness, I.shape[1], I.shape[2]], I.dtype)*cap_val
+    I_cap[cap_thickness:-cap_thickness, :, :] = I
+    return I_cap
 
 def embed(I, embed_depth, embed_dir, embed_val=None, pad=0, makecopy=False):
     """Add embedding to 3D image.

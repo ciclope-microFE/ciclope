@@ -40,7 +40,7 @@ def shell_mesh(bwimage, method='pymcubes', voxelsize=[1., 1., 1.], max_facet_dis
     triangles
         Mesh triangles.
     shellmesh : meshio
-        meshio mesh
+        Mesh data.
     """
 
     if method == 'pymcubes':
@@ -127,7 +127,8 @@ def cgal_mesh(bwimage, voxelsize, meshtype='both', max_facet_distance=0.0, max_c
 
     Returns
     -------
-    mesh
+    mesh : meshio
+        Mesh data.
 
     """
 
@@ -179,7 +180,42 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
     Parameters
     ----------
     meshdata : meshio
+        Mesh data.
+    templatefile : str
+        Analysis template file.
+    fileout : str
+        Output .INP file.
+    keywords : str
+        SUPPORTED ABAQUS KEYWORDS:
 
+        For a list of all Abaqus keywords and their description visit:
+        https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-c-gen-kwbrowser.htm#simacae-c-gen-kwbrowser__simacae-gen-xsl-U
+
+        * 'NSET':
+                Create boundary node sets. (Default = ON)
+                If 'NSET' is specified, the following node sets are created:
+                  - NODES_X0: Nodes on WEST (X-) surface of 3D model.
+                  - NODES_X1: Nodes on EAST (X+) surface of 3D model.
+                  - NODES_Y0: Nodes on SOUTH (Y-) surface of 3D model.
+                  - NODES_Y1: Nodes on NORTH (Y+) surface of 3D model.
+                  - NODES_Z0: Nodes on BOTTOM (Z-) surface of 3D model.
+                  - NODES_Z1: Nodes on TOP (Z+) surface of 3D model.
+                  - NODES_X0Y0Z0: 2 nodes on (0,0,0) model corner.
+                  - NODES_X0Y0Z1: 2 nodes on (0,0,1) model corner.
+                These node sets are available for boundary conditions definition.
+        * 'ELSET':
+                Create boundary element sets. (Default = ON)
+                If 'ELSET' is specified, the following element sets are created:
+                  - ELEMS_X0: Elements of WEST (X-) surface of 3D model.
+                  - ELEMS_X1: Elements of EAST (X+) surface of 3D model.
+                  - ELEMS_Y0: Elements of SOUTH (Y-) surface of 3D model.
+                  - ELEMS_Y1: Elements of NORTH (Y+) surface of 3D model.
+                  - ELEMS_Z0: Elements of BOTTOM (Z-) surface of 3D model.
+                  - ELEMS_Z1: Elements of TOP (Z+) surface of 3D model.
+    float_fmt : float
+        Precision for Abaqus input file writing.
+    verbose : bool
+        Verbose output.
     """
 
     # verbose output
