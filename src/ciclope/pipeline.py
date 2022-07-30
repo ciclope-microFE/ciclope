@@ -9,11 +9,11 @@ For more information, call this script with the help option:
 
 __author__ = ['Gianluca Iori', 'Martino Pani']
 __date_created__ = '2021-08-06'
-__date__ = '2022-06-24'
+__date__ = '2022-07-29'
 __copyright__ = 'Copyright (c) 2021, JC|MSK'
 __docformat__ = 'restructuredtext en'
 __license__ = "GPL"
-__version__ = "1.1.0"
+__version__ = "1.1.1"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -25,8 +25,8 @@ import numpy as np
 import meshio
 from skimage.filters import gaussian
 import matplotlib.pyplot as plt
-from .core import voxelFE, tetraFE
-from .utils import pybonemorph, preprocess, recon_utils
+from ciclope.core import voxelFE, tetraFE
+from ciclope.utils import preprocess, recon_utils
 
 #################################################################################
 
@@ -180,7 +180,7 @@ def main():
 
     # Keep largest isolated cluster of voxels #################################
     logging.info("Removing unconnected clusters of voxels..")
-    L = pybonemorph.remove_unconnected(BW)
+    L = preprocess.remove_unconnected(BW)
 
     # Visualization with Napari #############################################
     # import napari

@@ -41,7 +41,7 @@ vs = np.ones(3) * 0.06  # voxelsize [mm]
 Segment and remove unconnected voxels:
 ```python
 from skimage import morphology
-from ciclope.utils.pybonemorph import remove_unconnected
+from ciclope.utils.preprocess import remove_unconnected
 
 BW = data_3D > 142 # fixed global threshold
 BW = morphology.closing(BW, morphology.ball(2)) # optional step

@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Module for tetrahedra Finite Element model generation
+Ciclope module for tetrahedra Finite Element model generation
 """
 
 import logging

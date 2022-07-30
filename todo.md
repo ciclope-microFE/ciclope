@@ -1,6 +1,6 @@
 # ciclope 2 DO:
 - [X] plot field mid-planes with Paraview
-- [ ] BCs as in [Cox, Jason M., Joshua D. Smith, Marjolein C. H. van der Meulen, and Jacqueline H. Cole. 2022. “Heterogeneous Tissue Modulus Improved Prediction of Mechanical Behavior in Osteoporotic Vertebral Cancellous Bone.”](https://www.biorxiv.org/content/10.1101/2021.11.30.470675v2)
+- [ ] BCs as in [Cox et. al 2022. “Heterogeneous Tissue Modulus Improved Prediction of Mechanical Behavior in Osteoporotic Vertebral Cancellous Bone.”](https://www.biorxiv.org/content/10.1101/2021.11.30.470675v2)
 - [X] voxel uFE with heterogeneous material mapping
 - [X] fix voxel and tetraFE models flippedlr
 - [X] packaging

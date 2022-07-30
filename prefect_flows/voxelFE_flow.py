@@ -5,11 +5,10 @@ Module for prefect flow generation
 """
 
 import numpy as np
-from src.ciclope.utils.preprocess import resample, segment
-from src.ciclope.core.voxelFE import vol2voxelfe, matpropdictionary
-import recon_utils as ru
+from ciclope.utils.preprocess import resample, segment, remove_unconnected
+from ciclope.core.voxelFE import vol2voxelfe, matpropdictionary
+import ciclope.utils.recon_utils as ru
 from skimage.filters import gaussian
-from src.ciclope.utils.pybonemorph import remove_unconnected
 import prefect
 from prefect import task, Flow, Parameter
 
