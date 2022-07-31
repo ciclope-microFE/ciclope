@@ -11,15 +11,21 @@
 ### Documentation
 - [ ] comment FULL notebooks
 - [ ] Read The Docs page
-  - [ ] API reference
+  - [ ] import documentation
+  - [ ] clean API reference
+  - [X] clean notebooks Examples
+  - [ ] usage
+    - [ ] FE model generation - analysis definition
+    - [ ] FE model generation - material mapping
+      - [ ] add refs to material heterogeneity
+      - [ ] add E=f(GV) explanation and plotting
+    - [ ] `shell_mesh`
+    - [ ] postprocessing - ccx2paraview
 - [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
-- [ ] add E=f(GV) explanation and plotting
-- [ ] add refs to material heterogeneity
 - [ ] add picture of CT 2 FE `ciclope.main()` pipeline
 - [ ] Usage
   - [X] as a script
   - [X] as a module - ciclope.methods
-    - [ ] `shell_mesh`
     - [ ] voxelFE: material mapping
     - [ ] tetraFE: material mapping
     - [ ] post-processing of results
@@ -50,7 +56,7 @@
 - [ ] CalculiX postprocessing
   - [X] process CalculiX output with [`dat2txt.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
   - [X] produce Force displacement plot with `pandas`
-  - [ ] cgx or [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot) midplane plots
+  - [X] [Paraview](https://www.paraview.org/Wiki/ParaView/Python/Screenshot) midplane plots
     ```shell
     export PYTHONPATH="/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib:/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages"```
   - [ ] convergence plots with [`monitor.py`](https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts)
@@ -58,8 +64,8 @@
 ### Examples
 - [x] ex01: material property mapping with voxel-uFE
   - [x] GV -> BMD -> E
-- [ ] ex03: material property mapping with tetra-FE
-  - [ ] plot displacement field midplanes with paraview
+- [X] ex03: material property mapping with tetra-FE
+  - [X] plot displacement field midplanes with paraview
   - [X] rescale U3 to reach 2 kN
   - [X] comment NB
   - [X] multi-material tetrahedra-FE (tooth+embedding)
