@@ -1,9 +1,10 @@
 # About
-
-A typical pipeline for FE model generation from 3D microCT data is shown in the picture below.
+A typical pipeline for FE model generation from 3D microCT data is shown in the picture above.
 ![ciclope_design](ciclope_design.png)
+
 **Ciclope** is composed of a `core` module containing methods for voxel and tetrahedra FE model generation, and a module `utils` containing utilities for image and FE model pre- and post-processing. Both modules can be imported and used within Python. 
 Pipelines of FE model generation can be launched from the commandline using the `ciclope.py` script generated during installation. See the section [usage](usage) for more details.
+
 ---
 **Ciclope** requires several dependencies. The following is a list of the main external packages required for FE model generation and solution:
 * All mesh exports (voxel and tetrahedra Finite Elements) are performed with the [meshio](https://github.com/nschloe/meshio) module.
