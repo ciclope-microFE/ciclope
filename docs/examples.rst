@@ -4,7 +4,8 @@ Examples
 
 This section contains examples of **ciclope** pipelines.
 
-..Examples can be run in your browser using the Binder link at the top of the page.
+.. Examples can be run in your browser using the Binder link at the top of the page.
+
 You can run all
 `Jupyter notebook <https://jupyter-notebook.readthedocs.io/en/stable/>`_
 examples on your local machine.
