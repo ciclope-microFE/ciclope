@@ -165,7 +165,7 @@ ciclope test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif test_data/LHDL/3
 ```
 
 #### [Example #3 - tetrahedra-FE model of embedded tooth](examples/ipynb/ciclope_ex03_tetraFE_tooth_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
-![](test_data/tooth/results/Tooth_TAU_3_scaled_2_Smises2.png)
+![](test_data/tooth/results/Tooth_3_scaled_2_Smises2.png)
 Compression test of embedded human tooth.
 
 #### [Example #4 - non-linear tetrahedra-FE model of stainless steel foam](examples/ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
