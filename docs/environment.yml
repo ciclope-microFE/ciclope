@@ -8,16 +8,20 @@ dependencies:
   - tifffile
   - dxchange
   - matplotlib
-  - meshio
+  - meshio>=5.0.0
   - scikit-image
   - pygalmesh
   - itkwidgets
+  - itk
   - vtk
   - tqdm
   - numexpr
+  - pypng
   - pip>=20.1
   - pip:
       - sphinx==4.2.0
       - sphinx_rtd_theme==1.0.0
       - myst-nb==0.16.0
       - ipykernel
+      - PyMCubes
+      - ccx2paraview
