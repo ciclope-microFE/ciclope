@@ -21,4 +21,3 @@ dependencies:
       - sphinx_rtd_theme==1.0.0
       - myst-nb==0.16.0
       - ipykernel
-      - ciclope
