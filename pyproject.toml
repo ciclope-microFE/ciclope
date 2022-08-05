@@ -42,6 +42,7 @@ dependencies = [
 [project.optional-dependencies]
 all = [
     "matplotlib",
+    "scipy",
     "scikit-image",
     "tqdm",
     "dxchange",
