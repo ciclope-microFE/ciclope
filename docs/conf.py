@@ -54,7 +54,7 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for {MyST}NB ----------------------------------------------------
-nb_kernel_rgx_aliases = {}
+nb_kernel_rgx_aliases = {"ct2fe": "python3"}
 
 # -- Options for HTML output -------------------------------------------------
 
