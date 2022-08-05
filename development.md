@@ -4,12 +4,16 @@ Create and activate a virtual environment for development:
 conda env create -n ciclope
 conda activate ciclope
 ```
+Install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html):
+```shell
+conda install -c conda-forge dxchange
+```
 Clone the git repository:
-```commandline
+```shell
 git clone https://github.com/gianthk/ciclope.git
 ```
 Navigate to the repo folder and install the package using pip:
-```commandline
+```shell
 cd ciclope
 pip install .
 ```

@@ -45,7 +45,6 @@ all = [
     "scipy",
     "scikit-image",
     "tqdm",
-    "dxchange",
     "pypng",
     "itkwidgets",
     "itk",

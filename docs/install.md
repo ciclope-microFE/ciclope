@@ -3,6 +3,10 @@ Install using pip. The flag `[all]` will install optional dependencies needed to
 ```shell
 pip install ciclope[all]
 ```
+For running the examples you will need to install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html):
+```shell
+conda install -c conda-forge dxchange
+```
 ---
 
 ## Development installation
@@ -28,11 +32,11 @@ flit install --symlink
 ## Build instructions
 Build package:
 ```shell
-python3 -m build
+python -m build
 ```
 Upload to pypi:
 ```shell
-python3 -m twine upload --repository pypi dist/*
+python -m twine upload --repository pypi dist/*
 ```
 Uninstall the existing build:
 ```shell

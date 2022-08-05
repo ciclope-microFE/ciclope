@@ -23,7 +23,7 @@ copyright = '2022, Open and Reproducible MSK Imaging Research - ORMIR'
 author = 'Gianluca Iori'
 
 # The full version, including alpha/beta/rc tags
-release = '1.1.7'
+release = '1.1.8'
 
 # -- General configuration ---------------------------------------------------
 
@@ -54,6 +54,7 @@ templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for {MyST}NB ----------------------------------------------------
+# Mapping of kernel name: replace with standard python3 kernel
 nb_kernel_rgx_aliases = {"ct2fe": "python3"}
 
 # -- Options for HTML output -------------------------------------------------

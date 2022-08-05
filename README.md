@@ -15,6 +15,11 @@ For development installation see the [development guide](development.md).
 ```commandline
 pip install ciclope[all]
 ```
+For running the examples you will need to install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html):
+```shell
+conda install -c conda-forge dxchange
+```
+
 ---
 ### Usage
 **ciclope** pipelines can be run from the command line as a script. Scroll down and take a look at the [Examples](###Examples) folder for this type of use.
