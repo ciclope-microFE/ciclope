@@ -11,30 +11,30 @@
 ### Documentation
 - [ ] comment FULL notebooks
 - [ ] Read The Docs page
+  - [ ] [`sphinx-build -nW --keep-going -b html docs/ docs/_build/html`](https://www.sphinx-doc.org/en/master/man/sphinx-build.html)
   - [ ] import documentation
   - [ ] clean API reference
   - [X] clean notebooks Examples
   - [ ] usage
     - [ ] FE model generation - analysis definition
+      - [ ] BCs
     - [ ] FE model generation - material mapping
       - [ ] add refs to material heterogeneity
       - [ ] add E=f(GV) explanation and plotting
     - [ ] `shell_mesh`
-    - [ ] postprocessing - ccx2paraview
+    - [X] as a module - ciclope.methods
+      - [ ] voxelFE: material mapping
+      - [ ] tetraFE: material mapping
+      - [ ] post-processing of results
+        - [ ] `ccx2paraview`
+        - [X] PARAVIEW plot midplanes 
+      - [X] `cgal_mesh`
+      - [X] `vol2ugrid` and `mesh2voxelfe`
+      - [X] `mesh2tetrafe`
+    - [X] as a script
+    - [ ] prefect flow 
 - [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
-- [ ] add picture of CT 2 FE `ciclope.main()` pipeline
-- [ ] Usage
-  - [X] as a script
-  - [X] as a module - ciclope.methods
-    - [ ] voxelFE: material mapping
-    - [ ] tetraFE: material mapping
-    - [ ] post-processing of results
-      - [ ] `ccx2paraview`
-      - [X] PARAVIEW plot midplanes 
-    - [X] `cgal_mesh`
-    - [X] `vol2ugrid` and `mesh2voxelfe`
-    - [X] `mesh2tetrafe`
-- [ ] prefect flow 
+- [X] add picture of CT 2 FE `ciclope.main()` pipeline
 - [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [X] add installation notes 2 readme
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
