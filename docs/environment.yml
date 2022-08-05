@@ -15,4 +15,10 @@ dependencies:
   - vtk
   - tqdm
   - numexpr
-prefix: /home/gianthk/anaconda3/envs/CT2FE
+  - pip>=20.1
+  - pip:
+      - sphinx==4.2.0
+      - sphinx_rtd_theme==1.0.0
+      - myst-nb==0.16.0
+      - ipykernel
+      - ciclope
