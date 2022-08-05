@@ -58,7 +58,6 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 nb_kernel_rgx_aliases = {"ct2fe": "python3"}
 
 # -- Options for HTML output -------------------------------------------------
-
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 
