@@ -6,7 +6,7 @@
 ciclope - computed tomography to finite elements
 ================================================
 
-|PyPI license| |PyPI version shields.io| |PyPI pyversions|
+|PyPI license| |PyPI version shields.io| |PyPI pyversions| |Docs|
 
 .. |PyPI license| image:: https://img.shields.io/pypi/l/ansicolortags.svg
    :target: https://pypi.python.org/pypi/ansicolortags/
@@ -17,9 +17,9 @@ ciclope - computed tomography to finite elements
 .. |PyPI pyversions| image:: https://img.shields.io/pypi/pyversions/ciclope.svg
    :target: https://pypi.python.org/pypi/ansicolortags/
 
-.. image:: https://readthedocs.org/projects/ciclope/badge/?version=latest
-:target: https://ciclope.readthedocs.io/en/latest/?badge=latest
-:alt: Documentation Status
+.. |Docs| image:: https://readthedocs.org/projects/ciclope/badge/?version=latest
+   :target: https://ciclope.readthedocs.io/en/latest/?badge=latest
+   :alt: Documentation Status
 
 **ciclope** is an open-source Python package that processes micro Computed Tomography (microCT) 3D images to generate Finite Element (FE) models.
 
