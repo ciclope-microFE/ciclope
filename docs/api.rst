@@ -34,6 +34,9 @@ Data pre-processing
    :undoc-members:
    :show-inheritance:
 
+MicroCT reconstruction utilities
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 .. automodule:: ciclope.utils.recon_utils
    :members:
    :undoc-members:
@@ -46,3 +49,4 @@ Post-processing of FE results
    :members:
    :undoc-members:
    :show-inheritance:
+

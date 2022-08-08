@@ -1,25 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-Tomographic reconstruction image processing utilities.
-
-"""
-
-"""
-2DO:
-- 2D bbox
-- fast touint8
-- latex report
+MicroCT image processing utilities.
 
 """
 
 __author__ = 'Gianluca Iori'
 __date_created__ = '2021-03-28'
-__date__ = '2022-04-30'
-__copyright__ = 'Copyright (c) 2021, JC|MSK'
+__date__ = '2022-08-08'
+__copyright__ = 'Copyright (c) 2022, ORMIR'
 __docformat__ = 'restructuredtext en'
 __license__ = "MIT"
-__version__ = "1.2"
+__version__ = "1.3"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -30,111 +22,144 @@ import dxchange
 import tifffile
 import matplotlib.pyplot as plt
 
-def convert8bit(rec, data_min, data_max, numexpr=True):
-    rec = rec.astype(np.float32, copy=False)
-    df = np.float32(data_max-data_min)
-    mn = np.float32(data_min)
-
-    if numexpr:
-        import numexpr as ne
-
-        scl = ne.evaluate('0.5+255*(rec-mn)/df', truediv=True)
-        ne.evaluate('where(scl<0,0,scl)', out=scl)
-        ne.evaluate('where(scl>255,255,scl)', out=scl)
-        return scl.astype(np.uint8)
-    else:
-        rec = 0.5+255*(rec-mn)/df
-        rec[rec<0]=0
-        rec[rec>255]=255
-        return np.uint8(rec)
-
-def touint8(data, range=None, quantiles=None, numexpr=True):
+def touint8(data_3D, range=None, quantiles=None, numexpr=True):
     """Normalize and convert data to uint8.
 
-        Parameters
-        ----------
-        data
-            Input data.
-        range : [float, float]
-            Control range for data normalization.
-        quantiles : [float, float]
-            Define range for data normalization through input data quantiles. If range is given this input is ignored.
-        numexpr : bool
-            Use fast numerical expression evaluator for NumPy (memory expensive).
+    Parameters
+    ----------
+    data_3D
+        Input data.
+    range : [float, float]
+        Control range for data normalization.
+    quantiles : [float, float]
+        Define range for data normalization through input data quantiles. If range is given this input is ignored.
+    numexpr : bool
+        Use fast numerical expression evaluator for NumPy (memory expensive).
 
-        Returns
-        -------
-        output : uint8
-            Normalized data.
-        """
+    Returns
+    -------
+    output : uint8
+        Normalized data.
+    """
+
+    def convert8bit():
+
+        data_3D_float = data_3D.astype(np.float32, copy=False)
+        df = np.float32(data_max - data_min)
+        mn = np.float32(data_min)
+
+        if numexpr:
+            import numexpr as ne
+
+            scl = ne.evaluate('0.5+255*(data_3D_float-mn)/df', truediv=True)
+            ne.evaluate('where(scl<0,0,scl)', out=scl)
+            ne.evaluate('where(scl>255,255,scl)', out=scl)
+            return scl.astype(np.uint8)
+        else:
+            data_3D_float = 0.5 + 255 * (data_3D_float - mn) / df
+            data_3D_float[data_3D_float < 0] = 0
+            data_3D_float[data_3D_float > 255] = 255
+            return np.uint8(data_3D_float)
 
     if range == None:
 
         # if quantiles is empty data is scaled based on its min and max values
         if quantiles == None:
-            data_min = np.nanmin(data)
-            data_max = np.nanmax(data)
+            data_min = np.nanmin(data_3D)
+            data_max = np.nanmax(data_3D)
             data_max = data_max - data_min
-            return convert8bit(data, data_min, data_max, numexpr)
+            return convert8bit()
         else:
-            [q0, q1] = np.quantile(np.ravel(data), quantiles)
-            return convert8bit(data, q0, q1, numexpr)
+            [data_min, data_max] = np.quantile(np.ravel(data_3D), quantiles)
+            return convert8bit()
 
     else:
         # ignore quantiles input if given
         if quantiles is not None:
             print('quantiles input ignored.')
 
-        return convert8bit(data, range[0], range[1], numexpr)
+        data_min = range[0]
+        data_max = range[1]
+        return convert8bit()
 
-def to01(I):
+def to01(data_3D):
     """Normalize data to 0-1 range.
 
     Parameters
     ----------
-    I
+    data_3D
         Input data.
 
     Returns
     -------
-    I : float32
+    data_3D : float32
         Normalized data.
     """
     import numexpr as ne
 
-    I = I.astype(np.float32, copy=False)
-    data_min = np.nanmin(I)
-    data_max = np.nanmax(I)
+    data_3D = data_3D.astype(np.float32, copy=False)
+    data_min = np.nanmin(data_3D)
+    data_max = np.nanmax(data_3D)
     df = np.float32(data_max - data_min)
     mn = np.float32(data_min)
-    scl = ne.evaluate('(I-mn)/df', truediv=True)
+    scl = ne.evaluate('(data_3D-mn)/df', truediv=True)
     return scl.astype(np.float32)
 
-def writemidplanes(data, filename_out):
-    # write orthogonal mid-planes through 3D dataset
-    if data.ndim == 3:
-        filename, ext = os.path.splitext(filename_out)
+def writemidplanes(data_3D, fileout):
+    """Plot orthogonal mid-planes through 3D dataset and save them as images.
+    Uses pypng for writing .PNG files.
+
+    Parameters
+    ----------
+    data
+        Input 3D image data.
+    fileout : str
+        Output .PNG image file name.
+    """
+
+    if data_3D.ndim == 3:
+        filename, ext = os.path.splitext(fileout)
         with open(filename + '_XY.png', 'wb') as midplaneXY:
-            pngWriter = png.Writer(data.shape[2], data.shape[1], greyscale=True, alpha=False, bitdepth=8)
-            pngWriter.write(midplaneXY, touint8(data[int(data.shape[0] / 2), :, :]))
+            pngWriter = png.Writer(data_3D.shape[2], data_3D.shape[1], greyscale=True, alpha=False, bitdepth=8)
+            pngWriter.write(midplaneXY, touint8(data_3D[int(data_3D.shape[0] / 2), :, :]))
 
         with open(filename + '_XZ.png', 'wb') as midplaneXZ:
-            pngWriter = png.Writer(data.shape[2], data.shape[0], greyscale=True, alpha=False, bitdepth=8)
-            pngWriter.write(midplaneXZ, touint8(data[:, int(data.shape[1] / 2), :]))
+            pngWriter = png.Writer(data_3D.shape[2], data_3D.shape[0], greyscale=True, alpha=False, bitdepth=8)
+            pngWriter.write(midplaneXZ, touint8(data_3D[:, int(data_3D.shape[1] / 2), :]))
 
         with open(filename + '_YZ.png', 'wb') as midplaneYZ:
-            pngWriter = png.Writer(data.shape[1], data.shape[0], greyscale=True, alpha=False, bitdepth=8)
-            pngWriter.write(midplaneYZ, touint8(data[:, :, int(data.shape[2] / 2)]))
+            pngWriter = png.Writer(data_3D.shape[1], data_3D.shape[0], greyscale=True, alpha=False, bitdepth=8)
+            pngWriter.write(midplaneYZ, touint8(data_3D[:, :, int(data_3D.shape[2] / 2)]))
 
-def writemidplanesDxchange(data, filename_out):
-    if data.ndim == 3:
-        filename, ext = os.path.splitext(filename_out)
-        dxchange.writer.write_tiff(touint8(data[int(data.shape[0] / 2), :, :]), fname=filename+'_XY.tiff', dtype='uint8')
-        dxchange.writer.write_tiff(touint8(data[:, int(data.shape[1] / 2), :]), fname=filename + '_XZ.tiff', dtype='uint8')
-        dxchange.writer.write_tiff(touint8(data[:, :, int(data.shape[2] / 2)]), fname=filename + '_YZ.tiff', dype='uint8')
+def writemidplanesDxchange(data_3D, fileout):
+    """Plot orthogonal mid-planes through 3D dataset and save them as images.
+    Uses DXchange for writing .TIFF files.
+
+    Parameters
+    ----------
+    data_3D
+        Input 3D image data.
+    fileout : str
+        Output .PNG image file name.
+    """
+
+    if data_3D.ndim == 3:
+        filename, ext = os.path.splitext(fileout)
+        dxchange.writer.write_tiff(touint8(data_3D[int(data_3D.shape[0] / 2), :, :]), fname=filename+'_XY.tiff', dtype='uint8')
+        dxchange.writer.write_tiff(touint8(data_3D[:, int(data_3D.shape[1] / 2), :]), fname=filename + '_XZ.tiff', dtype='uint8')
+        dxchange.writer.write_tiff(touint8(data_3D[:, :, int(data_3D.shape[2] / 2)]), fname=filename + '_YZ.tiff', dype='uint8')
 
 def plot_midplanes(data_3D, slice_x=-1, slice_y=-1, slice_z=-1):
-    # Plot midplanes of 3D data
+    """Plot orthogonal cross-sections through 3D dataset.
+
+    Parameters
+    ----------
+    data_3D
+        Input 3D image data.
+    fileout : str
+        Output .PNG image file name.
+    """
+
     if slice_x == -1:
         slice_x = int(data_3D.shape[1] / 2)
     if slice_y == -1:
@@ -272,5 +297,21 @@ def bbox(bw, pad=0, dsize=None, verbose=None):
     if bw.ndim == 2:
         raise IOError('bbox method for 2D images not implemented yet.')
 
-def crop(I, crop_origin, crop_size):
-    return I[crop_origin[2]:crop_origin[2] + crop_size[2], crop_origin[0]:crop_origin[0] + crop_size[0], crop_origin[1]:crop_origin[1] + crop_size[1]]
+def crop(data_3D, crop_origin, crop_size):
+    """Crop 3D image given crop origin and size.
+
+    Parameters
+    ----------
+    data_3D
+        Input data.
+    crop_origin : [int, int, int]
+        Crop origin [Z,Y,X].
+    crop_size : [int, int, int]
+        Crop size [Z,Y,X].
+
+    Returns
+    -------
+    output
+        Cropped data.
+    """
+    return data_3D[crop_origin[2]:crop_origin[2] + crop_size[2], crop_origin[0]:crop_origin[0] + crop_size[0], crop_origin[1]:crop_origin[1] + crop_size[1]]

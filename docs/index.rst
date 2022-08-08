@@ -34,7 +34,6 @@ The project is licensed under `the MIT License <https://opensource.org/licenses/
    :caption: Contents:
 
    about
-   test
    install
    usage
    examples

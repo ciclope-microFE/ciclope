@@ -1,4 +1,4 @@
-name: CT2FE
+name: ciclope
 channels:
   - conda-forge
   - defaults
@@ -25,3 +25,4 @@ dependencies:
       - ipykernel
       - PyMCubes
       - ccx2paraview
+      - ciclope
