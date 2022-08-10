@@ -37,7 +37,7 @@ The python package `ciclope` processes micro Computed Tomography (microCT) data 
 # Statement of need
 - microCT to finite elements pipelines are used to..
 - our science case is musculoskeletal imaging but can be applied also to.. (examples)
-- a variety of different pipelines was proposed `[@fernandez_nonlinear_2022; @megias_numerical_2022; @kox_heterogeneous_2022]`, none of which is fully open-source. As a result validation and comparison of results remains challenging.
+- a variety of different pipelines was proposed [@fernandez_nonlinear_2022; @megias_numerical_2022; @kox_heterogeneous_2022], none of which is fully open-source. As a result validation and comparison of results remains challenging.
 
 # Citations
 
