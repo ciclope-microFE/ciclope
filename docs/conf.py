@@ -57,6 +57,9 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 # Mapping of kernel name: replace with standard python3 kernel
 nb_kernel_rgx_aliases = {"ct2fe": "python3"}
 
+# To turn off notebook execution
+jupyter_execute_notebooks = "off"
+
 # -- Options for HTML output -------------------------------------------------
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
