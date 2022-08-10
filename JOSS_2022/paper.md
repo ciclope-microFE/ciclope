@@ -21,7 +21,7 @@ affiliations:
   - name: School of Mechanical and Design Engineering, University of Portsmouth, UK
     index: 2
 date: 05 August 2022
-bibliography: paper.bib
+bibliography: pippo.bib
 
 # Optional fields if submitting to a AAS journal too, see this blog post:
 # https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
@@ -35,9 +35,9 @@ The python package `ciclope` processes micro Computed Tomography (microCT) data 
 
 
 # Statement of need
-
-The python package `ciclope` processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models.
-
+- microCT to finite elements pipelines are used to..
+- our science case is musculoskeletal imaging but can be applied also to.. (examples)
+- a variety of different pipelines was proposed `[@fernandez_nonlinear_2022; @megias_numerical_2022; @kox_heterogeneous_2022]`, none of which is fully open-source. As a result validation and comparison of results remains challenging.
 
 # Citations
 
