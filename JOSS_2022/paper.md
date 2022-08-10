@@ -39,9 +39,9 @@ The python package `ciclope` processes micro Computed Tomography (microCT) data 
 - We present a fully-open-source pipeline from microCT data preprocessing to FE model generation, solution and postprocessing (visualization) of results.
 
 # Design
+![Design of ciclope, and application to a common pipeline for FE model generation from microCT data. \label{fig:design}](./../docs/ciclope_design.png)
 A typical pipeline for FE model generation from 3D microCT data is shown in figure \autoref{fig:design}.
-![Design of ciclope, and application to a common pipeline for FE model generation from microCT data.\label{fig:design}](./../docs/ciclope_design.png)
-The package is composed of a core module containing methods for FE model generation (`ciclope.core`), and a module of utilities for image and FE model pre- and post-processing (`ciclope.utils` ).
+The package is composed of a core module containing methods for FE model generation (`ciclope.core`), and a module of utilities for image and FE model pre- and post-processing (`ciclope.utils`).
 
 Figure sizes can be customized by adding an optional second parameter:
 ![Caption for example figure.](figure.png){ width=20% }
