@@ -217,11 +217,11 @@ def plot_projections(data_3D, projection='max'):
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
 
-    if projection is 'max':
+    if projection=='max':
         ax1.imshow(np.max(data_3D, 0))
         ax2.imshow(np.max(data_3D, 1))
         ax3.imshow(np.max(data_3D, 2))
-    elif projection is 'min':
+    elif projection=='min':
         ax1.imshow(np.min(data_3D, 0))
         ax2.imshow(np.min(data_3D, 1))
         ax3.imshow(np.min(data_3D, 2))
