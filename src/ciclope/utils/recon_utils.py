@@ -156,21 +156,47 @@ def plot_midplanes(data_3D, slice_x=-1, slice_y=-1, slice_z=-1):
     ----------
     data_3D
         Input 3D image data.
-    fileout : str
-        Output .PNG image file name.
+    slice_x : int
+        X-slice number.
+    slice_y : int
+        Y-slice number.
+    slice_z : int
+        Z-slice number.
     """
 
     if slice_x == -1:
-        slice_x = int(data_3D.shape[1] / 2)
+        slice_x = int(data_3D.shape[2] / 2)
     if slice_y == -1:
-        slice_y = int(data_3D.shape[2] / 2)
+        slice_y = int(data_3D.shape[1] / 2)
     if slice_z == -1:
         slice_z = int(data_3D.shape[0] / 2)
 
     fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
     ax1.imshow(data_3D[slice_z, :, :])
-    ax2.imshow(data_3D[:, slice_x, :])
-    ax3.imshow(data_3D[:, :, slice_y])
+    ax2.imshow(data_3D[:, slice_y, :])
+    ax3.imshow(data_3D[:, :, slice_x])
+
+def plot_projections(data_3D, projection='max'):
+    """Plot orthogonal projections of 3D dataset.
+
+    Parameters
+    ----------
+    data_3D
+        Input 3D image data.
+    projection : str
+        Projection method. Available choices are 'max', 'min'.
+    """
+
+    fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+
+    if projection is 'max':
+        ax1.imshow(np.max(data_3D, 0))
+        ax2.imshow(np.max(data_3D, 1))
+        ax3.imshow(np.max(data_3D, 2))
+    elif projection is 'min':
+        ax1.imshow(np.min(data_3D, 0))
+        ax2.imshow(np.min(data_3D, 1))
+        ax3.imshow(np.min(data_3D, 2))
 
 def read_tiff_stack(filename, range=None, zfill=4):
     """Read stack of tiff files. Searches all files in parent folder and opens them as a stack of images.
