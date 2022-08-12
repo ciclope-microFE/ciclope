@@ -8,7 +8,11 @@ import sys
 # sys.path.append('/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib')
 sys.path.append('/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages')
 
-from paraview.simple import *
+try:
+    from paraview.simple import *
+except ImportError:
+    import warnings
+    warnings.warn("ParaView.simple is required!", RuntimeWarning)
 
 def paraview_plot(filein, fileout=None, slicenormal="XYZ", RepresentationType="Surface", Crinkle=False, ColorBy="S_Mises", Roll=0, ImageResolution=[1280, 960], TransparentBackground=True, ColorMap='Viridis (matplotlib)'):
     """Plot field data using ParaView.
