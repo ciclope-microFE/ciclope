@@ -23,7 +23,6 @@ ciclope - computed tomography to finite elements
 
 **ciclope** is an open-source Python package that processes micro Computed Tomography (microCT) 3D images to generate Finite Element (FE) models.
 
-
 License
 -------
 
@@ -38,6 +37,7 @@ The project is licensed under `the MIT License <https://opensource.org/licenses/
    usage
    examples
    api
+   acknowledgements
 
 Indices and tables
 ==================

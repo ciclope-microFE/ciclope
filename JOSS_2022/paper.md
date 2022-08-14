@@ -12,6 +12,16 @@ authors:
   - name: Gianluca Iori
     orcid: 0000-0001-8611-3281
     affiliation: 1
+  - name: Fulvia Taddei
+    orcid: 0000-0002-8342-7434
+    affiliation: 3
+  - name: Enrico Schileo
+    orcid: 0000-0003-3515-1231
+    affiliation: 3
+  - name: Gianluigi Crimi
+    affiliation: 3
+  - name: Giulia Fraterrigo
+    affiliation: 3
   - name: Martino Pani
     orcid: 0000-0002-5786-4462
     affiliation: 2
@@ -20,13 +30,11 @@ affiliations:
     index: 1
   - name: School of Mechanical and Design Engineering, University of Portsmouth, UK
     index: 2
-date: 05 August 2022
+  - name: Rizzoli Orthopaedic Institute, Bologna, Italy
+  - index: 3
+date: 14 August 2022
 bibliography: pippo.bib
 
-# Optional fields if submitting to a AAS journal too, see this blog post:
-# https://blog.joss.theoj.org/2018/12/a-new-collaboration-with-aas-publishing
-# aas-doi: 10.3847/xxxxx <- update this with the DOI from AAS once you know it.
-# aas-journal: Astrophysical Journal <- The name of the AAS journal.
 ---
 
 # Summary
@@ -44,33 +52,25 @@ We present a fully-open-source pipeline from microCT data preprocessing to FE mo
 Our science case is musculoskeletal imaging, but can microCT-derived FE models be applied to various fields (add examples)
 
 # Design
-![Design of ciclope, and application to a common pipeline for FE model generation from microCT data. \label{fig:design}](./../docs/ciclope_design.png)
-The central diagram of figure \autoref{fig:design} illustrates a pipeline for the generation, solution, and postprocessing of results from a microFE model derived from 3D, microCT data.
-The pipeline is composed of the following steps:
-1. **microCT image pre-processing**: after reading in python a microCT dataset, the 3D volume can be cropped and aligned according to the desired direction of load, smoothed to remove noise with a Gaussian kernel, and resampled to lower image resolution. A binary mask of the bone tissue is generated thresholding bone voxels. Several global (Otsu; Ridler_1978) or local adaptive thresholding (refs) techniques have been proposed (Kim 2006). Embedding layers and steel caps can be added to simulate the experimental conditions of mechanical testing. 
-2. **mesh generation**:
-3. **FE model generation**:
-   3.1. **Material mapping**: Uniform tissue material properties (elastic modulus and poisson ratio) are generally applied to all bone voxels. Alternatively, voxel grey values (GV) can be converted to bone mineral density (BMD) through a calibration rule obtained scanning a hydroxyapatite phantom. After this, an empirical law is used to convert local BMD to tissue elastic moduli (Bourne_2004; garcia_2008). 
-4. **FE model solution**:
+![Design of ciclope, and application to a pipeline for FE model generation from microCT data.\label{fig:design}](./../docs/ciclope_design.png)
+**Ciclope** is composed of a core library of modules for FE model generation (`ciclope.core`), and a library of utilities for image and FE model pre- and post-processing (`ciclope.utils`).
 
-(ii) a core module for the generation of a microFE model from the pre-processed dataset, (iii) model solution with an open-source FE solver and (iv) post-processing of results and 3D visualization routines. 
-The python script stack2Abaqus.py converts the preprocessed 3D dataset to a microFE input model file for solution with the open-source code CalculiX or with the commercial software ABAQUS. Image voxels are directly converted to 8-node hexahedral brick elements. The user can define either constant material properties or separate material mapping laws for different GV ranges. In this way, different material properties can be applied, for example, to bone tissue and steel or embedding material. Automatically generated boundary node sets are used to prescribe a uniaxial compression test up to 1% strain. The model is solved with a multi threaded version of CalculiX. The sample stiffness is calculated from the displacements and reaction forces written by CalculiX in separate output files. The visualization of the deformed 3D structure in Paraview is also illustrated after conversion with ccx2paraview.
+The central part of figure \autoref{fig:design} illustrates a pipeline for the generation and solution of a FE model derived from 3D microCT data. **Image pre-processing**: a microCT dataset is loaded in python and segmented to isolate bone voxels and background. A connectivity check is performed to remove spurious, unconnected structures. The 3D image can be smoothed, rotated, cropped and resampled to lower resolution. Embedding layers and steel caps can be added to simulate experimental conditions of mechanical testing. **Meshing**: **ciclope** allows to create several types of FE meshes. Image voxels can be directly converted to 8-node, hexahedral brick elements with the `voxelFE.py` module. Alternatively, meshes of 4-node tetrahedra can be generated with [@cgal] (`tetraFE.py` module). Finally, the `trussFE.py` module allows to generate a mesh of 2-node beam elements, where each beam represents a single trabecula, and has a local trabecular thickness associated to it. **FE model generation**: the mesh is converted to an `.INP` input file for the FE solver. Within this process, the user can define the model material properties and the type of FE analysis (i.e. boundary conditions, analysis type and steps, requested outputs) through separate `.TMP` template files. Libraries of `material_properties` and `input_templates` are provided. Additional resources can be found online [here](https://github.com/calculix/examples) and [here](https://github.com/calculix/mkraska). For voxel-FE model generation, different **material mapping** strategies can be used: uniform tissue material properties (elastic modulus and poisson ratio) can be applied to all bone voxels. Alternatively, the voxel grey values (GV) can be converted to heterogeneous material properties using a mapping law defined by the user. **FE model solution**: the `.INP` files generated by **ciclope** can be solved using the free software [CalculiX](https://github.com/calculix) [@calculix] or [Abaqus](https://www.3ds.com/products-services/simulia/products/abaqus/)
 
-## Ciclope modules
-The package is composed of a core module containing methods for FE model generation (`ciclope.core`), and a module of utilities for image and FE model pre- and post-processing (`ciclope.utils`).
+[comment]: <> (bone mineral density BMD through a calibration rule obtained scanning a hydroxyapatite phantom. After this, an empirical law is used to convert local BMD to tissue elastic moduli Bourne_2004; garcia_2008.)
+[comment]: <> (The pipeline is composed of the following steps:)
+[comment]: <> (1. **microCT image pre-processing**: after reading in python a microCT dataset, the 3D volume can be cropped and aligned according to the desired direction of load, smoothed to remove noise with a Gaussian kernel, and resampled to lower image resolution. A binary mask of the bone tissue is generated thresholding bone voxels. Several global Otsu; Ridler_1978, or local adaptive thresholding ,..., techniques have been proposed Kim 2006. Embedding layers and steel caps can be added to simulate the experimental conditions of mechanical testing.) 
 
 Figure sizes can be customized by adding an optional second parameter:
 ![Caption for example figure.](figure.png){ width=20% }
 
 ## The ciclope ecosystem
-**Ciclope** requires several dependencies. The following is a list of the main external packages required for FE model generation and solution:
-* All mesh exports (voxel and tetrahedra Finite Elements) are performed with the [meshio](https://github.com/nschloe/meshio) module.
-* Tetrahedra meshes are generated with [pygalmesh](https://github.com/nschloe/pygalmesh) (a Python frontend to [CGAL](https://www.cgal.org/)).
-* High-resolution surface meshes for visualization are generated with the [PyMCubes](https://github.com/pmneila/PyMCubes) module.
-* **Ciclope** generates Finite Element `.INP` files that can be solved using both [CalculiX](https://github.com/calculix) and [Abaqus](https://www.3ds.com/products-services/simulia/products/abaqus/).
-* The definition of material properties and of the FE analysis parameters (e.g. boundary conditions, simulation steps..) is handled through separate template files. The folders [material_properties](https://github.com/gianthk/ciclope/tree/master/material_properties) and [input_templates](https://github.com/gianthk/ciclope/tree/master/input_templates) contain a library of template files that can be used to generate FE simulations.
-  * Additional libraries of [CalculiX](https://github.com/calculix) examples and template files can be found [here](https://github.com/calculix/examples) and [here](https://github.com/calculix/mkraska)
-* For the post-processing of FE results, **ciclope** uses [ParaView](https://www.paraview.org/) and the CalculiX to ParaView converter [`ccx2paraview`](https://github.com/calculix/ccx2paraview).
+**Ciclope** relies on several dependencies:
+* Voxel and tetrahedra mesh exports are performed with [meshio](https://github.com/nschloe/meshio) [@meshio].
+* Tetrahedra meshes are generated with [pygalmesh](https://github.com/nschloe/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/) [@pygalmesh].
+* High-resolution surface meshes for visualization are generated with [PyMCubes](https://github.com/pmneila/PyMCubes).
+* For the post-processing of FE results, [ParaView](https://www.paraview.org/) [@paraview] and the CalculiX to ParaView converter [`ccx2paraview`](https://github.com/calculix/ccx2paraview) [@ccx2paraview] are used.
+* Dxchange [@decarlo_2014]
 
 ## Usage
 Both modules can be imported and used within Python.
