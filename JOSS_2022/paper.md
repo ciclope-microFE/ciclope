@@ -12,27 +12,28 @@ authors:
   - name: Gianluca Iori
     orcid: 0000-0001-8611-3281
     affiliation: 1
+	corresponding: true
   - name: Fulvia Taddei
     orcid: 0000-0002-8342-7434
-    affiliation: 3
+    affiliation: 2
   - name: Enrico Schileo
     orcid: 0000-0003-3515-1231
-    affiliation: 3
+    affiliation: 2
   - name: Gianluigi Crimi
-    affiliation: 3
+	affiliation: 2
   - name: Giulia Fraterrigo
-    affiliation: 3
+    affiliation: 2
   - name: Martino Pani
     orcid: 0000-0002-5786-4462
-    affiliation: 2
+    affiliation: 3
 affiliations:
   - name: Synchrotron-light for Experimental Science and Applications in the Middle East, Jordan
     index: 1
-  - name: School of Mechanical and Design Engineering, University of Portsmouth, UK
-    index: 2
   - name: Rizzoli Orthopaedic Institute, Bologna, Italy
-  - index: 3
-date: 14 August 2022
+    index: 2
+  - name: School of Mechanical and Design Engineering, University of Portsmouth, UK
+    index: 3
+date: 15 August 2022
 bibliography: pippo.bib
 
 ---
