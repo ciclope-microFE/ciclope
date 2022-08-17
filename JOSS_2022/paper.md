@@ -10,7 +10,7 @@ tags:
   - simulation
   - biomechanics
 
-  - authors:
+authors:
   - name: Gianluca Iori
     orcid: 0000-0001-8611-3281
     affiliation: 1
