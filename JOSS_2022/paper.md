@@ -57,7 +57,7 @@ We present a fully-open-source pipeline from microCT data preprocessing to FE mo
 Our science case is musculoskeletal imaging, but can microCT-derived FE models be applied to various fields (add examples)
 
 # Design
-**Ciclope** is composed of a core library of modules for FE model generation (`ciclope.core`), and a library of utilities for image and FE model pre- and post-processing (==ciclope.utils==) that can be imported and used within Python. Additionally, the `ciclope.py` script generated during package installation <mark>ciclope.py</mark> allows to launch microCT-to-FE pipelines directly from the commandline.
+**Ciclope** is composed of a core library of modules for FE model generation (`ciclope.core`), and a library of utilities for image and FE model pre- and post-processing (*ciclope.utils*) that can be imported and used within Python. Additionally, the `ciclope.py` script generated during package installation *ciclope.py* allows to launch microCT-to-FE pipelines directly from the commandline.
 
 ![Design of ciclope, and application to a pipeline for FE model generation from microCT data.\label{fig:design}](./../docs/ciclope_design.png){width=100%}
 
