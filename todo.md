@@ -8,11 +8,19 @@
 - [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
+### JOSS paper
+- [ ] fix all refs
+- [ ] intro
+- [ ] archive on Zenodo
+- [ ] fig:examples
+  - [X] caption 
+- [ ] upload LHDL reproduction dataset to Zenodo
+
 ### Documentation
 - [ ] comment FULL notebooks
-- [ ] Read The Docs page
-  - [ ] [`sphinx-build -nW --keep-going -b html docs/ docs/_build/html`](https://www.sphinx-doc.org/en/master/man/sphinx-build.html)
-  - [ ] import documentation
+- [X] Read The Docs page
+  - [X] [`sphinx-build -nW --keep-going -b html docs/ docs/_build/html`](https://www.sphinx-doc.org/en/master/man/sphinx-build.html)
+  - [X] import documentation
   - [ ] clean API reference
   - [X] clean notebooks Examples
   - [ ] usage
