@@ -9,8 +9,8 @@
 - [X] voxelFE: mesh2voxelFE
 
 ### JOSS paper
-- [ ] fix all refs
-- [ ] intro
+- [X] fix all refs
+- [X] intro
 - [ ] archive on Zenodo
 - [ ] fig:examples
   - [X] caption 
