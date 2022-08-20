@@ -198,5 +198,5 @@ The example shows how to:
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
 
-## acknowledgements
+## Acknowledgements
 This project was partially developed during the Jupyter Community Workshop [“Building the Jupyter Community in Musculoskeletal Imaging Research”](https://github.com/JCMSK/2022_JCW) sponsored by [NUMFocus](https://numfocus.org/).

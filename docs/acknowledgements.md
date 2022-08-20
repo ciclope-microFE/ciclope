@@ -1,2 +1,2 @@
-## acknowledgements
+## Acknowledgements
 This project was partially developed during the Jupyter Community Workshop [“Building the Jupyter Community in Musculoskeletal Imaging Research”](https://github.com/JCMSK/2022_JCW) sponsored by [NUMFocus](https://numfocus.org/).
