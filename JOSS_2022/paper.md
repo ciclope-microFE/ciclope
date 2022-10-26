@@ -43,8 +43,8 @@ bibliography: paper.bib
 ---
 
 # Summary
-The Python package `ciclope` processes micro computed tomography images to generate finite element models. 
-`Ciclope` is aimed to provide reproducible and fully open-source pipelines for simulating the mechanical behaviour of trabecular bone using Finite Element models.
+The Python package `ciclope` processes micro Computed Tomography images to generate Finite Element models. 
+`Ciclope` is aimed to provide reproducible and fully open-source pipelines for simulating the mechanical behaviour of trabecular bone using the Finite Element method.
 
 # Statement of need
 Micro Finite Element (microFE) models derived from micro Computed Tomography (microCT) volumetric data can provide non-destructive assessments of mechanical properties of trabecular bone. The technique is used to investigate the effect of pathologies, treatment and remodelling on the mechanical response of bone at the tissue level, and is applied both to human and animal samples. Linear elastic microFE simulations are implemented to back-calculate the tissue elastic modulus [@bayraktar_comparison_2004], understand deformation mechanisms [@zauel_comparison_2005], or predict failure [@pistoia_estimation_2002] of trabecular bone, as well as to estimate the stiffness of whole bones from small animals [@oliviero_optimization_2020].
@@ -61,7 +61,7 @@ We present the Python package `ciclope`: a fully open-source pipeline from micro
 
 ![Design of ciclope, and application to a pipeline for FE model generation from microCT data.\label{fig:design}](./../docs/ciclope_design.png){width=100%}
 
-A pipeline for the generation and solution of a FE model derived from 3D microCT data is shown in the central part of figure \autoref{fig:design}.
+A pipeline for the generation and solution of a FE model derived from 3D microCT data is shown in the central part of \autoref{fig:design}.
 **Image preprocessing**: a microCT dataset is loaded as a `NumPy` `ndarray` within Python and segmented to isolate bone voxels and background using the Otsu's method provided by `scikit-image` [@walt_scikit-image_2014]. A connectivity check is performed to remove isolated cluster of voxels, that the segmentation might have disconnected from the main structure. According to the user's needs, additional image processing can be applied for smoothing, cropping, resampling and rotating the dataset using the `SciPy` [@virtanen_scipy_2020] and `scikit-image` Python libraries. Furthermore, additional layers of material can be added at the top and bottom surfaces of the sample should the user need to replicate the effect of endcaps in the actual mechanical testing conditions.
 **Meshing**: `ciclope` allows to create two types of FE meshes. Image voxels can be directly converted to 8-node, hexahedral brick elements with the `voxelFE.py` module. Alternatively, meshes of 4-node tetrahedra can be generated calling `CGAL` [@the_cgal_project_cgal_2022] through the `tetraFE.py` module. 
 
@@ -84,7 +84,7 @@ A pipeline for the generation and solution of a FE model derived from 3D microCT
 [comment]: <> (Dxchange @decarlo_2014)
 
 # Examples
-`Ciclope` contains a library of `Jupyter` notebooks of example applications in the field of computational biomechanics \autoref{fig:examples}. The main use case is a pipeline for the generation of microFE models from microCT scans of trabecular bone \autoref{fig:examples}A. The simulation (linear-elastic) of a mechanical compression test is used to back-calculate the apparent elastic modulus of trabecular bone. This procedure is demonstrated using hexahedra (voxel, \autoref{fig:examples}B), and tetrahedra (\autoref{fig:examples}C) finite elements. Two approaches for the local mapping of material inhomogeneities are illustrated using voxel and tetrahedra FE. Each example can be run within `Jupyter` or executed from the commandline with the `ciclope.py` script. `Ciclope` can be applied to microCT scans other than trabecular bone, such as whole teeth, or metal foams.
+`Ciclope` contains a library of `Jupyter` notebooks of example applications in the field of computational biomechanics (\autoref{fig:examples}). The main use case is a pipeline for the generation of microFE models from microCT scans of trabecular bone (\autoref{fig:examples}A). The simulation (linear-elastic) of a mechanical compression test is used to back-calculate the apparent elastic modulus of trabecular bone. This procedure is demonstrated using hexahedra (voxel, \autoref{fig:examples}B), and tetrahedra (\autoref{fig:examples}C) finite elements. Two approaches for the local mapping of material inhomogeneities are illustrated using voxel and tetrahedra FE. Each example can be run within `Jupyter` or executed from the commandline with the `ciclope.py` script. `Ciclope` can be applied to microCT scans other than trabecular bone, such as whole teeth, or metal foams.
 
 ![MicroFE models of trabecular bone generated from 3D microCT images with `ciclope`. (A) Input microCT volume data. (B) Hexahedra, and (C) tetrahedra finite element models generated with the `voxelFE.py` and `tetraFE.py` modules, respectively.\label{fig:examples}](examples.png){width=100%}
 
