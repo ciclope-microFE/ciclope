@@ -11,13 +11,12 @@
 ### JOSS paper
 - [X] fix all refs
 - [X] intro
-- [ ] archive on Zenodo
-- [ ] fig:examples
+- [X] fig:examples
   - [X] caption 
 - [ ] upload LHDL reproduction dataset to Zenodo
 
 ### Documentation
-- [ ] comment FULL notebooks
+- [X] comment FULL notebooks
 - [X] Read The Docs page
   - [X] [`sphinx-build -nW --keep-going -b html docs/ docs/_build/html`](https://www.sphinx-doc.org/en/master/man/sphinx-build.html)
   - [X] import documentation
@@ -41,14 +40,13 @@
       - [X] `mesh2tetrafe`
     - [X] as a script
     - [ ] prefect flow 
-- [ ] add package to [jcmsk packages](https://jcmsk.github.io/packages.html)
+- [X] add package to [ORMIR packages](https://ormircommunity.github.io/packages.html)
 - [X] add picture of CT 2 FE `ciclope.main()` pipeline
 - [X] Ex01 and Ex02 from JCW_2022 notebook pipelines (voxel and tetra)
 - [X] add installation notes 2 readme
 - [X] link to [CalculiX examples](https://github.com/calculix/examples/tree/master/materials)
 
 ### Pre-processing
-- [ ] purge_mesh
 - [x] add caps
 - [X] write midplanes images (.PNG)
 - [X] 3D dataset embedding
@@ -56,6 +54,7 @@
 - [X] merge `pybonemorph` to `ciclope.utils.preprocess`
 - [X] Center Of Mass
 - [X] periosteum mask
+- [ ] purge_mesh
 - [ ] endosteum contour
 - [ ] cortical bone mask
 
@@ -77,7 +76,6 @@
   - [X] rescale U3 to reach 2 kN
   - [X] comment NB
   - [X] multi-material tetrahedra-FE (tooth+embedding)
-  - [ ] (?) rotate tooth before embedding
 - [ ] Example **prefect** pipeline
   - [X] launch pipeline from master CSV table
   - [X] ciclope voxelFE pipeline
