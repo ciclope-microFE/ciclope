@@ -8,12 +8,18 @@
 - [X] voxelFE: vol2ugrid (in meshio format!)
 - [X] voxelFE: mesh2voxelFE
 
-### JOSS paper
-- [X] fix all refs
-- [X] intro
-- [X] fig:examples
-  - [X] caption 
-- [ ] upload LHDL reproduction dataset to Zenodo
+### JOSS paper review
+- [ ] upload LHDL reproduction dataset to Zenodo or github
+- [ ] ethics LHDL dataset
+- [ ] single trabecula test dataset upload
+**Tests:**
+- [X] preprocess.remove_unconnected
+- [X] voxelFE.vol2ugrid
+- [X] voxelFE.mesh2voxelfe
+- [X] tetraFE.shell_mesh
+- [ ] tetraFE.cgal_mesh
+- [ ] tetraFE.mesh2tetrafe
+- [ ] everything with `unittest`
 
 ### Documentation
 - [X] comment FULL notebooks
