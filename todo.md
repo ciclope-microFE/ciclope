@@ -11,15 +11,15 @@
 ### JOSS paper review
 - [ ] upload LHDL reproduction dataset to Zenodo or github
 - [ ] ethics LHDL dataset
-- [ ] single trabecula test dataset upload
+- [X] single trabecula test dataset upload
 **Tests:**
 - [X] preprocess.remove_unconnected
 - [X] voxelFE.vol2ugrid
 - [X] voxelFE.mesh2voxelfe
 - [X] tetraFE.shell_mesh
-- [ ] tetraFE.cgal_mesh
-- [ ] tetraFE.mesh2tetrafe
-- [ ] everything with `unittest`
+- [X] tetraFE.cgal_mesh
+- [X] tetraFE.mesh2tetrafe
+- [X] everything with `unittest`
 
 ### Documentation
 - [X] comment FULL notebooks

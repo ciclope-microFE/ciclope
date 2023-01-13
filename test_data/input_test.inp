@@ -1,0 +1,22 @@
+** ---------------------------------------------------
+** The STEP module defines the analysis steps and associated output requests. More info at:
+** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** ---------------------------------------------------
+** Analysis definition:
+*STEP
+*STATIC
+*BOUNDARY
+** All displacements fixed at bottom:
+NODES_B, 1, 3, 0.0
+** Vertical displacement imposed at top:
+*BOUNDARY
+NODES_T, 3, 3, -0.002
+** Output request:
+** Nodal displacements; Element stress; Reaction Force sum on NODES_B
+*NODE FILE
+U
+*EL FILE
+S
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_B
+RF
+*END STEP
