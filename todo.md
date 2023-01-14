@@ -9,8 +9,9 @@
 - [X] voxelFE: mesh2voxelFE
 
 ### JOSS paper review
+- [ ] rerun jupyter notebooks
 - [ ] upload LHDL reproduction dataset to Zenodo or github
-- [ ] ethics LHDL dataset
+- [X] ethics LHDL dataset
 - [X] single trabecula test dataset upload
 **Tests:**
 - [X] preprocess.remove_unconnected
