@@ -1,21 +1,31 @@
 # Installation
-Install using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
-```shell
+For mesh generation, `ciclope` requires [pygalmesh](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/). Follow the installation procedure [here](https://github.com/meshpro/pygalmesh#installation).
+
+After installing pygalmesh, you can install `ciclope` using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
+```commandline
 pip install ciclope[all]
 ```
-For running the examples you will need to install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html):
+
+Some examples will require [DXchange](https://dxchange.readthedocs.io/en/latest/index.html). You can install it with:
 ```shell
 conda install -c conda-forge dxchange
 ```
 ---
+## Testing
+Run tests to verify your installation with the command:
+```commandline
+python -m unittest -v ciclope_tests.run_tests
+```
+---
+## How to contribute
+If you want to contribute to `ciclope` follow the installation steps below:
 
-## Development installation
 Create and activate a virtual environment for development:
 ```shell
 conda env create -n ciclope
 conda activate ciclope
 ```
-Clone the git repository:
+Clone (or fork and clone) the git repository:
 ```shell
 git clone https://github.com/gianthk/ciclope.git
 ```

@@ -10,15 +10,24 @@ Computed Tomography to Finite Elements.
 
 ---
 ## Installation
-Install using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
-For development installation see the [development guide](development.md).
+For mesh generation, `ciclope` requires [pygalmesh](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/). Follow the installation procedure [here](https://github.com/meshpro/pygalmesh#installation).
+
+After installing pygalmesh, you can install `ciclope` using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
 ```commandline
 pip install ciclope[all]
 ```
-For running the examples you will need to install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html):
+
+Some examples will require [DXchange](https://dxchange.readthedocs.io/en/latest/index.html). You can install it with:
 ```shell
 conda install -c conda-forge dxchange
 ```
+### Testing
+Run tests to verify your installation with the command:
+```commandline
+python -m unittest -v ciclope_tests.run_tests
+```
+### How to contribute
+If you want to contribute to this project, please install `ciclope` following the [development guide](development.md).
 
 ---
 ## Usage

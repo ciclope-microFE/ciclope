@@ -5,8 +5,8 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "ciclope"
 authors = [
-  { name="Gianluca Iori", email="gianthk.iori@gmail.com" },
-  { name="Martino Pani", email="martino.pani@port.ac.uk" },
+    { name="Gianluca Iori", email="gianthk.iori@gmail.com" },
+    { name="Martino Pani", email="martino.pani@port.ac.uk" },
 ]
 keywords = [
     "computed tomography",
@@ -14,7 +14,7 @@ keywords = [
     "image processing",
     "engineering",
     "simulation",
-    "biomechanics"
+    "biomechanics",
 ]
 readme = "README.md"
 license = {file = "LICENSE"}
@@ -29,7 +29,8 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
     "Topic :: Scientific/Engineering",
-    "Topic :: Utilities"]
+    "Topic :: Utilities",
+]
 requires-python = ">=3.7"
 dynamic = ["version", "description"]
 dependencies = [
@@ -37,15 +38,15 @@ dependencies = [
     "meshio>=5.0.0",
     "pygalmesh",
     "PyMCubes",
+    "scipy",
+    "scikit-image",
+    "pypng",
 ]
 
 [project.optional-dependencies]
 all = [
     "matplotlib",
-    "scipy",
-    "scikit-image",
     "tqdm",
-    "pypng",
     "itkwidgets",
     "itk",
     "vtk",

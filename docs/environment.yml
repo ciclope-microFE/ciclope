@@ -6,7 +6,6 @@ dependencies:
   - python=3.8
   - numpy
   - tifffile
-  - dxchange
   - matplotlib
   - meshio>=5.0.0
   - scikit-image

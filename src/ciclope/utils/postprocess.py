@@ -5,8 +5,7 @@ Ciclope postprocessing module
 """
 
 import sys
-# sys.path.append('/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib')
-sys.path.append('/home/gianthk/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages')
+sys.path.append('~/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages')
 
 try:
     from paraview.simple import *

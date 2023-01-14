@@ -5,14 +5,11 @@ Extended from the dat2txt.py helper script by
 https://github.com/mkraska/CalculiX-Examples/tree/master/Scripts
 
 """
-import sys
 import re
 import glob
-import os
 import argparse
 import logging
 import textwrap
-import numpy as np
 
 def dat2txt(filename, verbose=False):
     """Read CalculiX .DAT output file and write analysis results to .TXT file.

@@ -1,0 +1,2 @@
+include ciclope_tests.py
+graft test_data/LHDL/trab

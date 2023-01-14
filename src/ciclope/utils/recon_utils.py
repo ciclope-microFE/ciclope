@@ -7,18 +7,17 @@ MicroCT image processing utilities.
 
 __author__ = 'Gianluca Iori'
 __date_created__ = '2021-03-28'
-__date__ = '2022-08-08'
+__date__ = '2023-01-14'
 __copyright__ = 'Copyright (c) 2022, ORMIR'
 __docformat__ = 'restructuredtext en'
 __license__ = "MIT"
-__version__ = "1.3"
+__version__ = "1.4"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
 import numpy as np
 import png
 import os
-import dxchange
 import tifffile
 import matplotlib.pyplot as plt
 
@@ -144,38 +143,6 @@ def writemidplanes(data_3D, fileout, slice_x=-1, slice_y=-1, slice_z=-1):
         with open(filename + '_YZ.png', 'wb') as midplaneYZ:
             pngWriter = png.Writer(data_3D.shape[1], data_3D.shape[0], greyscale=True, alpha=False, bitdepth=8)
             pngWriter.write(midplaneYZ, touint8(data_3D[:, :, int(slice_x)]))
-
-def writemidplanesDxchange(data_3D, fileout, slice_x=-1, slice_y=-1, slice_z=-1):
-    """Plot orthogonal mid-planes through 3D dataset and save them as images.
-    Uses DXchange for writing .TIFF files.
-
-    Parameters
-    ----------
-    data_3D
-        Input 3D image data.
-    fileout : str
-        Output .PNG image file name.
-    slice_x : int
-        X-slice number.
-    slice_y : int
-        Y-slice number.
-    slice_z : int
-        Z-slice number.
-    """
-
-    if data_3D.ndim == 3:
-
-        if slice_x == -1:
-            slice_x = int(data_3D.shape[2] / 2)
-        if slice_y == -1:
-            slice_y = int(data_3D.shape[1] / 2)
-        if slice_z == -1:
-            slice_z = int(data_3D.shape[0] / 2)
-
-        filename, ext = os.path.splitext(fileout)
-        dxchange.writer.write_tiff(touint8(data_3D[int(slice_z), :, :]), fname=filename+'_XY.tiff', dtype='uint8')
-        dxchange.writer.write_tiff(touint8(data_3D[:, int(slice_y), :]), fname=filename + '_XZ.tiff', dtype='uint8')
-        dxchange.writer.write_tiff(touint8(data_3D[:, :, int(slice_x)]), fname=filename + '_YZ.tiff', dype='uint8')
 
 def plot_midplanes(data_3D, slice_x=-1, slice_y=-1, slice_z=-1):
     """Plot orthogonal cross-sections through 3D dataset.
