@@ -24,7 +24,8 @@ conda install -c conda-forge dxchange
 ### Testing
 Run tests to verify your installation with the command:
 ```commandline
-python -m unittest -v ciclope_tests.run_tests
+cd test
+python -m unittest -v test_ciclope.run_tests
 ```
 ### How to contribute
 If you want to contribute to this project, please install `ciclope` following the [development guide](development.md).

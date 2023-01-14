@@ -5,7 +5,7 @@ import ciclope
 import numpy as np
 import unittest
 
-test_data_file = 'test_data/LHDL/3155_D_4_bc/trab/slice_00.tif'
+test_data_file = 'trab/slice_00.tif'
 
 class run_tests(unittest.TestCase):
     def test_remove_unconnected(self):
@@ -36,9 +36,9 @@ class run_tests(unittest.TestCase):
         self.assertNotEqual(len(mesh.cells[0][1]), 0)
 
     def test_mesh2tetrafe(self):
-        ciclope.tetraFE.mesh2tetrafe(ciclope.tetraFE.cgal_mesh(remove_unconnected((read_tiff_stack(test_data_file)>100)), [0.12, 0.12, 0.12], meshtype='tetra'), 'test_data/input_test.inp', 'test_data/foo.inp')
+        ciclope.tetraFE.mesh2tetrafe(ciclope.tetraFE.cgal_mesh(remove_unconnected((read_tiff_stack(test_data_file)>100)), [0.12, 0.12, 0.12], meshtype='tetra'), 'test_input.inp', 'foo.inp')
         # read and check input CALCULIX file: check existence of essential fields
-        with open("test_data/foo.inp", 'r') as f:
+        with open("foo.inp", 'r') as f:
             lines = f.readlines()
             node = False
             element = False
@@ -82,9 +82,9 @@ class run_tests(unittest.TestCase):
         self.assertEqual((pippo_mesh.points[100] == np.array([0.12, 1.08, 0])).all(), True)
 
     def test_mesh2voxelFE(self):
-        ciclope.voxelFE.mesh2voxelfe(ciclope.core.voxelFE.vol2ugrid(read_tiff_stack(test_data_file), [0.12,0.12,0.12], GVmin=100), 'test_data/input_test.inp', 'test_data/foo.inp')
+        ciclope.voxelFE.mesh2voxelfe(ciclope.core.voxelFE.vol2ugrid(read_tiff_stack(test_data_file), [0.12,0.12,0.12], GVmin=100), 'test_input.inp', 'foo.inp')
         # read and check input CALCULIX file: check existence of essential fields
-        with open("test_data/foo.inp", 'r') as f:
+        with open("foo.inp", 'r') as f:
             lines = f.readlines()
             node = False
             element = False
@@ -108,7 +108,7 @@ class run_tests(unittest.TestCase):
                     bc = True
 
         # read and check input CALCULIX file: read two specific file lines
-        with open("test_data/foo.inp", 'r') as f:
+        with open("foo.inp", 'r') as f:
             line_numbers = [99, 860]
             lines = []
             for i, line in enumerate(f):

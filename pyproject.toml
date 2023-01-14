@@ -1,9 +1,10 @@
 [build-system]
-requires = ["flit_core >=3.2,<4"]
-build-backend = "flit_core.buildapi"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
 
 [project]
 name = "ciclope"
+description = "Computed Tomography to Finite Elements"
 authors = [
     { name="Gianluca Iori", email="gianthk.iori@gmail.com" },
     { name="Martino Pani", email="martino.pani@port.ac.uk" },
@@ -32,7 +33,7 @@ classifiers = [
     "Topic :: Utilities",
 ]
 requires-python = ">=3.7"
-dynamic = ["version", "description"]
+dynamic = ["version"]
 dependencies = [
     "numpy",
     "meshio>=5.0.0",
@@ -58,3 +59,6 @@ Home = "https://github.com/gianthk/ciclope"
 
 [project.scripts]
 ciclope = "ciclope:pipeline.main"
+
+[tool.setuptools.dynamic]
+version = {attr = "ciclope.__version__"}
