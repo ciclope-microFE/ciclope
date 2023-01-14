@@ -26,7 +26,7 @@ Some examples will require [DXchange](https://dxchange.readthedocs.io/en/latest/
 conda install -c conda-forge dxchange
 ```
 ### Testing
-Run tests to verify your installation with the command:
+To verify your installation checkout this repository and run the tests with the command:
 ```commandline
 cd test
 python -m unittest -v test_ciclope.run_tests
