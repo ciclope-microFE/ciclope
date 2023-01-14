@@ -1,2 +1,2 @@
-include ciclope_tests.py
-graft test_data/LHDL/trab
+graft test/trab
+include test/test_input.inp
