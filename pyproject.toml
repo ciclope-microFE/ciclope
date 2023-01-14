@@ -36,18 +36,18 @@ requires-python = ">=3.7"
 dynamic = ["version"]
 dependencies = [
     "numpy",
-    "meshio>=5.0.0",
-    "pygalmesh",
+    "meshio==5.0.0",
+    "pygalmesh==0.10.6",
     "PyMCubes",
     "scipy",
     "scikit-image",
     "pypng",
+    "tqdm",
 ]
 
 [project.optional-dependencies]
 all = [
     "matplotlib",
-    "tqdm",
     "itkwidgets",
     "itk",
     "vtk",

@@ -24,7 +24,6 @@ import textwrap
 import numpy as np
 import meshio
 from skimage.filters import gaussian
-import matplotlib.pyplot as plt
 from ciclope.core import voxelFE, tetraFE
 from ciclope.utils import preprocess, recon_utils
 
@@ -168,13 +167,6 @@ def main():
     BW, T = preprocess.segment(I, args.threshold)
     if args.threshold is None:
         logging.info("Threshold value not given. Using Otsu method..")
-
-        if args.verbose:
-            # plot the input image histogram
-            fig2, ax2 = plt.subplots()
-            plt.hist(I.ravel(), bins=100)
-            plt.show()
-            fig2.savefig(fileout_base + "_hist.png")
 
     logging.info("Threshold: {}".format(T))
 

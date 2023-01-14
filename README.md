@@ -10,8 +10,12 @@ Computed Tomography to Finite Elements.
 
 ---
 ## Installation
-For mesh generation, `ciclope` requires [pygalmesh](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/). Follow the installation procedure [here](https://github.com/meshpro/pygalmesh#installation).
-
+For mesh generation, `ciclope` requires [pygalmesh](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
+Follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
+After that install pygalmesh with:
+```commandline
+conda install -c conda-forge pygalmesh
+```
 After installing pygalmesh, you can install `ciclope` using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
 ```commandline
 pip install ciclope[all]
