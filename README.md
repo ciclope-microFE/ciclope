@@ -12,7 +12,7 @@ Computed Tomography to Finite Elements.
 ## Installation
 For mesh generation, `ciclope` requires [pygalmesh-0.10.6](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
 Follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
-After that install pygalmesh with:
+After that, install pygalmesh with:
 ```commandline
 conda install -c conda-forge pygalmesh==0.10.6
 ```
@@ -184,9 +184,8 @@ The pipeline can be executed from the command line with:
 ciclope test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif test_data/LHDL/3155_D_4_bc/results/3155_D_4_bc.inp -vs 0.0195 0.0195 0.0195 -r 2 -t 63 --smooth 1 --tetrafe --max_facet_distance 0.025 --max_cell_circumradius 0.05 --vol_mesh --template input_templates/tmp_example01_comp_static_bone.inp
 ```
 ---
-### [Example #3 - tetrahedra-FE model of embedded tooth](examples/ipynb/ciclope_ex03_tetraFE_tooth_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+### [Example #3 - tetrahedra-FE model of embedded tooth; compression test; heterogeneous materials](examples/ipynb/ciclope_ex03_tetraFE_tooth_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/tooth/results/Tooth_3_scaled_2_Smises2.png)
-Compression test of embedded human tooth.
 ---
 ### [Example #4 - non-linear tetrahedra-FE model of stainless steel foam](examples/ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
@@ -210,6 +209,6 @@ The example shows how to:
 - [x] Launch simulation in Calculix
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
----
+
 ## Acknowledgements
 This project was partially developed during the Jupyter Community Workshop [“Building the Jupyter Community in Musculoskeletal Imaging Research”](https://github.com/JCMSK/2022_JCW) sponsored by [NUMFocus](https://numfocus.org/).
