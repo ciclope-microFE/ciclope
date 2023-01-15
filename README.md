@@ -8,7 +8,7 @@ Computed Tomography to Finite Elements.
 
 **ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
 
----
+
 ## Installation
 For mesh generation, `ciclope` requires [pygalmesh-0.10.6](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
 Follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
@@ -34,7 +34,7 @@ python -m unittest -v test_ciclope.run_tests
 ### How to contribute
 If you want to contribute to this project, please install `ciclope` following the [development guide](development.md).
 
----
+
 ## Usage
 **ciclope** pipelines can be run from the command line as a script. Scroll down and take a look at the [Examples](###Examples) folder for this type of use.
 To view the command line script help run:
@@ -126,11 +126,11 @@ ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_YZ.png) |
 
----
-## ciclope pipeline 
-The following table shows a general pipeline for FE model generation from CT data that can be executed with ciclope:
 
-| # | Step | Description | **ciclope** flag |
+## ciclope pipeline 
+The following table shows a general pipeline for FE model generation from CT data that can be executed from the command line with the `ciclope` script:
+
+| # | Step | Description | command line script flag |
 |:-:|:-|:-|:-|
 | 1. | **Load CT data** | | |
 | 2. | **Pre-processing** | Gaussian smooth | `--smooth` |
@@ -146,14 +146,13 @@ The following table shows a general pipeline for FE model generation from CT dat
 | | | Voxel FE | `--voxelfe` |
 | | | Tetrahedra FE | `--tetrafe` |
 
----
+
 ## Notes on ciclope
 * Tetrahedra meshes are generated with [pygalmesh](https://github.com/nschloe/pygalmesh) (a Python frontend to [CGAL](https://www.cgal.org/))
 * High-resolution surface meshes for visualization are generated with the [PyMCubes](https://github.com/pmneila/PyMCubes) module.
 * All mesh exports are performed with the [meshio](https://github.com/nschloe/meshio) module.
 * **ciclope** handles the definition of material properties and FE analysis parameters (e.g. boundary conditions, simulation steps..) through separate template files. The folders [material_properties](/material_properties) and [input_templates](/input_templates) contain a library of template files that can be used to generate FE simulations.
   * Additional libraries of [CalculiX](https://github.com/calculix) examples and template files can be found [here](https://github.com/calculix/examples) and [here](https://github.com/calculix/mkraska)
-___
 
 ## Examples
 ### [Example 1: voxel-uFE model of trabecular bone; linear compression test](examples/ipynb/ciclope_ex01_voxeluFE_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/old/ciclope_ex01_voxelFE_trabecularbone_CalculiX.ipynb)
@@ -176,7 +175,7 @@ The example shows how to:
 - [x] Launch simulation in Calculix
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
-
+---
 ### [Example 2: tetrahedra-uFE model of trabecular bone; linear compression test](examples/ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ipynb/ciclope_ex02_tetrauFE_CalculiX.ipynb)
 ![](test_data/LHDL/3155_D_4_bc/results/LHDL_tetraFE_U3.png)
 
@@ -184,12 +183,12 @@ The pipeline can be executed from the command line with:
 ```commandline
 ciclope test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif test_data/LHDL/3155_D_4_bc/results/3155_D_4_bc.inp -vs 0.0195 0.0195 0.0195 -r 2 -t 63 --smooth 1 --tetrafe --max_facet_distance 0.025 --max_cell_circumradius 0.05 --vol_mesh --template input_templates/tmp_example01_comp_static_bone.inp
 ```
-
+---
 ### [Example #3 - tetrahedra-FE model of embedded tooth](examples/ipynb/ciclope_ex03_tetraFE_tooth_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
 ![](test_data/tooth/results/Tooth_3_scaled_2_Smises2.png)
 Compression test of embedded human tooth.
-
-### [Example #4 - non-linear tetrahedra-FE model of stainless steel foam](examples/ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex02_tetraFE_steelfoam_CalculiX.ipynb)
+---
+### [Example #4 - non-linear tetrahedra-FE model of stainless steel foam](examples/ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb)
 ![](test_data/steel_foam/B_matrix_tetraFE_Nlgeom_results/PEEQ.gif)
 
 The pipeline can be executed from the command line with:
@@ -211,6 +210,6 @@ The example shows how to:
 - [x] Launch simulation in Calculix
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
-
+---
 ## Acknowledgements
 This project was partially developed during the Jupyter Community Workshop [“Building the Jupyter Community in Musculoskeletal Imaging Research”](https://github.com/JCMSK/2022_JCW) sponsored by [NUMFocus](https://numfocus.org/).
