@@ -12,7 +12,7 @@ Computed Tomography to Finite Elements.
 ## Installation
 For mesh generation, `ciclope` requires [pygalmesh-0.10.6](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
 Follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
-After that, install pygalmesh with:
+After that, install pygalmesh with pip or conda:
 ```commandline
 conda install -c conda-forge pygalmesh==0.10.6
 ```
@@ -33,7 +33,6 @@ python -m unittest -v test_ciclope.run_tests
 ```
 ### How to contribute
 If you want to contribute to this project, please install `ciclope` following the [development guide](development.md).
-
 
 ## Usage
 **ciclope** pipelines can be run from the command line as a script. Scroll down and take a look at the [Examples](###Examples) folder for this type of use.
@@ -176,7 +175,7 @@ The example shows how to:
 - [x] Convert Calculix output to .VTK for visualization in Paraview
 - [x] Visualize simulation results in Paraview
 ---
-### [Example 2: tetrahedra-uFE model of trabecular bone; linear compression test](examples/ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ipynb/ciclope_ex02_tetrauFE_CalculiX.ipynb)
+### [Example 2: tetrahedra-uFE model of trabecular bone; linear compression test](examples/ipynb/ciclope_ex02_tetrauFE_CalculiX.ipynb) [![Made withJupyter](https://img.shields.io/badge/Made%20with-Jupyter-orange?style=for-the-badge&logo=Jupyter)](examples/ipynb/ciclope_ex02_tetrauFE_CalculiX.ipynb)
 ![](test_data/LHDL/3155_D_4_bc/results/LHDL_tetraFE_U3.png)
 
 The pipeline can be executed from the command line with:

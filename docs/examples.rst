@@ -24,3 +24,4 @@ You can also execute the pipelines from the command line. The header of each exa
    ipynb/ciclope_ex01_voxeluFE_CalculiX
    ipynb/ciclope_ex02_tetrauFE_CalculiX
 ..   ipynb/ciclope_ex03_tetraFE_tooth_CalculiX
+..   ipynb/ciclope_ex04_tetraFE_steelfoam_nonlinear_CalculiX
