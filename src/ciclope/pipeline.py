@@ -9,11 +9,10 @@ For more information, call this script with the help option:
 
 __author__ = ['Gianluca Iori', 'Martino Pani']
 __date_created__ = '2021-08-06'
-__date__ = '2022-08-14'
-__copyright__ = 'Copyright (c) 2022, ORMIR'
+__date__ = '2023-01-18'
+__copyright__ = 'Copyright (c) 2023, ORMIR'
 __docformat__ = 'restructuredtext en'
-__license__ = "GPL"
-__version__ = "1.1.2"
+__license__ = "MIT"
 __maintainer__ = 'Gianluca Iori'
 __email__ = "gianthk.iori@gmail.com"
 
@@ -26,6 +25,8 @@ import meshio
 from skimage.filters import gaussian
 from ciclope.core import voxelFE, tetraFE
 from ciclope.utils import preprocess, recon_utils
+from sys import version_info
+from .__about__ import __version__
 
 #################################################################################
 
@@ -124,6 +125,7 @@ def main():
                         help='Reference node input. Used for kinematic coupling of Boundary Conditions in the analysis template file.'
                              'The REF_NODE coordinates [x,y,z] can be given. Alternatively use one of the following args [X0, X1, Y0, Y1, Z0, Z1] to generate a REF_NODE at a model boundary.')
     parser.add_argument('-v', '--verbose', dest='verbose', action='store_true', help='Verbose output.')
+    parser.add_argument('--version', action='version', version=_get_version_text(), help='Display version information.')
     parser.set_defaults(shell_mesh=False, vol_mesh=False, voxelfe=False, tetrafe=False, verbose=False)
 
     args = parser.parse_args()
@@ -274,7 +276,17 @@ def main():
 
     return
 
+def _get_version_text():
+    python_version = f"{version_info.major}.{version_info.minor}.{version_info.micro}"
+    return "\n".join(
+        [
+            f"ciclope {__version__} [Python {python_version}]",
+            "Copyright (c) 2023, Gianluca Iori et al.",
+        ]
+    )
+
 if __name__ == '__main__':
     main()
+
 
 
