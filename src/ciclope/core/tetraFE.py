@@ -134,7 +134,7 @@ def cgal_mesh(bwimage, voxelsize, meshtype='both', max_facet_distance=0.0, max_c
 
     import pygalmesh
     # generate mesh
-    mesh = pygalmesh.generate_from_array(np.transpose(bwimage, [2, 1, 0]).astype('uint8'), tuple(voxelsize), max_facet_distance=max_facet_distance, max_cell_circumradius=max_cell_circumradius)
+    mesh = pygalmesh.generate_from_array(np.transpose(bwimage, [2, 1, 0]).astype('uint8'), tuple(voxelsize), max_facet_distance=max_facet_distance, max_cell_circumradius=max_cell_circumradius, verbose=False)
 
     # check mesh fields and get index for triangle and tetra cells
     triangle_id = None
