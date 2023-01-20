@@ -100,10 +100,14 @@ ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 
 ```
 
 ### Postprocessing
-`ciclope.utils.postprocess.paraviewplot` calls [ParaView](https://www.paraview.org/) to generate and save plots of a chosen model scalar field:
+`ciclope.utils.postprocess.paraviewplot` calls [ParaView](https://www.paraview.org/) to generate and save plots of a chosen model scalar field.
+- Add path to your ParaView installation with
+```python
+import sys
+sys.path.append('~/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages')
+```
 
-Plot midplanes of the vertical displacement field `UD3`:
-
+- Plot midplanes of the vertical displacement field `UD3`:
 ```python
 ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_2.vtk', slicenormal="xyz",
                                         RepresentationType="Surface", Crinkle=True, ColorBy=['U', 'D2'], Roll=90,
@@ -114,8 +118,7 @@ ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_YZ.png) |
 
-Plot midplanes of the Von Mises stress `S_Mises`:
-
+- Plot midplanes of the Von Mises stress `S_Mises`:
 ```python
 ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_2.vtk", slicenormal="xyz",
                                         RepresentationType="Surface", Crinkle=False, ColorBy="S_Mises", Roll=90,
