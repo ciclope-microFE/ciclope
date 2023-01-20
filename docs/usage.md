@@ -39,17 +39,17 @@ import ciclope
 input_template = "./input_templates/tmp_example01_comp_static_bone.inp"
 
 # generate unstructured grid mesh
-mesh = ciclope.voxelFE.vol2ugrid(data_3D, vs)
+mesh = ciclope.core.voxelFE.vol2ugrid(data_3D, vs)
 
 # generate CalculiX input file
-ciclope.voxelFE.mesh2voxelfe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
+ciclope.core.voxelFE.mesh2voxelfe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
 
 ### tetrahedra-FE
 ![](./../test_data/steel_foam/B_matrix_tetraFE_mesh.png)
 Generate mesh of tetrahedra. `ciclope` uses [`pygalmesh`](https://github.com/nschloe/pygalmesh) for tetrahedra mesh generation:
 ```python
-mesh = ciclope.tetraFE.cgal_mesh(L, vs, 'tetra', max_facet_distance=0.2, max_cell_circumradius=0.1)
+mesh = ciclope.core.tetraFE.cgal_mesh(L, vs, 'tetra', max_facet_distance=0.2, max_cell_circumradius=0.1)
 ```
 
 Generate **tetrahedra-FE** model of non-linear tensile test
@@ -57,7 +57,7 @@ Generate **tetrahedra-FE** model of non-linear tensile test
 input_template = "./input_templates/tmp_example02_tens_static_steel.inp"
 
 # generate CalculiX input file
-ciclope.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
+ciclope.core.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
 ---
 ## Post-processing of results
