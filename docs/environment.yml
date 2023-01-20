@@ -9,7 +9,7 @@ dependencies:
   - matplotlib
   - meshio==5.0.0
   - scikit-image
-  - pygalmesh==10.6.0
+  - pygalmesh==0.10.6
   - itkwidgets
   - itk
   - vtk
