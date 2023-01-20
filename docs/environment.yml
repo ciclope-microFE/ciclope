@@ -7,9 +7,9 @@ dependencies:
   - numpy
   - tifffile
   - matplotlib
-  - meshio>=5.0.0
+  - meshio==5.0.0
   - scikit-image
-  - pygalmesh
+  - pygalmesh==10.6.0
   - itkwidgets
   - itk
   - vtk
