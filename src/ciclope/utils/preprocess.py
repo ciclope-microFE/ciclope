@@ -5,9 +5,9 @@ Ciclope image preprocessing module
 """
 
 import numpy as np
-from scipy import ndimage, misc
+from scipy import ndimage
 from skimage import measure, morphology
-from skimage.filters import threshold_otsu, gaussian
+from skimage.filters import threshold_otsu
 import logging
 from tqdm import tqdm
 from . import recon_utils as ru

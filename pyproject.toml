@@ -43,11 +43,12 @@ dependencies = [
     "scikit-image",
     "pypng",
     "tqdm",
+    "matplotlib",
+    "tifffile",
 ]
 
 [project.optional-dependencies]
 all = [
-    "matplotlib",
     "itkwidgets",
     "itk",
     "vtk",
