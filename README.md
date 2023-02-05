@@ -6,8 +6,8 @@ Computed Tomography to Finite Elements.
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/)
 [![Documentation Status](https://readthedocs.org/projects/ciclope/badge/?version=latest)](https://ciclope.readthedocs.io/en/latest/?badge=latest)
 
-**ciclope** processes micro Computed Tomography (microCT) data to generate Finite Element (FE) models. <br />
-
+Micro Finite Element (microFE) models can be derived from micro Computed Tomography (microCT) 3D images to non-destructively assess mechanical properties of biological or artificial specimens. <br />
+**ciclope** provides fully open-source pipelines from microCT data preprocessing to microFE model generation, solution and postprocessing. <br />
 
 ## Installation
 For mesh generation, `ciclope` requires [pygalmesh-0.10.6](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
