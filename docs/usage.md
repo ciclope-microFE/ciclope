@@ -90,6 +90,8 @@ ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |![](./../test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XY.png) | ![](./../test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XZ.png) | ![](./../test_data/tooth/results/Tooth_3_scaled_2_S_Mises_YZ.png) |
+
+
 See the Jupyter Notebooks in the [examples section](https://ciclope.readthedocs.io/en/latest/examples.html) for more examples of 3D data and results visualization.
 
 ---
