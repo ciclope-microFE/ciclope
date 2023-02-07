@@ -12,7 +12,7 @@ Micro Finite Element (microFE) models can be derived from micro Computed Tomogra
 ## Installation
 For mesh generation, `ciclope` requires [pygalmesh-0.10.6](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
 Follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
-After that, install pygalmesh with pip or conda:
+After that, install pygalmesh with pip or conda
 ```commandline
 conda install -c conda-forge pygalmesh==0.10.6
 ```
@@ -21,12 +21,12 @@ After installing pygalmesh, you can install `ciclope` using pip. The flag `[all]
 pip install ciclope[all]
 ```
 
-Some examples will require [DXchange](https://dxchange.readthedocs.io/en/latest/index.html). You can install it with:
+Some examples will require [DXchange](https://dxchange.readthedocs.io/en/latest/index.html). You can install it with
 ```shell
 conda install -c conda-forge dxchange
 ```
 ### Testing
-To verify your installation checkout this repository and run the tests with the command:
+To verify your installation checkout this repository and run the tests with the command
 ```commandline
 cd test
 python -m unittest -v test_ciclope.run_tests
@@ -36,7 +36,7 @@ If you want to contribute to this project, please install `ciclope` following th
 
 ## Usage
 **ciclope** pipelines can be run from the command line as a script. Scroll down and take a look at the [Examples](###Examples) folder for this type of use.
-To view the command line script help run:
+To view the command line script help run
 ```commandline
 ciclope -h
 ```
@@ -46,18 +46,21 @@ To use **ciclope** within python, import the package with
 import ciclope
 ```
 ### Image pre-processing
-`ciclope.utils` contains functions that help you read and pre-process 3D datasets for FE model generation. You can skip this and use `ciclope` with 3D data as [`numpy.ndarray`](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html), or directly with a 3D [`meshio`](https://github.com/nschloe/meshio) object.
+`ciclope.utils` contains functions that help you read and pre-process 3D datasets for FE model generation.
 
-Read 3D CT dataset stored as stack of TIFFs:
+Read 3D CT dataset stored as stack of TIFFs
 ```python
 from ciclope.utils.recon_utils import read_tiff_stack
 
-input_file = '/path_to_your_file/slice_0000.tiff'
+input_file = './test_data/LHDL/3155_D_4_bc/cropped/3155_D_4_bc_0000.tif'
 
 data_3D = read_tiff_stack(input_file)
 vs = np.ones(3) * 0.06  # voxelsize [mm]
 ```
-Segment and remove unconnected voxels:
+`read_tiff_stack` reads all TIFF files (slices) contained in the `input_file` folder. The volume is stored in a 3D [`numpy.ndarray`](https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html) with size `[slices, rows, columns]`.
+
+---
+Segment and remove unconnected voxels
 ```python
 from skimage import morphology
 from ciclope.utils.preprocess import remove_unconnected
@@ -67,47 +70,45 @@ BW = morphology.closing(BW, morphology.ball(2)) # optional step
 L = remove_unconnected(BW)
 ```
 
-### FE model generation
+### Mesh and FE model generation
+If you already have a mesh file, you can skip the mesh generation steps and use `ciclope` with 3D [`meshio`](https://github.com/nschloe/meshio) objects.
 
 #### voxel-FE
 ![](test_data/trabecular_bone/trab_sample_mini3_UD3.png)
-Generate **voxel-FE** model of linear elastic compression test:
+Generate unstructured grid mesh of hexahedra (voxels)
 ```python
 import ciclope
-
-input_template = "./input_templates/tmp_example01_comp_static_bone.inp"
-
-# generate unstructured grid mesh
 mesh = ciclope.core.voxelFE.vol2ugrid(data_3D, vs)
+```
 
-# generate CalculiX input file
+Generate CalculiX input file `.INP` for **voxel-FE** model of linear elastic compression test
+```python
+input_template = "./input_templates/tmp_example01_comp_static_bone.inp"
 ciclope.core.voxelFE.mesh2voxelfe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
 
 #### tetrahedra-FE
 ![](test_data/steel_foam/B_matrix_tetraFE_mesh.png)
-Generate mesh of tetrahedra. `ciclope` uses [`pygalmesh`](https://github.com/nschloe/pygalmesh) for tetrahedra mesh generation:
+Generate mesh of tetrahedra. `ciclope` uses [`pygalmesh`](https://github.com/nschloe/pygalmesh) for tetrahedra mesh generation
 ```python
 mesh = ciclope.core.tetraFE.cgal_mesh(L, vs, 'tetra', max_facet_distance=0.2, max_cell_circumradius=0.1)
 ```
 
-Generate **tetrahedra-FE** model of non-linear tensile test
+Generate CalculiX input file `.INP` for **tetrahedra-FE** model of non-linear tensile test
 ```python
 input_template = "./input_templates/tmp_example02_tens_static_steel.inp"
-
-# generate CalculiX input file
 ciclope.core.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
 
 ### Postprocessing
-`ciclope.utils.postprocess.paraviewplot` calls [ParaView](https://www.paraview.org/) to generate and save plots of a chosen model scalar field.
+`ciclope.utils.postprocess.paraviewplot` calls [`ParaView`](https://www.paraview.org/) to generate and save plots of a chosen model scalar field.
 - Add path to your ParaView installation with
 ```python
 import sys
 sys.path.append('~/Applications/ParaView-5.9.0-RC1-MPI-Linux-Python3.8-64bit/lib/python3.8/site-packages')
 ```
 
-- Plot midplanes of the vertical displacement field `UD3`:
+- Plot midplanes of the vertical displacement field `UD3`
 ```python
 ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_2.vtk', slicenormal="xyz",
                                         RepresentationType="Surface", Crinkle=True, ColorBy=['U', 'D2'], Roll=90,
@@ -118,7 +119,7 @@ ciclope.utils.postprocess.paraview_plot('test_data/tooth/results/Tooth_3_scaled_
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_UD3_YZ.png) |
 
-- Plot midplanes of the Von Mises stress `S_Mises`:
+- Plot midplanes of the Von Mises stress `S_Mises`
 ```python
 ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_2.vtk", slicenormal="xyz",
                                         RepresentationType="Surface", Crinkle=False, ColorBy="S_Mises", Roll=90,
@@ -127,7 +128,7 @@ ciclope.utils.postprocess.paraview_plot("test_data/tooth/results/Tooth_3_scaled_
 | | | |
 |:-------------------------:|:-------------------------:|:-------------------------:|
 |![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XY.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_XZ.png) | ![](test_data/tooth/results/Tooth_3_scaled_2_S_Mises_YZ.png) |
-
+See the Jupyter Notebooks in the [examples section](https://github.com/gianthk/ciclope#examples) for more examples of 3D data and results visualization.
 
 ## ciclope pipeline 
 The following table shows a general pipeline for FE model generation from CT data that can be executed from the command line with the `ciclope` script:
