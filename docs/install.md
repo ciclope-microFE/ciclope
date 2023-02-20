@@ -1,9 +1,9 @@
 # Installation
-For mesh generation, `ciclope` requires [pygalmesh-0.10.6](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
+For mesh generation, `ciclope` requires [pygalmesh](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/).
 Follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
 After that, install pygalmesh with pip or conda:
 ```commandline
-conda install -c conda-forge pygalmesh==0.10.6
+conda install -c conda-forge pygalmesh
 ```
 After installing pygalmesh, you can install `ciclope` using pip. The flag `[all]` will install optional dependencies needed to run full pipelines and examples.
 ```commandline
