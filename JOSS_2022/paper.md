@@ -30,11 +30,11 @@ authors:
     affiliation: 3
 
 affiliations:
-  - name: Synchrotron-light for Experimental Science and Applications in the Middle East, Jordan
+  - name: Synchrotron-light for Experimental Science and Applications in the Middle East, Allan, Jordan
     index: 1
   - name: IRCCS Istituto Ortopedico Rizzoli, Bologna, Italy
     index: 2
-  - name: School of Mechanical and Design Engineering, University of Portsmouth, UK
+  - name: School of Mechanical and Design Engineering, University of Portsmouth, United Kingdom
     index: 3
 
 date: 15 August 2022
