@@ -104,7 +104,7 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
     }
 
     # cell data ##################################################
-    row_nodes = data_shape[1] + 1  # n nodes along y
+    row_nodes = data_shape[2] + 1  # n nodes along y
     slice_nodes = (data_shape[2] + 1) * (data_shape[1] + 1)  # n nodes in 1 slice
     cell_i = 0
 
