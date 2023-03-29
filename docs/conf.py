@@ -23,7 +23,7 @@ copyright = '2023, Open and Reproducible MSK Imaging Research - ORMIR'
 author = 'Gianluca Iori'
 
 # The full version, including alpha/beta/rc tags
-release = '1.3.2'
+release = '1.3.5'
 
 # -- General configuration ---------------------------------------------------
 
