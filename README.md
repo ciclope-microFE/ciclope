@@ -5,6 +5,7 @@ Computed Tomography to Finite Elements.
 [![PyPi Version](https://img.shields.io/pypi/v/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/)
 [![Documentation Status](https://readthedocs.org/projects/ciclope/badge/?version=latest)](https://ciclope.readthedocs.io/en/latest/?badge=latest)
+[![DOI](https://joss.theoj.org/papers/10.21105/joss.04952/status.svg)](https://doi.org/10.21105/joss.04952)
 
 Micro Finite Element (microFE) models can be derived from micro Computed Tomography (microCT) 3D images to non-destructively assess mechanical properties of biological or artificial specimens. <br />
 **ciclope** provides fully open-source pipelines from microCT data preprocessing to microFE model generation, solution and postprocessing. <br />

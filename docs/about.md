@@ -1,4 +1,12 @@
 # About
+### How to cite
+If you use ciclope please cite:
+> Iori et al., (2023). Ciclope: micro Computed Tomography to Finite Elements. Journal of Open Source Software, 8(84), 4952, https://doi.org/10.21105/joss.04952 <br>
+
+``` bibtex
+@article{Iori2023, doi = {10.21105/joss.04952}, url = {https://doi.org/10.21105/joss.04952}, year = {2023}, publisher = {The Open Journal}, volume = {8}, number = {84}, pages = {4952}, author = {Gianluca Iori and Gianluigi Crimi and Enrico Schileo and Fulvia Taddei and Giulia Fraterrigo and Martino Pani}, title = {Ciclope: micro Computed Tomography to Finite Elements}, journal = {Journal of Open Source Software} }
+```
+
 ### Statement of need
 Micro Finite Element (microFE) models are often derived from volumetric stacks of micro Computed Tomography (microCT) images to non-destructively assess mechanical properties of biological or artificial specimens. However, the general absence of reproducible image-to-model pipelines and the use of proprietary or non-open-source software strongly limit validation and comparison of results across studies. **Ciclope** is a fully open-source pipeline, allowing to preprocess microCT data and obtain a corresponding microFE model, solve and postprocess it.
 

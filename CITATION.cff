@@ -1,0 +1,56 @@
+cff-version: "1.2.0"
+authors:
+- family-names: Iori
+  given-names: Gianluca
+  orcid: "https://orcid.org/0000-0001-8611-3281"
+- family-names: Crimi
+  given-names: Gianluigi
+- family-names: Schileo
+  given-names: Enrico
+  orcid: "https://orcid.org/0000-0003-3515-1231"
+- family-names: Taddei
+  given-names: Fulvia
+  orcid: "https://orcid.org/0000-0002-8342-7434"
+- family-names: Fraterrigo
+  given-names: Giulia
+- family-names: Pani
+  given-names: Martino
+  orcid: "https://orcid.org/0000-0002-5786-4462"
+contact:
+- family-names: Iori
+  given-names: Gianluca
+  orcid: "https://orcid.org/0000-0001-8611-3281"
+doi: 10.5281/zenodo.7716943
+message: If you use this software, please cite our article in the
+  Journal of Open Source Software.
+preferred-citation:
+  authors:
+  - family-names: Iori
+    given-names: Gianluca
+    orcid: "https://orcid.org/0000-0001-8611-3281"
+  - family-names: Crimi
+    given-names: Gianluigi
+  - family-names: Schileo
+    given-names: Enrico
+    orcid: "https://orcid.org/0000-0003-3515-1231"
+  - family-names: Taddei
+    given-names: Fulvia
+    orcid: "https://orcid.org/0000-0002-8342-7434"
+  - family-names: Fraterrigo
+    given-names: Giulia
+  - family-names: Pani
+    given-names: Martino
+    orcid: "https://orcid.org/0000-0002-5786-4462"
+  date-published: 2023-04-02
+  doi: 10.21105/joss.04952
+  issn: 2475-9066
+  issue: 84
+  journal: Journal of Open Source Software
+  publisher:
+    name: Open Journals
+  start: 4952
+  title: "Ciclope: micro Computed Tomography to Finite Elements"
+  type: article
+  url: "https://joss.theoj.org/papers/10.21105/joss.04952"
+  volume: 8
+title: "Ciclope: micro Computed Tomography to Finite Elements"
