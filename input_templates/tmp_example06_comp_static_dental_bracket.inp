@@ -1,0 +1,64 @@
+** User material property definition:
+** ---------------------------------------------------
+** ENAMEL
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET4, MATERIAL=ENAMEL
+1.
+*MATERIAL,NAME=ENAMEL
+*ELASTIC
+1338.2, 0.3
+** ---------------------------------------------------
+** CEMENT H poly - https://brieflands.com/articles/zjrms-94390.html
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET2, MATERIAL=CEMENT
+1.
+*MATERIAL,NAME=CEMENT
+*ELASTIC
+2200., 0.3
+** ---------------------------------------------------
+** Resin dental Clearfil SE Bond - https://pubmed.ncbi.nlm.nih.gov/11823019/
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET3, MATERIAL=RESIN
+1.
+*MATERIAL,NAME=RESIN
+*ELASTIC
+4700., 0.3
+** ---------------------------------------------------
+** STEEL
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET5, MATERIAL=STEEL
+1.
+*MATERIAL,NAME=STEEL
+*ELASTIC
+210., 0.333
+** ---------------------------------------------------
+** ALUMINIUM
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET1, MATERIAL=ALUMINUM
+1.
+*MATERIAL,NAME=ALUMINUM
+*ELASTIC
+70., 0.334
+** ---------------------------------------------------
+** Analysis definition. The Step module defines the analysis steps and associated output requests.
+** More info at:
+** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** Impose vertical displacement on NODES_X0 and NODES_X1; NODES_Y1 completely constrained.
+** ---------------------------------------------------
+*STEP
+*STATIC
+*BOUNDARY
+NODES_Y1, 1, 3, 0.0
+*BOUNDARY
+NODES_X0, 1, +0.1
+*BOUNDARY
+NODES_X1, 1, -0.1
+** ---------------------------------------------------
+** Output request:
+*NODE FILE, OUTPUT=2D
+U
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_X0
+RF
+*EL FILE, OUTPUT=2D
+S, E
+*END STEP

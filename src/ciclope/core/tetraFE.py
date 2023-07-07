@@ -235,10 +235,10 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
 
         # add dictionary of boundary point sets
         meshdata.point_sets = {
-            'NODES_Y1': np.where(meshdata.points[:, 1] == model_coors_max[1])[0],
-            'NODES_Y0': np.where(meshdata.points[:, 1] == model_coors_min[1])[0],
-            'NODES_X1': np.where(meshdata.points[:, 0] == model_coors_max[0])[0],
-            'NODES_X0': np.where(meshdata.points[:, 0] == model_coors_min[0])[0],
+            'NODES_Y1': np.where(meshdata.points[:, 1] >= (model_coors_max[1]-0.01*abs(extent[1])))[0],
+            'NODES_Y0': np.where(meshdata.points[:, 1] <= (model_coors_min[1]+0.01*abs(extent[1])))[0],
+            'NODES_X1': np.where(meshdata.points[:, 0] >= (model_coors_max[0]-0.01*abs(extent[0])))[0],
+            'NODES_X0': np.where(meshdata.points[:, 0] <= (model_coors_min[0]+0.01*abs(extent[0])))[0],
             'NODES_Z1': np.where(meshdata.points[:, 2] >= (model_coors_max[2]-0.01*abs(extent[2])))[0],
             'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2]+0.01*abs(extent[2])))[0]
         }
