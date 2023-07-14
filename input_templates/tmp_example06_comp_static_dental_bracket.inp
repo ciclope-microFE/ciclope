@@ -1,12 +1,12 @@
 ** User material property definition:
 ** ---------------------------------------------------
-** ENAMEL
+** ALUMINIUM
 ** ---------------------------------------------------
-*SOLID SECTION, ELSET=SET4, MATERIAL=ENAMEL
+*SOLID SECTION, ELSET=SET1, MATERIAL=ALUMINUM
 1.
-*MATERIAL,NAME=ENAMEL
+*MATERIAL,NAME=ALUMINUM
 *ELASTIC
-1338.2, 0.3
+70., 0.334
 ** ---------------------------------------------------
 ** CEMENT H poly - https://brieflands.com/articles/zjrms-94390.html
 ** ---------------------------------------------------
@@ -24,6 +24,14 @@
 *ELASTIC
 4700., 0.3
 ** ---------------------------------------------------
+** ENAMEL
+** ---------------------------------------------------
+*SOLID SECTION, ELSET=SET4, MATERIAL=ENAMEL
+1.
+*MATERIAL,NAME=ENAMEL
+*ELASTIC
+1338.2, 0.3
+** ---------------------------------------------------
 ** STEEL
 ** ---------------------------------------------------
 *SOLID SECTION, ELSET=SET5, MATERIAL=STEEL
@@ -31,14 +39,6 @@
 *MATERIAL,NAME=STEEL
 *ELASTIC
 210., 0.333
-** ---------------------------------------------------
-** ALUMINIUM
-** ---------------------------------------------------
-*SOLID SECTION, ELSET=SET1, MATERIAL=ALUMINUM
-1.
-*MATERIAL,NAME=ALUMINUM
-*ELASTIC
-70., 0.334
 ** ---------------------------------------------------
 ** Analysis definition. The Step module defines the analysis steps and associated output requests.
 ** More info at:
@@ -57,7 +57,11 @@ NODES_X1, 1, -0.1
 ** Output request:
 *NODE FILE, OUTPUT=2D
 U
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_Y1
+RF
 *NODE PRINT, TOTALS=ONLY, NSET=NODES_X0
+RF
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_X1
 RF
 *EL FILE, OUTPUT=2D
 S, E
