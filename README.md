@@ -1,7 +1,7 @@
 # ciclope
 Computed Tomography to Finite Elements.
 
-[![GitHub license](https://img.shields.io/github/license/Naereen/StrapDown.js.svg)](https://github.com/Naereen/StrapDown.js/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/github/license/gianthk/ciclope)](https://github.com/gianthk/ciclope/blob/master/LICENSE)
 [![PyPi Version](https://img.shields.io/pypi/v/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/)
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/ciclope.svg?style=flat-square)](https://pypi.org/project/ciclope/)
 [![Documentation Status](https://readthedocs.org/projects/ciclope/badge/?version=latest)](https://ciclope.readthedocs.io/en/latest/?badge=latest)
