@@ -223,7 +223,7 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
     else:
         return mesh
 
-def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'ELSET'], eltype='C3D8', matpropbits=8, refnode=None, verbose=False):
+def mesh2voxelfe(mesh, templatefile, fileout='pippo.inp', matprop=None, keywords=['NSET', 'ELSET'], eltype='C3D8', matpropbits=8, refnode=None, verbose=False):
     """Generate ABAQUS voxel Finite Element (FE) input file from 3D Unstructured Grid mesh data.
     The file written is an input file (.INP) in ABAQUS syntax that can be solved using ABAQUS or CALCULIX.
     The user can define a material mapping strategy for the conversion of local GVs to local material properties in the FE model.
