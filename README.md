@@ -101,20 +101,6 @@ input_template = "./input_templates/tmp_example02_tens_static_steel.inp"
 ciclope.core.tetraFE.mesh2tetrafe(mesh, input_template, 'foo.inp', keywords=['NSET', 'ELSET'])
 ```
 
-#### beam-FE
-Skeletonize and generate graph of beam elements representing trabecular architecture
-```python
-import ciclope
-nodes, elements, thickness, graph = ciclope.core.beamFE.vol2graph(L, vs)
-```
-
-Generate CalculiX input file `.INP` for **beam-FE** model of non-linear analysis of uniaxial tension test
-```python
-input_template = "./input_templates/tmp_example02_tens_Nlgeom_steel.inp"
-ciclope.core.beamFE.graph2beamfefe(nodes, elements, thickness, templatefile=input_template, fileout='foo.inp')
-```
-
-
 ### Postprocessing
 `ciclope.utils.postprocess.paraviewplot` calls [`ParaView`](https://www.paraview.org/) to generate and save plots of a chosen model scalar field.
 - Add path to your ParaView installation with
