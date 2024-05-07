@@ -4,6 +4,10 @@
 Ciclope postprocessing module
 """
 
+import numpy as np
+import math
+import h5py
+
 try:
     from paraview.simple import *
 except ImportError:
@@ -232,3 +236,152 @@ def plot_slice(renderView1, slice1Display, fileout, RepresentationType, colorby,
     time.sleep(1)
 
     return
+
+def calculate_total_force(filename_dat):
+    """
+    Calculate the total force from a data file.
+
+    Parameters:
+    - filename_dat (str): The path to the data file containing force components.
+
+    Returns:
+    - float or None: The total force calculated from the data file, or None if an error occurs.
+    """
+    try:
+        with open(filename_dat, 'r') as file:
+            lines = file.readlines()
+
+        # Check if there are enough lines
+        if len(lines) >= 4:
+            # Extract the data line (fourth line) and split it
+            data_line = lines[3].split()
+
+            # Check if data_line contains enough elements
+            if len(data_line) >= 3:
+                # Extract the values of the three components
+                fx = float(data_line[0])
+                fy = float(data_line[1])
+                fz = float(data_line[2])
+
+                # Calculate the total force
+                total_force = math.sqrt(fx**2 + fy**2 + fz**2)
+
+                return total_force
+            else:
+                raise ValueError("Not enough data in the lines of force component values.")
+        else:
+            raise ValueError("The file does not contain enough lines.")
+
+    except FileNotFoundError:
+        print("The specified file does not exist.")
+        return None
+    
+def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
+    """
+    Create circular masks and calculate BVTV.
+
+    Parameters
+    ----------
+    L : list of numpy.ndarray
+        List of input slices.
+
+    diameter : float
+        Diameter of the circle.
+
+    pixel_spacing_mm : float
+        Pixel spacing in millimeters.
+
+    Returns
+    -------
+    circular_masks : list of numpy.ndarray
+        List of circular masks.
+
+    BVTV : float
+        Bone volume-to-total volume ratio.
+    """
+    # Calculate the circle radius in pixels
+    circle_radius_pixel = diameter / (2 * pixel_spacing_mm)
+
+    # Initialize a list for circular masks
+    circular_masks = []
+
+    # Calculate a circular mask for each slice in L
+    for slice_mask in L:
+        # Find the center of the slice (assuming it is at the center)
+        center_x, center_y = slice_mask.shape[1] // 2, slice_mask.shape[0] // 2
+
+        # Create a grid of coordinates
+        y, x = np.ogrid[:slice_mask.shape[0], :slice_mask.shape[1]]
+
+        # Calculate the circular mask for this slice
+        circular_mask = ((x - center_x) ** 2 + (y - center_y) ** 2 <= circle_radius_pixel ** 2)
+
+        # Add the circular mask to the list
+        circular_masks.append(circular_mask)
+
+    # Calculate the BVTV of the entire model
+    num_pixel_osso_totale = 0
+    num_pixel_osseo_vuoto_totale = 0
+
+    for slice_mask, circular_mask in zip(L, circular_masks):
+        num_pixel_osso = np.sum(np.logical_and(slice_mask, circular_mask))
+        num_pixel_osseo_vuoto = np.sum(np.logical_or(slice_mask, circular_mask))
+
+        num_pixel_osso_totale += num_pixel_osso
+        num_pixel_osseo_vuoto_totale += num_pixel_osseo_vuoto
+
+    BVTV = num_pixel_osso_totale / (num_pixel_osseo_vuoto_totale)
+
+    return circular_masks, BVTV
+
+ def reaction_forces(file_path, vs):
+    """
+    Calculate total reaction force and Z value from an HDF5 file.
+
+    Parameters:
+    file_path (str): Path to the HDF5 file.
+    vs (float): Voxel size.
+
+    Returns:
+    Z_value (float): The calculated Z value.
+    total_force (numpy.ndarray): The total force (fx, fy, fz).
+    F_tot (float): Magnitude of the total force.
+    """
+    with h5py.File(file_path, 'r') as file:
+        # Access the Fixed_Displacement_Coordinates dataset within the Image_Data group
+        fixed_disp_coords = file['Image_Data/Fixed_Displacement_Coordinates'][()]
+        
+        # Find the slice ID with the highest numerical value
+        max_slice_id = np.max(fixed_disp_coords[:, 0])
+        
+        # Calculate Z_value
+        Z_value = max_slice_id * vs
+        
+        print(f"Z_value: {Z_value}")
+        print()
+        
+        # Read the node coordinates from the Mesh group
+        coordinates = file['Mesh/Coordinates'][()]
+        
+        # Identify nodes with the specified Z value
+        z_indices = np.where(coordinates[:, 2] == Z_value)[0]
+        
+        # Assuming we can access the nodal force data in some manner
+        nodal_forces = file['Solution/Nodal forces'][()]
+        
+        # Assuming nodal_forces has a one-to-one mapping with coordinates
+        # Extract forces corresponding to Z indices
+        forces_filtered = nodal_forces[z_indices, :]
+        
+        # Calculate the sum of forces for fx, fy, and fz
+        total_force = np.sum(forces_filtered, axis=0)
+        
+        print(f"Total force (fx, fy, fz) for set NODES_Z0 and time  0.1000000E+01: {total_force}")
+        print()
+        
+        # Apply Pythagoras' theorem to calculate the total force
+        F_tot = np.sqrt(np.sum(total_force**2))
+        
+        print(f"F_tot: {F_tot:.2f} N")
+        
+        return Z_value, total_force, F_tot

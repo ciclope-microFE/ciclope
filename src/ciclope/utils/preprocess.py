@@ -11,6 +11,11 @@ from skimage.filters import threshold_otsu
 import logging
 from tqdm import tqdm
 from . import recon_utils as ru
+import cv2
+import os
+import imageio
+from PIL import Image
+import math
 
 def segment(image, threshold_value):
     """Threshold image.
@@ -413,3 +418,102 @@ def periosteummask(bwimage, closepixels=10, closevoxels=0, remove_objects_smalle
             perimask = remove_unconnected(perimask)
 
     return perimask
+
+"""
+Ciclope functions for the modelling of trabecular bone sample with a cylindrical shape
+"""
+
+## Cropping and Loading input data
+
+def invert_images(input_folder, output_folder):
+    """
+    Invert pixel values in images and save them.
+
+    Parameters:
+    - input_folder (str): The path to the input folder containing the images.
+    - output_folder (str): The path to the output folder where inverted images will be saved.
+
+    Returns:
+    None
+    """
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    for filename in os.listdir(input_folder):
+        if filename.endswith(".bmp"):
+            input_path = os.path.join(input_folder, filename)
+            img = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE)
+
+            # Perform pixel value inversion
+            inverted_img = cv2.bitwise_not(img)
+
+            output_path = os.path.join(output_folder, filename)
+            cv2.imwrite(output_path, inverted_img)
+            
+
+def convert_bmp_to_tiff(input_folder, tiff_folder):
+    """
+    Convert BMP images to TIFF format and save them.
+
+    Parameters:
+    - input_folder (str): The path to the input folder containing BMP images.
+    - tiff_folder (str): The path to the output folder where TIFF images will be saved.
+
+    Returns:
+    - str: The path to the folder where TIFF images are saved.
+    """
+    if not os.path.exists(tiff_folder):
+        os.makedirs(tiff_folder)
+
+    for filename in os.listdir(input_folder):
+        if filename.endswith(".bmp"):
+            input_path = os.path.join(input_folder, filename)
+            output_path = os.path.join(tiff_folder, os.path.splitext(filename)[0] + ".tif")
+            img = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE)
+            imageio.imsave(output_path, img)
+
+    return tiff_folder
+
+
+def crop_and_resize_images(input_folder, output_folder, diameter):
+    """
+    Crop and resize images based on a provided diameter.
+
+    Parameters:
+    - input_folder (str): The path to the input folder containing the images.
+    - output_folder (str): The path to the output folder where cropped and resized images will be saved.
+    - diameter (float): The diameter in millimeters for cropping and resizing.
+
+    Returns:
+    None
+    """
+    if not os.path.exists(output_folder):
+        os.makedirs(output_folder)
+
+    # Calculate the radius in pixels based on the provided diameter
+    pixel_spacing_mm = 0.01948  # Modify the value of PixelSpacing if necessary
+    radius_in_pixels = int(diameter / (2 * pixel_spacing_mm))
+
+    for filename in os.listdir(input_folder):
+        if filename.endswith(".tif"):
+            input_path = os.path.join(input_folder, filename)
+            img = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE)
+
+            h, w = img.shape
+
+            y, x = np.ogrid[:h, :w]
+            mask = (x - w//2)**2 + (y - h//2)**2 <= radius_in_pixels**2
+
+            cropped_img = img.copy()
+            cropped_img[~mask] = 0
+
+            non_zero_x = np.where(cropped_img.any(axis=0))
+            non_zero_y = np.where(cropped_img.any(axis=1))
+            left, right = non_zero_x[0][0], non_zero_x[0][-1]
+            top, bottom = non_zero_y[0][0], non_zero_y[0][-1]
+
+            cropped_img = cropped_img[top:bottom+1, left:right+1]
+            resized_img = cv2.resize(cropped_img, (257, 257), interpolation=cv2.INTER_LINEAR)
+
+            output_path = os.path.join(output_folder, filename)
+            Image.fromarray(resized_img).save(output_path)
