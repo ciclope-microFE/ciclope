@@ -5,9 +5,11 @@ Ciclope module for voxel Finite Element model generation
 """
 
 import os
+import h5py
 import logging
 import numpy as np
 from datetime import datetime
+from ciclope.utils.recon_utils import bbox
 
 def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=False):
     """Generate unstructured grid mesh from 3D volume data.
@@ -222,8 +224,185 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
         return mesh, refnodes_dict
     else:
         return mesh
+        
 
-def mesh2voxelfe(mesh, templatefile, fileout='pippo.inp', matprop=None, keywords=['NSET', 'ELSET'], eltype='C3D8', matpropbits=8, refnode=None, verbose=False):
+def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=0.3, young_modulus=18e3, topHorizontaFixedlDisplacement=True, verbose=False):
+    """Generate ParOSol HDF5 (.h5) input file from 3D volume data.
+    Before to generate ParOSol HDF5 file, the Bounding BOX (bbox class) limits the input binary image.
+    Info on HDF5 file type for ParOSol solver at: https://github.com/reox/parosol-tu-wien/blob/master/doc/file_format.md
+
+    Parameters
+    ----------
+    
+    voldata : ndarray
+        3D voxel data.
+    fileout : str
+        Output .h5 file.
+    topDisplacement: float
+        Vertical displacement imposed at the top. 
+    voxelsize : float
+        3D model voxelsize.
+    poisson_ratio: float
+        Poisson ratio.
+    Young_modulus: float
+        Young's modulus [MPa].
+    topHorizontaFixedlDisplacement: bool 
+        if True X and Y displacements fixed at the top; if False no displacements fixed at the top.
+    verbose : bool
+        Activate verbose output.
+    """
+    #definitions
+    H5T_IEEE_F64LE='<f8'
+    H5T_IEEE_F32LE='<f4'
+    H5T_STD_U16LE='<u2'
+   
+    # verbose output
+    if verbose:
+        logging.basicConfig(level=logging.INFO)
+        
+    #file and main group(Image_Data) creation
+    logging.info('Opening Output file')
+    file=h5py.File(fileout, 'w')
+
+    logging.info('creating h5 Image_Data Group')
+    imgData=file.create_group("Image_Data")
+   
+    # get 3D input dataset shape
+    data_shape = voldata.shape
+    
+    #using bbox utility to calculate output dataset shape (excluding empty planes)
+    [origin, dims]=bbox(voldata)
+    
+    #use the same format as data_shape for origin and dims  
+    origin=[origin[2],origin[1],origin[0]]
+    dims=[dims[2],dims[1],dims[0]]
+    end=[origin[0]+dims[0], origin[1]+dims[1], origin[2]+dims[2]]
+    
+    
+    #image dataset preparation
+    logging.info('preparing Image dataset...')
+    array_data = np.zeros((dims[0] + 1, dims[1] + 1, dims[2] + 1))
+    
+    lowBoundaryEls = []
+    topBoundaryEls = []
+    
+    #logging.info('D shape ' + str(data_shape[0])+ ' ' + str(data_shape[1]) + ' ' + str(data_shape[2]))
+    #logging.info('origin ' + str(origin[0])+ ' ' + str(origin[1]) + ' ' + str(origin[2]))
+    #logging.info('dims ' + str(dims[0])+ ' ' + str(dims[1]) + ' ' + str(dims[2]))
+        
+    #fill output image data and get low and top boundary elements 
+    for slice in range(origin[0],end[0]+1):
+        for row in range(origin[1],end[1]+1):
+            for col in range(origin[2],end[2]+1):
+                # get cell GV
+                voxVal = voldata[(slice,row,col)]*young_modulus
+                array_data[slice-origin[0],row-origin[1],col-origin[2]] = voxVal
+                if(slice==origin[0] and voldata[(slice,row,col)] != 0):
+                    lowBoundaryEls.append(np.array([slice-origin[0],row-origin[1],col-origin[2]]))
+                if(slice==end[0] and voldata[(slice,row,col)] != 0):
+                    topBoundaryEls.append(np.array([slice-origin[0],row-origin[1],col-origin[2]]))
+    
+    #image dataset creation
+    logging.info('creating Image dataset...')
+    # Creazione di un array di esempio
+    image=imgData.create_dataset("Image", (dims[0]+1,dims[1]+1,dims[2]+1), data=array_data, dtype=H5T_IEEE_F32LE)
+ 
+    
+    #setting voxel size
+    logging.info('Setting voxel size')
+    imgData.create_dataset("Voxelsize", data=voxelsize, dtype=H5T_IEEE_F64LE)
+
+    #setting poisson ratio
+    logging.info('Setting Poisson ratio')
+    imgData.create_dataset("Poisons_ratio", data=poisson_ratio, dtype=H5T_IEEE_F64LE)
+    
+    #create Fixed_Displacement_Coordinates
+    lbElLen=len(lowBoundaryEls);
+    tbElLen=len(topBoundaryEls);
+    
+    logging.info('Creating Fixed_Displacement_Coordinates')
+    if(topHorizontaFixedlDisplacement):
+        fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", (lbElLen*3+tbElLen*3,4), dtype=H5T_STD_U16LE)
+    else:
+        fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", (lbElLen*3+tbElLen,4), dtype=H5T_STD_U16LE)
+    
+    #fill Fixed_Displacement_Coordinates 3 elements for low boundary elemnts and 1 or 3 elements to top boundary elmenent
+    #depending on topHorizontaFixedlDisplacement parameter
+    outDisplacementN=0
+    for lbEl in lowBoundaryEls:
+        baseIndex=outDisplacementN*3 
+        fdc[baseIndex, 0]=lbEl[0]
+        fdc[baseIndex  , 1]=lbEl[1]
+        fdc[baseIndex  , 2]=lbEl[2]
+        fdc[baseIndex  , 3]=0
+    
+        fdc[baseIndex+1, 0]=lbEl[0]
+        fdc[baseIndex+1, 1]=lbEl[1]
+        fdc[baseIndex+1, 2]=lbEl[2]
+        fdc[baseIndex+1, 3]=1
+
+        fdc[baseIndex+2, 0]=lbEl[0]
+        fdc[baseIndex+2, 1]=lbEl[1]
+        fdc[baseIndex+2, 2]=lbEl[2]
+        fdc[baseIndex+2, 3]=2
+        
+        outDisplacementN+=1
+    
+    baseDipl=outDisplacementN*3
+    outDisplacementN=0;    
+    for tbEl in topBoundaryEls:
+        if(topHorizontaFixedlDisplacement):
+            baseIndex=baseDipl+outDisplacementN*3
+            fdc[baseIndex  , 0]=tbEl[0]
+            fdc[baseIndex  , 1]=tbEl[1]
+            fdc[baseIndex  , 2]=tbEl[2]
+            fdc[baseIndex  , 3]=0
+
+      
+            fdc[baseIndex+1, 0]=tbEl[0]
+            fdc[baseIndex+1, 1]=tbEl[1]
+            fdc[baseIndex+1, 2]=tbEl[2]
+            fdc[baseIndex+1, 3]=1
+
+            fdc[baseIndex+2, 0]=tbEl[0]
+            fdc[baseIndex+2, 1]=tbEl[1]
+            fdc[baseIndex+2, 2]=tbEl[2]
+            fdc[baseIndex+2, 3]=2
+        else:
+            baseIndex=baseDipl+outDisplacementN
+            fdc[baseIndex  , 0]=tbEl[0]
+            fdc[baseIndex  , 1]=tbEl[1]
+            fdc[baseIndex  , 2]=tbEl[2]
+            fdc[baseIndex  , 3]=2
+        outDisplacementN+=1
+    
+    #creating Fixed_Displacement_Values 
+    logging.info('Creating Fixed_Displacement_Values')
+    if(topHorizontaFixedlDisplacement):
+        fdv=imgData.create_dataset("Fixed_Displacement_Values", (lbElLen*3+tbElLen*3), dtype=H5T_IEEE_F32LE)
+    else:
+        fdv=imgData.create_dataset("Fixed_Displacement_Values", (lbElLen*3+tbElLen), dtype=H5T_IEEE_F32LE)
+    
+    #fill Fixed_Displacement_Values
+    for i in range (lbElLen*3):
+        fdv[i]=0
+        
+    if(topHorizontaFixedlDisplacement):
+        for i in range (tbElLen):
+            baseIndex=lbElLen*3+i*3
+            fdv[baseIndex  ]=0
+            fdv[baseIndex+1]=0
+            fdv[baseIndex+2]=topDisplacement
+    else:
+        for i in range (tbElLen):
+            baseIndex=lbElLen*3+i
+            fdv[baseIndex]=topDisplacement
+    
+    #finalizing 
+    file.close()
+    logging.info('hdf5 export done!')
+
+def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'ELSET'], eltype='C3D8', matpropbits=8, refnode=None, verbose=False):
     """Generate ABAQUS voxel Finite Element (FE) input file from 3D Unstructured Grid mesh data.
     The file written is an input file (.INP) in ABAQUS syntax that can be solved using ABAQUS or CALCULIX.
     The user can define a material mapping strategy for the conversion of local GVs to local material properties in the FE model.
