@@ -385,3 +385,27 @@ def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
         print(f"F_tot: {F_tot:.2f} N")
         
         return Z_value, total_force, F_tot
+    
+def sample_height(input_folder, vs):
+    """
+    Calculate the height of the sample in millimeters based on the number of .tif slices.
+
+    Parameters
+    ----------
+    input_folder : str
+        The path to the folder containing the .tif slices.
+    voxel_size : float
+        The size of a voxel in millimeters.
+
+    Returns
+    -------
+    float
+        The height of the sample in millimeters.
+    """
+    # Count the number of .tif files in the specified folder
+    num_slices = len([f for f in os.listdir(input_folder) if f.endswith('.tif')])
+
+    # Calculate the height of the sample
+    height_mm = num_slices * vs
+
+    return height_mm
