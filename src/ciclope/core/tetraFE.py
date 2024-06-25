@@ -292,7 +292,7 @@ def create_new_cells(mesh, edge_to_midpoint):
 
     return new_cells
 
-def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], float_fmt='.6e', verbose=False):
+def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], float_fmt='.6e', verbose=False, bound_tol=None):
     """Generate ABAQUS tetrahedra Finite Element (FE) input file from 3D mesh. The output can be solved using ABAQUS or CalculiX.
 
     Boundary conditions (BCs), simulation steps and associated output requests are defined in a separate template file.
@@ -308,7 +308,7 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
         Output .INP file.
     keywords : str
         SUPPORTED ABAQUS KEYWORDS:
-
+        
         For a list of all Abaqus keywords and their description visit:
         https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-c-gen-kwbrowser.htm#simacae-c-gen-kwbrowser__simacae-gen-xsl-U
 
@@ -337,6 +337,8 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
         Precision for Abaqus input file writing.
     verbose : bool
         Verbose output.
+    bound_tol : float or array-like
+        Boundary tolerance for defining node sets.
     """
 
     # verbose output
@@ -346,22 +348,32 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
     logging.info('Converting mesh with fields:\n')
     logging.info(vars(meshdata))
 
+    # find model boundaries
+    model_coors_max = np.amax(meshdata.points, 0)
+    model_coors_min = np.amin(meshdata.points, 0)
+
+    # volume extent in x, y and z
+    extent = model_coors_max - model_coors_min
+
+    # Set edge tolerance to 1% of model extent if not specified.
+    if bound_tol is None:
+        bound_tol = 0.01 * extent
+    else:
+        bound_tol = np.array(bound_tol)
+        if bound_tol.size == 1:
+            bound_tol = np.repeat(bound_tol, 3)
+        elif bound_tol.size != 3:
+            raise ValueError("bound_tol must be a float, list, or array with 1 or 3 values")
+
     if 'NSET' in keywords:
-        # find model boundaries
-        model_coors_max = np.amax(meshdata.points, 0)
-        model_coors_min = np.amin(meshdata.points, 0)
-
-        # volume extent in x, y and z
-        extent = model_coors_max-model_coors_min
-
         # add dictionary of boundary point sets
         meshdata.point_sets = {
-            'NODES_Y1': np.where(meshdata.points[:, 1] >= (model_coors_max[1]-0.01*abs(extent[1])))[0],
-            'NODES_Y0': np.where(meshdata.points[:, 1] <= (model_coors_min[1]+0.01*abs(extent[1])))[0],
-            'NODES_X1': np.where(meshdata.points[:, 0] >= (model_coors_max[0]-0.01*abs(extent[0])))[0],
-            'NODES_X0': np.where(meshdata.points[:, 0] <= (model_coors_min[0]+0.01*abs(extent[0])))[0],
-            'NODES_Z1': np.where(meshdata.points[:, 2] >= (model_coors_max[2]-0.01*abs(extent[2])))[0],
-            'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2]+0.01*abs(extent[2])))[0]
+            'NODES_Y1': np.where(meshdata.points[:, 1] >= (model_coors_max[1] - bound_tol[1]))[0],
+            'NODES_Y0': np.where(meshdata.points[:, 1] <= (model_coors_min[1] + bound_tol[1]))[0],
+            'NODES_X1': np.where(meshdata.points[:, 0] >= (model_coors_max[0] - bound_tol[0]))[0],
+            'NODES_X0': np.where(meshdata.points[:, 0] <= (model_coors_min[0] + bound_tol[0]))[0],
+            'NODES_Z1': np.where(meshdata.points[:, 2] >= (model_coors_max[2] - bound_tol[2]))[0],
+            'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2] + bound_tol[2]))[0]
         }
 
     meshdata.point_sets['NODES_X0Y0Z0'] = meshdata.point_sets['NODES_Z0'][0:2]
