@@ -8,6 +8,8 @@ import logging
 import numpy as np
 import meshio
 import mcubes
+import pygalmesh
+import math
 
 def shell_mesh(bwimage, method='pymcubes', voxelsize=[1., 1., 1.], max_facet_distance=0.0, max_cell_circumradius=0.0):
     """Generate outer shell mesh of triangles from binary volume data.
@@ -170,6 +172,125 @@ def cgal_mesh(bwimage, voxelsize, meshtype='both', max_facet_distance=0.0, max_c
             raise IOError('{0} method type.', format(meshtype))
 
     return mesh
+
+def find_unique_edges(mesh):
+    """
+    Find unique edges in a tetrahedral mesh.
+
+    This function iterates through all the tetrahedral cells in the mesh
+    and extracts unique edges by considering each pair of vertices in the tetrahedra.
+    Each edge is represented as a tuple of two sorted vertex indices.
+
+    Parameters
+    ----------
+    mesh : Mesh
+        A mesh object that contains cells, where each cell represents a tetrahedron.
+
+    Returns
+    -------
+    unique_edges : set of tuple of int
+        A set containing unique edges, where each edge is represented as a
+        tuple of two vertex indices (sorted in ascending order). Each tuple
+        represents an undirected edge between two vertices in the mesh.
+    """
+
+    unique_edges = set()
+    for cell in mesh.cells:
+        if cell.type == "tetra":
+            for tetra in cell.data:
+                for i in range(4):
+                    for j in range(i+1, 4):
+                        edge = tuple(sorted([tetra[i], tetra[j]]))
+                        unique_edges.add(edge)
+
+    return unique_edges
+
+def add_midpoints_to_mesh(mesh, sorted_edges):
+    """
+    Add midpoints of edges to the mesh and update edge-to-midpoint mapping.
+
+    This function computes the midpoints of the given edges, adds these midpoints
+    to the mesh's points, and updates a dictionary that maps each edge to its 
+    corresponding midpoint index in the mesh.
+
+    Parameters
+    ----------
+    mesh : Mesh
+        The mesh object containing points and cells.
+    sorted_edges : list of tuple of int
+        A list of sorted edges, where each edge is represented as a tuple 
+        containing two vertex indices (sorted in ascending order).
+
+    Returns
+    -------
+    edge_to_midpoint : dict of tuple of int to int
+        A dictionary mapping each edge (represented as a tuple of two vertex 
+        indices) to the index of its midpoint in the mesh's points array.
+    """
+
+    edge_num = len(sorted_edges)
+    edge_to_midpoint = {}
+
+    # Preallocate a 2D array for the new midpoints
+    new_points = np.empty((edge_num, 3))
+    old_point_num = len(mesh.points)
+
+    for i, edge in enumerate(sorted_edges):
+        node1, node2 = edge
+        # Calculate the midpoint and store it in the new_points array
+        new_points[i] = (mesh.points[node1] + mesh.points[node2]) / 2
+        # Map the edge to the index of the new midpoint
+        edge_to_midpoint[edge] = old_point_num + i
+
+    # Concatenate the new points with the existing points in the mesh
+    mesh.points = np.concatenate((mesh.points, new_points))
+
+    return edge_to_midpoint
+
+def create_new_cells(mesh, edge_to_midpoint):
+    """
+    Create a new list of tetrahedral cells with midpoint nodes.
+
+    This function generates new cells for the mesh by adding midpoint nodes
+    to the edges of existing tetrahedral cells. Each new cell includes the
+    original vertices and the additional midpoint nodes, resulting in a 
+    10-node tetrahedral element (tetra10).
+
+    Parameters
+    ----------
+    mesh : Mesh
+        The mesh object containing cells and points.
+    edge_to_midpoint : dict of tuple of int to int
+        A dictionary mapping each edge (represented as a tuple of two vertex
+        indices) to the index of its corresponding midpoint in the mesh's points
+        array.
+
+    Returns
+    -------
+    new_cells : list of meshio.CellBlock
+        A list containing the new cells with the added midpoint nodes. Each cell
+        is represented as a `meshio.CellBlock` object with 'tetra10' type, and the
+        `data` attribute contains a list of vertex indices, including the midpoints.
+    """
+
+    new_cells_data = []
+
+    for i, cell in enumerate(mesh.cells):
+        if cell.type == 'tetra':
+            for nodes in cell.data:
+                new_cell = list(nodes)
+
+                edges = [(0, 1), (1, 2), (0, 2), (0, 3), (1, 3), (2, 3)]
+                for edge in edges:
+                    key = tuple(sorted((nodes[edge[0]], nodes[edge[1]])))
+                    new_cell.append(edge_to_midpoint[key])
+
+                new_cells_data.append(new_cell)
+
+    new_cells = [meshio.CellBlock('tetra10', np.array(new_cells_data))]
+    mesh.cells = new_cells
+
+    return new_cells
 
 def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], float_fmt='.6e', verbose=False):
     """Generate ABAQUS tetrahedra Finite Element (FE) input file from 3D mesh. The output can be solved using ABAQUS or CalculiX.

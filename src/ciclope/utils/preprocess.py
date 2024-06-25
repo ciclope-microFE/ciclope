@@ -517,3 +517,40 @@ def crop_and_resize_images(input_folder, output_folder, diameter):
 
             output_path = os.path.join(output_folder, filename)
             Image.fromarray(resized_img).save(output_path)
+            
+def replace_ElType_ref(filename, old_word, new_word):
+"""
+    Replace element type word in a `.inp` file for correct input to Calculix.
+
+    This function reads a `.inp` file, replaces all instances of the specified
+    old element type word with a new word, and writes the updated content
+    back to the same file. This is useful for modifying finite element models
+    for compatibility with Calculix or other finite element software.
+
+    Parameters
+    ----------
+    filename : str
+        The path to the `.inp` file that needs modification. This should include
+        the full file name and path.
+    old_word : str
+        The word (typically an element type identifier) that is to be replaced 
+        in the file.
+    new_word : str
+        The word to replace the old word with. This should be the new element
+        type or identifier that is compatible with Calculix or the desired software.
+
+    Returns
+    -------
+    None
+    """
+
+    # Read the content of the file
+    with open(filename, 'r') as file:
+        file_content = file.read()
+
+    # Replace the old word with the new word
+    new_content = file_content.replace(old_word, new_word)
+
+    # Write the modified content back to the file
+    with open(filename, 'w') as file:
+        file.write(new_content)
