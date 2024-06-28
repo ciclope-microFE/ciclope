@@ -7,6 +7,7 @@ Ciclope postprocessing module
 import numpy as np
 import math
 import h5py
+import os
 
 try:
     from paraview.simple import *
