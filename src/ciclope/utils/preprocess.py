@@ -519,7 +519,7 @@ def crop_and_resize_images(input_folder, output_folder, diameter):
             Image.fromarray(resized_img).save(output_path)
             
 def replace_ElType_ref(filename, old_word, new_word):
-"""
+    """
     Replace element type word in a `.inp` file for correct input to Calculix.
 
     This function reads a `.inp` file, replaces all instances of the specified

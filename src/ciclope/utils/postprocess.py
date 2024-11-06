@@ -335,7 +335,7 @@ def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
 
     return circular_masks, BVTV
 
- def reaction_forces(file_path, vs):
+def reaction_forces(file_path, vs):
     """
     Calculate total reaction force and Z value from an HDF5 file.
 
