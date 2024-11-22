@@ -273,11 +273,12 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     #using bbox utility to calculate output dataset shape (excluding empty planes)
     [origin, dims]=bbox(voldata)
     
-    #use the same format as data_shape for origin and dims  
-    origin=[origin[2],origin[1],origin[0]]
-    dims=[dims[2],dims[1],dims[0]]
-    end=[origin[0]+dims[0], origin[1]+dims[1], origin[2]+dims[2]]
+    #use the same format as data_shape for origin and dims (reorder from Y,X,Z to Z,Y,X)
+    origin=[origin[2],origin[0],origin[1]]
+    dims=[dims[2],dims[0],dims[1]]
     
+    #Calculating end using origin and dims 
+    end=[origin[0]+dims[0], origin[1]+dims[1], origin[2]+dims[2]]
     
     #image dataset preparation
     logging.info('preparing Image dataset...')
@@ -306,7 +307,6 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     logging.info('creating Image dataset...')
     # Creazione di un array di esempio
     image=imgData.create_dataset("Image", (dims[0]+1,dims[1]+1,dims[2]+1), data=array_data, dtype=H5T_IEEE_F32LE)
- 
     
     #setting voxel size
     logging.info('Setting voxel size')
