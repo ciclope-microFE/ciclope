@@ -513,7 +513,7 @@ def crop_and_resize_images(input_folder, output_folder, diameter):
             top, bottom = non_zero_y[0][0], non_zero_y[0][-1]
 
             cropped_img = cropped_img[top:bottom+1, left:right+1]
-            resized_img = cv2.resize(cropped_img, (257, 257), interpolation=cv2.INTER_LINEAR)
+            resized_img = cv2.resize(cropped_img, (257, 257), interpolation=cv2.INTER_LINEAR) # Change the value of resizing if necessary
 
             output_path = os.path.join(output_folder, filename)
             Image.fromarray(resized_img).save(output_path)
