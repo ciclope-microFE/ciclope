@@ -292,16 +292,29 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     #logging.info('dims ' + str(dims[0])+ ' ' + str(dims[1]) + ' ' + str(dims[2]))
         
     #fill output image data and get low and top boundary elements 
-    for slice in range(origin[0],end[0]+1):
-        for row in range(origin[1],end[1]+1):
-            for col in range(origin[2],end[2]+1):
-                # get cell GV
-                voxVal = voldata[(slice,row,col)]*young_modulus
-                array_data[slice-origin[0],row-origin[1],col-origin[2]] = voxVal
-                if(slice==origin[0] and voldata[(slice,row,col)] != 0):
-                    lowBoundaryEls.append(np.array([slice-origin[0],row-origin[1],col-origin[2]]))
-                if(slice==end[0] and voldata[(slice,row,col)] != 0):
-                    topBoundaryEls.append(np.array([slice-origin[0],row-origin[1],col-origin[2]]))
+    # Define slices for the region of interest
+    slice_start, slice_end = origin[0], end[0] + 1
+    row_start, row_end = origin[1], end[1] + 1
+    col_start, col_end = origin[2], end[2] + 1
+
+    # Extract the sub-block from voldata
+    sub_block = voldata[slice_start:slice_end, row_start:row_end, col_start:col_end]
+
+    # Compute the new values in one operation
+    result_block = sub_block * young_modulus
+
+    # Assign directly to array_data
+    array_data[:, :, :] = result_block
+        
+    # Find low boundary elements (slice == origin[0]) and non-zero values
+    low_boundary_mask = (sub_block[0, :, :] != 0)
+    lowBoundaryEls = np.argwhere(low_boundary_mask)
+    lowBoundaryEls = np.hstack((np.full((lowBoundaryEls.shape[0], 1), 0), lowBoundaryEls))
+
+    # Find top boundary elements (slice == end[0]) and non-zero values
+    top_boundary_mask = (sub_block[-1, :, :] != 0)
+    topBoundaryEls = np.argwhere(top_boundary_mask)
+    topBoundaryEls = np.hstack((np.full((topBoundaryEls.shape[0], 1), slice_end - slice_start - 1), topBoundaryEls))
     
     #image dataset creation
     logging.info('creating Image dataset...')
