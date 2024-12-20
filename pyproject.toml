@@ -8,7 +8,7 @@ description = "Computed Tomography to Finite Elements"
 authors = [
     { name="Gianluca Iori", email="gianthk.iori@gmail.com" },
     { name="Martino Pani", email="martino.pani@port.ac.uk" },
-    { name="Alfonso Dario Santamaria"},
+    { name="Alfonso Dario Santamaria", email="dariosantamaria99@gmail.com"},
     { name="Gigi Crimi"},
 ]
 keywords = [
