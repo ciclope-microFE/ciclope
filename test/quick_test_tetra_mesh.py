@@ -74,7 +74,7 @@ bw = np.pad(bw, 3, 'constant', constant_values=0)
 # bw = mcubes.smooth(bw)
 
 # surface mesh using marching cubes
-vertices, triangles = mcubes.marching_cubes(bw, 0.1)
+vertices, triangles = mcubes.marching_cubes(bw, 0.5)
 vertices = vertices * voxelsize
 
 # generate meshio mesh object
