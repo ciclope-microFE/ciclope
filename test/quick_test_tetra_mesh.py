@@ -110,7 +110,7 @@ m2 = pygalmesh.generate_volume_mesh_from_surface_mesh(
     min_facet_angle=20.0,
     max_radius_surface_delaunay_ball=3*voxelsize,
     max_facet_distance=2*voxelsize,
-    max_circumradius_edge_ratio=2*voxelsize,
+    max_circumradius_edge_ratio=3,
     verbose=True,
     reorient=True,
 )
