@@ -24,7 +24,8 @@ samplename = 'trab' # 'scaffold'
 
 # read test image
 data_3D = read_tiff_stack(input_file)
-vs = np.ones(3)*19.5e-3 # [mm]
+voxelsize = 19.5e-3
+vs = np.ones(3)*voxelsize # [mm]
 
 # gaussian filter
 data_3D = gaussian(data_3D, sigma=1, preserve_range=True)
@@ -37,6 +38,7 @@ resampling = 1
 
 # correct voxelsize
 vs = vs * resampling
+voxelsize = voxelsize * resampling
 
 # thresholding
 T = threshold_otsu(data_3D)
@@ -55,10 +57,10 @@ bw = remove_unconnected(bw)
 # generate mesh from array
 filename_mesh_out = '/Users/gianthk/Desktop/'+samplename+'_tetramesh.vtk'
 mesh_size_factor = 2
-m1 = ciclope.tetraFE.cgal_mesh(bw, vs, 'tetra', mesh_size_factor*min(vs), 2*mesh_size_factor*min(vs))
+# m1 = ciclope.tetraFE.cgal_mesh(bw, vs, 'tetra', mesh_size_factor*min(vs), 2*mesh_size_factor*min(vs))
 
 # write mesh to file
-m1.write(filename_mesh_out)
+# m1.write(filename_mesh_out)
 
 # generate microFE input file
 # input_template = "/Users/gianthk/Code/ORMIR/ciclope/input_templates/tmp_comp_static_scaffold.inp"
@@ -68,22 +70,32 @@ m1.write(filename_mesh_out)
 # pad with one voxel layer of zeros
 bw = np.pad(bw, 3, 'constant', constant_values=0)
 
-# surface mesh using marching cubes
-filename_surfacemesh_out = '/Users/gianthk/Desktop/'+samplename+'_surfacemesh.obj'
-
 # smooth edges of the binary image
-bw = mcubes.smooth(bw)
+# bw = mcubes.smooth(bw)
 
+# surface mesh using marching cubes
 vertices, triangles = mcubes.marching_cubes(bw, 0.1)
+vertices = vertices * voxelsize
+
+# generate meshio mesh object
+# cells = []
+
+# for c in triangles:
+#     cells.append(['triangle', c])
+
+# m10 = meshio.Mesh(points=vertices, cells=cells)
+
+# write surface mesh
+filename_surfacemesh_out = '/Users/gianthk/Desktop/'+samplename+'_surfacemesh.obj'
 mcubes.export_obj(vertices, triangles, filename_surfacemesh_out)
 
 # remeshing an existing surface mesh
 # m11 = pygalmesh.remesh_surface(
 #     filename_surfacemesh_out,
-#     max_edge_size_at_feature_edges=4,
-#     min_facet_angle=25,
-#     max_radius_surface_delaunay_ball=7,
-#     max_facet_distance=4,
+#     max_edge_size_at_feature_edges=4*voxelsize,
+#     min_facet_angle=20,
+#     max_radius_surface_delaunay_ball=7*voxelsize,
+#     max_facet_distance=4*voxelsize,
 #     verbose=True,
 # )
 
@@ -92,15 +104,16 @@ mcubes.export_obj(vertices, triangles, filename_surfacemesh_out)
 # m11.write(filename_mesh_out)
 
 # volume mesh from surface mesh
-# m2 = pygalmesh.generate_volume_mesh_from_surface_mesh(
-#     filename_mesh_out,
-#     min_facet_angle=5.0,
-#     max_radius_surface_delaunay_ball=0.1,
-#     max_facet_distance=0.1,
-#     max_circumradius_edge_ratio=5.0,
-#     verbose=True,
-# )
+m2 = pygalmesh.generate_volume_mesh_from_surface_mesh(
+    filename_surfacemesh_out,
+    min_facet_angle=20.0,
+    max_radius_surface_delaunay_ball=3*voxelsize,
+    max_facet_distance=2*voxelsize,
+    max_circumradius_edge_ratio=2*voxelsize,
+    verbose=True,
+    reorient=True,
+)
 
-# # write mesh to file
-# filename_mesh_out = '/Users/gianthk/Desktop/'+samplename+'_tetramesh_from_surface.vtk'
-# m2.write(filename_mesh_out)
+# write mesh to file
+filename_mesh_out = '/Users/gianthk/Desktop/'+samplename+'_tetramesh_from_surface.vtk'
+m2.write(filename_mesh_out)
