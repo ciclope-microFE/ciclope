@@ -42,7 +42,8 @@ voxelsize = voxelsize * resampling
 
 # thresholding
 T = threshold_otsu(data_3D)
-bw = data_3D > T
+# bw = data_3D > T
+bw = data_3D > 63 # from comparison with histology
 
 # remove unconnected components
 bw = remove_unconnected(bw)
