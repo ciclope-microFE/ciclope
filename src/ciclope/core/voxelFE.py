@@ -329,87 +329,130 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     logging.info('Setting Poisson ratio')
     imgData.create_dataset("Poisons_ratio", data=poisson_ratio, dtype=H5T_IEEE_F64LE)
     
+    #create nodes condition lists for top and low boundary els.
+    lbNodesSet = set()
+    tbNodesSet = set()
+
+    #Creating boundary condition for nodes as sets 
+    #each voxel has 8 nodes at the coordinates x and x+1, y and y+1, z and z+1
+    #as reference read this 2d table:
+        
+    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
+    # Elements:  |  0,0  |  0,1  |  0,2  |  0,3  |  0,4  |  0,5  |
+    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
+    # Elements:  |  0,0  |  0,1  |  0,2  |  0,3  |  0,4  |  0,5  |
+    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
+    # Elements:  |  0,0  |  0,1  |  0,2  |  0,3  |  0,4  |  0,5  |
+    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
+    
+    #Voxels can have common nodes so we use a set to remove duplicates on nodes list 
+    #the last column indicate the direction of the BCs
+    
+    for lbEl in lowBoundaryEls:
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,0) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,0) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,0) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,0) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,0) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,0) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,0) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,0) )
+        
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,1) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,1) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,1) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,1) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,1) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,1) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,1) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,1) )
+
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,2) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,2) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,2) )
+        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,2) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,2) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,2) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,2) )
+        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,2) )
+    
+    #if topHorizontaFixedlDisplacement is true X and Y displacements are fixed at the top
+    if(topHorizontaFixedlDisplacement):    
+        for tbEl in topBoundaryEls:
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,0) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,0) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,0) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,0) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,0) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,0) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,0) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,0) )
+            
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,1) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,1) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,1) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,1) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,1) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,1) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,1) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,1) )
+
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,2) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,2) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,2) )
+            tbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,2) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,2) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,2) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,2) )
+            tbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,2) )
+    else:
+        for tbEl in topBoundaryEls:
+            tbNodesSet.add( (tbEl[0]  , tbEl[1]  , tbEl[2]  ,2) )
+            tbNodesSet.add( (tbEl[0]  , tbEl[1]  , tbEl[2]+1,2) )
+            tbNodesSet.add( (tbEl[0]  , tbEl[1]+1, tbEl[2]  ,2) )
+            tbNodesSet.add( (tbEl[0]  , tbEl[1]+1, tbEl[2]+1,2) )
+            tbNodesSet.add( (tbEl[0]+1, tbEl[1]  , tbEl[2]  ,2) )
+            tbNodesSet.add( (tbEl[0]+1, tbEl[1]  , tbEl[2]+1,2) )
+            tbNodesSet.add( (tbEl[0]+1, tbEl[1]+1, tbEl[2]  ,2) )
+            tbNodesSet.add( (tbEl[0]+1, tbEl[1]+1, tbEl[2]+1,2) )
+        
     #create Fixed_Displacement_Coordinates
-    lbElLen=len(lowBoundaryEls);
-    tbElLen=len(topBoundaryEls);
+    lbNsLen=len(lbNodesSet);
+    tbNsLen=len(tbNodesSet);
+    
+    logging.info(f'lbel:{len(lowBoundaryEls)}, tbel:{len(topBoundaryEls)}, lns:{lbNsLen}, tns:{tbNsLen}')
     
     logging.info('Creating Fixed_Displacement_Coordinates')
-    if(topHorizontaFixedlDisplacement):
-        fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", (lbElLen*3+tbElLen*3,4), dtype=H5T_STD_U16LE)
-    else:
-        fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", (lbElLen*3+tbElLen,4), dtype=H5T_STD_U16LE)
+    fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", (lbNsLen+tbNsLen,4), dtype=H5T_STD_U16LE)
     
-    #fill Fixed_Displacement_Coordinates 3 elements for low boundary elemnts and 1 or 3 elements to top boundary elmenent
-    #depending on topHorizontaFixedlDisplacement parameter
-    outDisplacementN=0
-    for lbEl in lowBoundaryEls:
-        baseIndex=outDisplacementN*3 
-        fdc[baseIndex, 0]=lbEl[0]
-        fdc[baseIndex  , 1]=lbEl[1]
-        fdc[baseIndex  , 2]=lbEl[2]
-        fdc[baseIndex  , 3]=0
-    
-        fdc[baseIndex+1, 0]=lbEl[0]
-        fdc[baseIndex+1, 1]=lbEl[1]
-        fdc[baseIndex+1, 2]=lbEl[2]
-        fdc[baseIndex+1, 3]=1
+    for idx, ns in enumerate(lbNodesSet):
+        fdc[idx, 0]=ns[0]
+        fdc[idx, 1]=ns[1]
+        fdc[idx, 2]=ns[2]
+        fdc[idx, 3]=ns[3]
 
-        fdc[baseIndex+2, 0]=lbEl[0]
-        fdc[baseIndex+2, 1]=lbEl[1]
-        fdc[baseIndex+2, 2]=lbEl[2]
-        fdc[baseIndex+2, 3]=2
-        
-        outDisplacementN+=1
-    
-    baseDipl=outDisplacementN*3
-    outDisplacementN=0;    
-    for tbEl in topBoundaryEls:
-        if(topHorizontaFixedlDisplacement):
-            baseIndex=baseDipl+outDisplacementN*3
-            fdc[baseIndex  , 0]=tbEl[0]
-            fdc[baseIndex  , 1]=tbEl[1]
-            fdc[baseIndex  , 2]=tbEl[2]
-            fdc[baseIndex  , 3]=0
+    for idx, ns in enumerate(tbNodesSet):
+        fdc[lbNsLen+idx, 0]=ns[0]
+        fdc[lbNsLen+idx, 1]=ns[1]
+        fdc[lbNsLen+idx, 2]=ns[2]
+        fdc[lbNsLen+idx, 3]=ns[3]
 
-      
-            fdc[baseIndex+1, 0]=tbEl[0]
-            fdc[baseIndex+1, 1]=tbEl[1]
-            fdc[baseIndex+1, 2]=tbEl[2]
-            fdc[baseIndex+1, 3]=1
-
-            fdc[baseIndex+2, 0]=tbEl[0]
-            fdc[baseIndex+2, 1]=tbEl[1]
-            fdc[baseIndex+2, 2]=tbEl[2]
-            fdc[baseIndex+2, 3]=2
-        else:
-            baseIndex=baseDipl+outDisplacementN
-            fdc[baseIndex  , 0]=tbEl[0]
-            fdc[baseIndex  , 1]=tbEl[1]
-            fdc[baseIndex  , 2]=tbEl[2]
-            fdc[baseIndex  , 3]=2
-        outDisplacementN+=1
     
     #creating Fixed_Displacement_Values 
     logging.info('Creating Fixed_Displacement_Values')
-    if(topHorizontaFixedlDisplacement):
-        fdv=imgData.create_dataset("Fixed_Displacement_Values", (lbElLen*3+tbElLen*3), dtype=H5T_IEEE_F32LE)
-    else:
-        fdv=imgData.create_dataset("Fixed_Displacement_Values", (lbElLen*3+tbElLen), dtype=H5T_IEEE_F32LE)
+    
+    fdv=imgData.create_dataset("Fixed_Displacement_Values", (lbNsLen+tbNsLen), dtype=H5T_IEEE_F32LE)
     
     #fill Fixed_Displacement_Values
-    for i in range (lbElLen*3):
+    for i in range (lbNsLen):
         fdv[i]=0
         
-    if(topHorizontaFixedlDisplacement):
-        for i in range (tbElLen):
-            baseIndex=lbElLen*3+i*3
-            fdv[baseIndex  ]=0
-            fdv[baseIndex+1]=0
-            fdv[baseIndex+2]=topDisplacement
-    else:
-        for i in range (tbElLen):
-            baseIndex=lbElLen*3+i
-            fdv[baseIndex]=topDisplacement
+    for idx, ns in enumerate(tbNodesSet):
+        if(ns[3]==2):
+            fdv[lbNsLen+idx]=topDisplacement
+        else:
+            fdv[lbNsLen+idx]=0
+        
     
     #finalizing 
     file.close()
