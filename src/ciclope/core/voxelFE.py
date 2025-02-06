@@ -415,44 +415,36 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
             tbNodesSet.add( (tbEl[0]+1, tbEl[1]  , tbEl[2]+1,2) )
             tbNodesSet.add( (tbEl[0]+1, tbEl[1]+1, tbEl[2]  ,2) )
             tbNodesSet.add( (tbEl[0]+1, tbEl[1]+1, tbEl[2]+1,2) )
-        
-    #create Fixed_Displacement_Coordinates
+
+	#Create Fixed_Displacement_Coordinates
+    logging.info('Creating Fixed_Displacement_Coordinates')
+    
     lbNsLen=len(lbNodesSet);
     tbNsLen=len(tbNodesSet);
     
-    logging.info(f'lbel:{len(lowBoundaryEls)}, tbel:{len(topBoundaryEls)}, lns:{lbNsLen}, tns:{tbNsLen}')
+    # Create a NumPy array of size lbNsLen+tbNsLen x 4
+    fixDispCoord = np.zeros((lbNsLen+tbNsLen, 4), dtype=int)
     
-    logging.info('Creating Fixed_Displacement_Coordinates')
-    fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", (lbNsLen+tbNsLen,4), dtype=H5T_STD_U16LE)
+    #put sets elements in the array
+    lb_list = list(lbNodesSet)
+    tb_list = list(tbNodesSet)
+    fixDispCoord[:len(lb_list), :] = lb_list
+    fixDispCoord[len(lb_list):, :] = tb_list
+        
+    fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", data=fixDispCoord, dtype=H5T_STD_U16LE)
     
-    for idx, ns in enumerate(lbNodesSet):
-        fdc[idx, 0]=ns[0]
-        fdc[idx, 1]=ns[1]
-        fdc[idx, 2]=ns[2]
-        fdc[idx, 3]=ns[3]
-
-    for idx, ns in enumerate(tbNodesSet):
-        fdc[lbNsLen+idx, 0]=ns[0]
-        fdc[lbNsLen+idx, 1]=ns[1]
-        fdc[lbNsLen+idx, 2]=ns[2]
-        fdc[lbNsLen+idx, 3]=ns[3]
-
-    
-    #creating Fixed_Displacement_Values 
+    #Create Fixed_Displacement_Values 
     logging.info('Creating Fixed_Displacement_Values')
     
-    fdv=imgData.create_dataset("Fixed_Displacement_Values", (lbNsLen+tbNsLen), dtype=H5T_IEEE_F32LE)
-    
-    #fill Fixed_Displacement_Values
-    for i in range (lbNsLen):
-        fdv[i]=0
-        
+    # Create a NumPy array of size lbNsLen+tbNsLen 
+    fixDispValues = np.zeros((lbNsLen+tbNsLen), dtype=float)
+            
+    # All displacements are at 0 due to np.zeros so we need to add only top diplacement in the Z direction (ns[3] == 2)
     for idx, ns in enumerate(tbNodesSet):
         if(ns[3]==2):
-            fdv[lbNsLen+idx]=topDisplacement
-        else:
-            fdv[lbNsLen+idx]=0
+            fixDispValues[lbNsLen+idx]=topDisplacement
         
+    fdv=imgData.create_dataset("Fixed_Displacement_Values", data=fixDispValues, dtype=H5T_IEEE_F32LE)
     
     #finalizing 
     file.close()
