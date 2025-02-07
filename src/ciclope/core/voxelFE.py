@@ -225,8 +225,7 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
     else:
         return mesh
         
-
-def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=0.3, young_modulus=18e3, topHorizontaFixedlDisplacement=True, verbose=False):
+def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=0.3, young_modulus=18e3, topHorizontaFixedlDisplacement=True, plane_lock_num = 1, verbose=False):
     """Generate ParOSol HDF5 (.h5) input file from 3D volume data.
     Before to generate ParOSol HDF5 file, the Bounding BOX (bbox class) limits the input binary image.
     Info on HDF5 file type for ParOSol solver at: https://github.com/reox/parosol-tu-wien/blob/master/doc/file_format.md
@@ -248,6 +247,11 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
         Young's modulus [MPa].
     topHorizontaFixedlDisplacement: bool 
         if True X and Y displacements fixed at the top; if False no displacements fixed at the top.
+    plane_lock_num: int
+        Number of planes where boundary conditions (BCs) are applied.
+    plane_lock_num : int
+        Number of planes where boundary conditions (BCs) are applied. 
+        By default, BCs are applied only to the first layer nodes at the bases.        
     verbose : bool
         Activate verbose output.
     """
@@ -307,14 +311,24 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     array_data[:, :, :] = result_block
         
     # Find low boundary elements (slice == origin[0]) and non-zero values
-    low_boundary_mask = (sub_block[0, :, :] != 0)
-    lowBoundaryEls = np.argwhere(low_boundary_mask)
-    lowBoundaryEls = np.hstack((np.full((lowBoundaryEls.shape[0], 1), 0), lowBoundaryEls))
+    for i in range (0, plane_lock_num):
+        low_boundary_mask = (sub_block[i, :, :] != 0)
+        lowBoundaryEls2d = np.argwhere(low_boundary_mask)
+        lowBoundaryEls2d = np.hstack((np.full((lowBoundaryEls2d.shape[0], 1), i), lowBoundaryEls2d))
+        if (i == 0):
+            lowBoundaryEls = lowBoundaryEls2d
+        else:
+            lowBoundaryEls = np.concatenate((lowBoundaryEls, lowBoundaryEls2d), axis=0)
 
     # Find top boundary elements (slice == end[0]) and non-zero values
-    top_boundary_mask = (sub_block[-1, :, :] != 0)
-    topBoundaryEls = np.argwhere(top_boundary_mask)
-    topBoundaryEls = np.hstack((np.full((topBoundaryEls.shape[0], 1), slice_end - slice_start - 1), topBoundaryEls))
+    for i in range (0, plane_lock_num):
+        top_boundary_mask = (sub_block[-1, :, :] != 0)
+        topBoundaryEls2d = np.argwhere(top_boundary_mask)
+        topBoundaryEls2d = np.hstack((np.full((topBoundaryEls2d.shape[0], 1), slice_end - slice_start - (i+1)), topBoundaryEls2d))
+        if (i == 0):
+            topBoundaryEls = topBoundaryEls2d
+        else:
+            topBoundaryEls = np.concatenate((topBoundaryEls, topBoundaryEls2d), axis=0)
     
     #image dataset creation
     logging.info('creating Image dataset...')
