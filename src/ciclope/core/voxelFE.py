@@ -322,7 +322,7 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
 
     # Find top boundary elements (slice == end[0]) and non-zero values
     for i in range (0, plane_lock_num):
-        top_boundary_mask = (sub_block[-1, :, :] != 0)
+        top_boundary_mask = (sub_block[-(i+1), :, :] != 0)
         topBoundaryEls2d = np.argwhere(top_boundary_mask)
         topBoundaryEls2d = np.hstack((np.full((topBoundaryEls2d.shape[0], 1), slice_end - slice_start - (i+1)), topBoundaryEls2d))
         if (i == 0):
