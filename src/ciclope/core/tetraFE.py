@@ -320,12 +320,12 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
     # Definizione dei set di nodi di confine (NSET)
     if 'NSET' in keywords:
         meshdata.point_sets = {
-            'NODES_Y1': np.where(meshdata.points[:, 1] >= (model_coors_max[1] - bound_tol[1]))[0],
-            'NODES_Y0': np.where(meshdata.points[:, 1] <= (model_coors_min[1] + bound_tol[1]))[0],
+            'NODES_X0': np.where(meshdata.points[:, 0] <= (model_coors_min[0] + bound_tol[0]))[0],            
             'NODES_X1': np.where(meshdata.points[:, 0] >= (model_coors_max[0] - bound_tol[0]))[0],
-            'NODES_X0': np.where(meshdata.points[:, 0] <= (model_coors_min[0] + bound_tol[0]))[0],
-            'NODES_Z1': np.where(meshdata.points[:, 2] >= (model_coors_max[2] - bound_tol[2]))[0],
-            'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2] + bound_tol[2]))[0]
+            'NODES_Y0': np.where(meshdata.points[:, 1] <= (model_coors_min[1] + bound_tol[1]))[0],
+            'NODES_Y1': np.where(meshdata.points[:, 1] >= (model_coors_max[1] - bound_tol[1]))[0],
+            'NODES_Z0': np.where(meshdata.points[:, 2] <= (model_coors_min[2] + bound_tol[2]))[0],
+            'NODES_Z1': np.where(meshdata.points[:, 2] >= (model_coors_max[2] - bound_tol[2]))[0]
         }
 
     # Aggiunge i set per i nodi degli angoli (esempio)
@@ -339,17 +339,16 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
         
         # Mappa tra set di elementi e set di nodi di confine corrispondenti
         mapping = {
-            'ELEMS_Y1': 'NODES_Y1',
-            'ELEMS_Y0': 'NODES_Y0',
             'ELEMS_X0': 'NODES_X0',
             'ELEMS_X1': 'NODES_X1',
-            'ELEMS_Z1': 'NODES_Z1',
-            'ELEMS_Z0': 'NODES_Z0'
+            'ELEMS_Y0': 'NODES_Y0',
+            'ELEMS_Y1': 'NODES_Y1',
+            'ELEMS_Z0': 'NODES_Z0',
+            'ELEMS_Z1': 'NODES_Z1'
         }
         
         # Array contenente le celle (ogni riga sono gli indici dei nodi che compongono l'elemento)
         cells_array = meshdata.cells[0][1]
-        
         
         # Se esistono dati per le celle, crea ulteriori set in base ai valori unici
         if hasattr(meshdata, 'cell_data'):
@@ -368,7 +367,6 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
                 # Salva gli indici unici degli elementi trovati
                 cell_sets[cell_set_name] = [np.unique(elem_indices)]
         
-        
         meshdata.cell_sets = cell_sets
 
     else:
@@ -385,4 +383,3 @@ def mesh2tetrafe(meshdata, templatefile, fileout, keywords=['NSET', 'ELSET'], fl
     except IOError:
         logging.error("Abaqus template file {} non trovato.".format(templatefile))
         exit(1)
-
