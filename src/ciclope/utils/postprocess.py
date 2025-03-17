@@ -334,6 +334,35 @@ def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
     BVTV = num_pixel_total_bone / (num_pixel_total_bone-empty)
 
     return circular_masks, BVTV
+    
+def cyl_binary_mask2bvtv(mask: np.ndarray, voxel_size: float, radius: float, height: float) -> float:
+    """
+    Calculates the BV/TV (Bone Volume/Total Volume) ratio of a trabecular bone sample.
+    
+    Parameters:
+        mask (np.ndarray): Binarized (3D) mask with 1 = bone, 0 = empty.
+        voxel_size (float): Size of the voxel in mm.
+        radius (float): Radius of the sample cylinder in mm.
+        height (float): Height of the sample in mm.
+    
+    returns:
+        float: BV/TV expressed as a percentage.
+    """
+    # Compute the number of bone voxels
+    bone_pixel_number = np.sum(mask)
+    
+    # Compute the bone volume
+    voxel_volume = voxel_size ** 3
+    bone_volume = bone_pixel_number * voxel_volume
+    
+    # Compute of the geometric volume of the ideal cylinder
+    ideal_bone_volume = np.pi * (radius ** 2) * height
+    
+    # Compute the BV/TV percentage
+    bvtv = (bone_volume / ideal_bone_volume) * 100
+    print(f'BV/TV = {bvtv:.2f}%')
+    
+    return bvtv
 
 def reaction_forces(file_path, vs):
     """
