@@ -77,12 +77,12 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
 
     # dictionary of boundary node sets
     nodes_set = {
-        'NODES_Y1': [],
-        'NODES_Y0': [],
         'NODES_X0': [],
         'NODES_X1': [],
-        'NODES_Z1': [],
+        'NODES_Y0': [],
+        'NODES_Y1': [],
         'NODES_Z0': [],
+        'NODES_Z1': [],
         'NODES_X0Y0Z0': [],
         'NODES_X0Y0Z1': []
     }
@@ -97,12 +97,12 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
 
     # dictionary of boundary cell sets
     cells_set = {
-        'CELLS_Y1': [],
-        'CELLS_Y0': [],
         'CELLS_X0': [],
         'CELLS_X1': [],
-        'CELLS_Z1': [],
-        'CELLS_Z0': []
+        'CELLS_Y0': [],
+        'CELLS_Y1': [],
+        'CELLS_Z0': [],
+        'CELLS_Z1': []
     }
 
     # cell data ##################################################
@@ -175,16 +175,16 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
                         refnode_Z1 += node_coors
                     if col == 0:
                         nodes_set['NODES_X0'].append(node_i)
-                        refnode_Y0 += node_coors
+                        refnode_X0 += node_coors
                     if col == data_shape[2]:
                         nodes_set['NODES_X1'].append(node_i)
-                        refnode_Y1 += node_coors
+                        refnode_X1 += node_coors
                     if row == 0:
                         nodes_set['NODES_Y0'].append(node_i)
-                        refnode_X0 += node_coors
+                        refnode_Y0 += node_coors
                     if row == data_shape[1]:
                         nodes_set['NODES_Y1'].append(node_i)
-                        refnode_X1 += node_coors
+                        refnode_Y1 += node_coors
 
                 node_i = node_i + 1
 
