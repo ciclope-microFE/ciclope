@@ -11,19 +11,26 @@ import numpy as np
 from datetime import datetime
 from ciclope.utils.recon_utils import bbox
 
-def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=False):
-    """Generate unstructured grid mesh from 3D volume data.
+def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, plane_lock_num=1, node_level_lock_num=1, locking_strategy="plane", refnodes=False, verbose=False):
+    """
+    Generate unstructured grid mesh from 3D volume data.
 
     Parameters
     ----------
     voldata : ndarray
         3D voxel data.
-    voxelsize : float
+    voxelsize : list or array
         3D model voxelsize.
-    matpropbits : int
-        Bit depth for material mapping.
-    GVmin
+    GVmin : int or float
         Minimum Grey Value considered for meshing. By default, GVmin=0: all zeroes are considered background.
+    plane_lock_num : int
+        Number of volume slices to consider for locking in "plane" mode.
+    node_level_lock_num : int
+        Number of node levels to consider for locking in "exact" mode.
+    locking_strategy : str
+        Strategy for node locking:
+            - "plane" locks the entire strip of cells (default), 
+        - "exact" locks nodes exactly at specific levels.
     refnodes : bool
         Return dictionary of reference nodes on the model boundaries. Even if this option is not activated, the returned
         mesh will contain the following nodes and elements sets:
@@ -47,35 +54,29 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
 
     Returns
     -------
-    mesh : meshio
+    mesh : meshio.Mesh
         Unstructured grid mesh.
-    refnodes : list
-        centroids on the model boundaries (X0, X1, Y0, Y1, Z0, Z1)
+    refnodes_dict : dict (optional)
+        centroids on the model boundaries (X0, X1, Y0, Y1, Z0, Z1) if refnodes is True.
     """
-
-    # verbose output
     if verbose:
         logging.basicConfig(level=logging.INFO)
 
-    # get 3D dataset shape
+    # Get 3D dataset shape
     data_shape = voldata.shape
 
     # voxelsize list if only one value is given
-    if type(voxelsize) is not list and type(voxelsize) is not np.ndarray:
+    if not isinstance(voxelsize, (list, np.ndarray)):
         voxelsize = [voxelsize, voxelsize, voxelsize]
     if len(voxelsize) == 1:
-        voxelsize = [voxelsize[0], voxelsize[0], voxelsize[0]]
+        voxelsize = [voxelsize[0]] * 3
 
-    # variables initialization ##################################################
-    # nodes arrays
-    nodes = []
-    existing_nodes = np.full((data_shape[0]+1)*(data_shape[1]+1)*(data_shape[2]+1), False)
+    # Initialization of lists and dictionaries
+    nodes = []         # Node coordinates
+    cells = []         # List of cells (elements)
+    cell_GV = []       # List of grey values for each cell
 
-    # cell nodes and cell grey value arrays
-    cells = []
-    cell_GV = []
-
-    # dictionary of boundary node sets
+    # Dictionary of boundary node sets
     nodes_set = {
         'NODES_X0': [],
         'NODES_X1': [],
@@ -86,16 +87,8 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
         'NODES_X0Y0Z0': [],
         'NODES_X0Y0Z1': []
     }
-
-    # reference nodes coordinates (one refnode per boundary)
-    refnode_X0 = np.zeros(3)
-    refnode_X1 = np.zeros(3)
-    refnode_Y0 = np.zeros(3)
-    refnode_Y1 = np.zeros(3)
-    refnode_Z0 = np.zeros(3)
-    refnode_Z1 = np.zeros(3)
-
-    # dictionary of boundary cell sets
+    
+    # Dictionary of boundary cell sets
     cells_set = {
         'CELLS_X0': [],
         'CELLS_X1': [],
@@ -105,119 +98,182 @@ def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, refnodes=False, verbose=Fal
         'CELLS_Z1': []
     }
 
-    # cell data ##################################################
-    row_nodes = data_shape[2] + 1  # n nodes along y
-    slice_nodes = (data_shape[2] + 1) * (data_shape[1] + 1)  # n nodes in 1 slice
+    # Reference nodes coordinates (one refnode per boundary)
+    refnode_X0 = np.zeros(3)
+    refnode_X1 = np.zeros(3)
+    refnode_Y0 = np.zeros(3)
+    refnode_Y1 = np.zeros(3)
+    refnode_Z0 = np.zeros(3)
+    refnode_Z1 = np.zeros(3)
+    
+    # Binary mask for existing nodes
+    if locking_strategy == "exact":
+        existing_nodes = np.full((data_shape[0]+1)*(data_shape[1]+1)*(data_shape[2]+1), False)
+    
+    # Dictionary to store indices of nodes belonging to the surfaces
+    elif locking_strategy == "plane":    
+        planes_nodes = {
+            'NODES_Z0': set(),
+            'NODES_Z1': set(),
+            'NODES_X0': set(),
+            'NODES_X1': set(),
+            'NODES_Y0': set(),
+            'NODES_Y1': set()
+        }
+        
+    else:
+        raise ValueError("locking_strategy must be 'plane' or 'exact'")
+
+    # Preliminary calculations for the number of nodes per row and per slice
+    row_nodes = data_shape[2] + 1                # Nodes along Y (columns + 1)
+    slice_nodes = (data_shape[2] + 1) * (data_shape[1] + 1)  # Nodes per slice
     cell_i = 0
 
     logging.info('Calculating cell array')
+    # Loop to create cells (elements) from the voxel matrix
     for slice in range(data_shape[0]):
         for row in range(data_shape[1]):
             for col in range(data_shape[2]):
 
-                # get cell GV
-                GV = voldata[(slice, row, col)]
-
+                # Current voxel value
+                GV = voldata[slice, row, col]
                 if GV > GVmin:
-                    cell_i = cell_i + 1
-                    # cell nodes indexes
+                    cell_i += 1
+                    # Calculate the node indices for the element (cell)
                     # See eight-node brick cell (C3D8 and F3D8) node convention (Par. 6.2.1) at: http://www.dhondt.de/ccx_2.15.pdf
-                    cell_nodes = [slice_nodes * slice + row_nodes * row + col,
-                                  slice_nodes * slice + row_nodes * row + col + 1,
-                                  slice_nodes * slice + row_nodes * (row + 1) + col + 1,
-                                  slice_nodes * slice + row_nodes * (row + 1) + col,
-                                  slice_nodes * (slice + 1) + row_nodes * row + col,
-                                  slice_nodes * (slice + 1) + row_nodes * row + col + 1,
-                                  slice_nodes * (slice + 1) + row_nodes * (row + 1) + col + 1,
-                                  slice_nodes * (slice + 1) + row_nodes * (row + 1) + col]
-
+                    cell_nodes = [
+                        slice_nodes * slice + row_nodes * row + col,
+                        slice_nodes * slice + row_nodes * row + col + 1,
+                        slice_nodes * slice + row_nodes * (row + 1) + col + 1,
+                        slice_nodes * slice + row_nodes * (row + 1) + col,
+                        slice_nodes * (slice + 1) + row_nodes * row + col,
+                        slice_nodes * (slice + 1) + row_nodes * row + col + 1,
+                        slice_nodes * (slice + 1) + row_nodes * (row + 1) + col + 1,
+                        slice_nodes * (slice + 1) + row_nodes * (row + 1) + col
+                    ]
+                    
                     # append to cell list
                     cells.append(cell_nodes)
-
+                    
                     # append to cell_GV list
                     cell_GV.append(GV)
 
-                    # dictionary of cells belonging to boundary sets
-                    if slice == 0:
-                        cells_set['CELLS_Z0'].append(cell_i)
-                    if slice == data_shape[0] - 1:
-                        cells_set['CELLS_Z1'].append(cell_i)
-                    if col == 0:
-                        cells_set['CELLS_X0'].append(cell_i)
-                    if col == data_shape[2] - 1:
-                        cells_set['CELLS_X1'].append(cell_i)
-                    if row == 0:
-                        cells_set['CELLS_Y0'].append(cell_i)
-                    if row == data_shape[1] - 1:
-                        cells_set['CELLS_Y1'].append(cell_i)
+                    # Handle locking along Z depending on the selected strategy
+                    if locking_strategy == "plane":
+                        if slice < plane_lock_num:
+                            cells_set['CELLS_Z0'].append(cell_i)
+                            for i in cell_nodes:
+                                planes_nodes['NODES_Z0'].add(i)
+                        if slice >= data_shape[0] - plane_lock_num:
+                            cells_set['CELLS_Z1'].append(cell_i)
+                            for i in cell_nodes:
+                                planes_nodes['NODES_Z1'].add(i)
+                        if col < plane_lock_num:
+                            cells_set['CELLS_X0'].append(cell_i)
+                            for i in cell_nodes:
+                                planes_nodes['NODES_X0'].add(i)
+                        if col >= data_shape[2] - plane_lock_num:
+                            cells_set['CELLS_X1'].append(cell_i)
+                            for i in cell_nodes:
+                                planes_nodes['NODES_X1'].add(i)
+                        if row < plane_lock_num:
+                            cells_set['CELLS_Y0'].append(cell_i)
+                            for i in cell_nodes:
+                                planes_nodes['NODES_Y0'].add(i)
+                        if row >= data_shape[1] - plane_lock_num:
+                            cells_set['CELLS_Y1'].append(cell_i)
+                            for i in cell_nodes:
+                                planes_nodes['NODES_Y1'].add(i)
 
-                    # store if the cell nodes exist
-                    for i in cell_nodes:
-                        existing_nodes[i] = True
-
-    # node coordinates and boundary node sets
+                    elif locking_strategy == "exact":
+                        # Store if the cell nodes exist
+                        for i in cell_nodes:
+                            existing_nodes[i] = True
     logging.info('Detecting node coordinates and boundary nodes')
+    # Loop to generate coordinates for all nodes and build the sets of boundary nodes
     node_i = 0
-    for slice in range(data_shape[0] + 1):
-        for row in range(data_shape[1] + 1):
-            for col in range(data_shape[2] + 1):
-                # store node coordinates
+    total_slices = data_shape[0] + 1
+    total_rows = data_shape[1] + 1
+    total_cols = data_shape[2] + 1
+    for slice in range(total_slices):
+        for row in range(total_rows):
+            for col in range(total_cols):
                 node_coors = [voxelsize[0] * col, voxelsize[1] * row, voxelsize[2] * slice]
                 nodes.append(node_coors)
-
-                if existing_nodes[node_i]:
-                    # compose dictionary of boundary node sets
-                    if slice == 0:
+   
+                if locking_strategy == "plane":
+                    if node_i in planes_nodes['NODES_Z0']:
                         nodes_set['NODES_Z0'].append(node_i)
                         refnode_Z0 += node_coors
-                    if slice == data_shape[0]:
+                    if node_i in planes_nodes['NODES_Z1']:
                         nodes_set['NODES_Z1'].append(node_i)
                         refnode_Z1 += node_coors
-                    if col == 0:
+                    if node_i in planes_nodes['NODES_X0']:
                         nodes_set['NODES_X0'].append(node_i)
                         refnode_X0 += node_coors
-                    if col == data_shape[2]:
+                    if node_i in planes_nodes['NODES_X1']:
                         nodes_set['NODES_X1'].append(node_i)
                         refnode_X1 += node_coors
-                    if row == 0:
+                    if node_i in planes_nodes['NODES_Y0']:
                         nodes_set['NODES_Y0'].append(node_i)
                         refnode_Y0 += node_coors
-                    if row == data_shape[1]:
+                    if node_i in planes_nodes['NODES_Y1']:
                         nodes_set['NODES_Y1'].append(node_i)
                         refnode_Y1 += node_coors
-
-                node_i = node_i + 1
-
+                        
+                elif locking_strategy == "exact":
+                    if existing_nodes[node_i]:
+                        # compose dictionary of boundary node sets
+                        if slice < node_level_lock_num:
+                            nodes_set['NODES_Z0'].append(node_i)
+                            refnode_Z0 += node_coors
+                        if slice > data_shape[0]-node_level_lock_num:
+                            nodes_set['NODES_Z1'].append(node_i)
+                            refnode_Z1 += node_coors
+                        if col < node_level_lock_num:
+                            nodes_set['NODES_X0'].append(node_i)
+                            refnode_X0 += node_coors
+                        if col > data_shape[2]-node_level_lock_num:
+                            nodes_set['NODES_X1'].append(node_i)
+                            refnode_X1 += node_coors
+                        if row < node_level_lock_num:
+                            nodes_set['NODES_Y0'].append(node_i)
+                            refnode_Y0 += node_coors
+                        if row > data_shape[1]-node_level_lock_num:
+                            nodes_set['NODES_Y1'].append(node_i)
+                            refnode_Y1 += node_coors
+                            
+                node_i += 1
+    
+    # For completeness, also define the corners (using the first two nodes found on surface Z)
     nodes_set['NODES_X0Y0Z0'] = nodes_set['NODES_Z0'][0:2]
     nodes_set['NODES_X0Y0Z1'] = nodes_set['NODES_Z1'][0:2]
 
-    # reference nodes are the barycenters of boundary node sets
-    refnode_X0 /= len(nodes_set['NODES_X0'])
-    refnode_X1 /= len(nodes_set['NODES_X1'])
-    refnode_Y0 /= len(nodes_set['NODES_Y0'])
-    refnode_Y1 /= len(nodes_set['NODES_Y1'])
-    refnode_Z0 /= len(nodes_set['NODES_Z0'])
-    refnode_Z1 /= len(nodes_set['NODES_Z1'])
+    # Reference nodes are the barycenters of boundary node sets
+    refnode_X0 /= len(nodes_set['NODES_X0']) if nodes_set['NODES_X0'] else 1
+    refnode_X1 /= len(nodes_set['NODES_X1']) if nodes_set['NODES_X1'] else 1
+    refnode_Y0 /= len(nodes_set['NODES_Y0']) if nodes_set['NODES_Y0'] else 1
+    refnode_Y1 /= len(nodes_set['NODES_Y1']) if nodes_set['NODES_Y1'] else 1
+    refnode_Z0 /= len(nodes_set['NODES_Z0']) if nodes_set['NODES_Z0'] else 1
+    refnode_Z1 /= len(nodes_set['NODES_Z1']) if nodes_set['NODES_Z1'] else 1
 
     refnodes_dict = {
-                   "X0": refnode_X0,
-                   "X1": refnode_X1,
-                   "Y0": refnode_Y0,
-                   "Y1": refnode_Y1,
-                   "Z0": refnode_Z0,
-                   "Z1": refnode_Z1,
+        "X0": refnode_X0,
+        "X1": refnode_X1,
+        "Y0": refnode_Y0,
+        "Y1": refnode_Y1,
+        "Z0": refnode_Z0,
+        "Z1": refnode_Z1,
     }
 
-    # generate meshio object
+    # Generate meshio object
     import meshio
-
     cells_dict = [("hexahedron", cells)]
-    # mesh = meshio.Mesh(nodes, cells_dict, cell_data={"GV": [cell_GV]})
-    mesh = meshio.Mesh(nodes, cells_dict, cell_data={"GV": [cell_GV]}, point_sets=nodes_set, cell_sets=cells_set)
-    # mesh = meshio.Mesh(nodes, cells_dict, cell_data={"GV": [np.array(cell_GV, dtype='float')]})
-    # mesh.write("foo.vtk")
+    mesh = meshio.Mesh(nodes, cells_dict, cell_data={"GV": [cell_GV]},
+                        point_sets=nodes_set, cell_sets=cells_set)
 
-    logging.info('Generated the following mesh with {0} nodes and {1} elements:'.format(len(mesh.points), len(mesh.cells[0])))
+    logging.info('Generated the following mesh with {0} nodes and {1} elements:'
+                 .format(len(mesh.points), len(mesh.cells[0])))
     logging.info(mesh)
 
     if refnodes:
