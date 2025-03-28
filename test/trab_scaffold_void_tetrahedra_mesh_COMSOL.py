@@ -7,7 +7,7 @@ from ciclope.utils.preprocess import remove_unconnected
 import ciclope
 
 data_folder = '/Volumes/stamplab_terminus/processed/Zeiss730/2025/02/01_Scaffold-nocell_2025-02-07_111220/masks/'
-datasets = ['scaffold2_clean', 'scaffold3_clean'] # 'scaffold1_clean', 
+datasets = ['scaffold1_clean', 'scaffold2_clean', 'scaffold3_clean'] # 'scaffold1_clean', 
 output_folder = '/Volumes/stamplab_terminus/processed/Zeiss730/2025/02/01_Scaffold-nocell_2025-02-07_111220/meshes/' 
 
 for dataset in datasets:
@@ -44,10 +44,10 @@ for dataset in datasets:
     m1 = ciclope.tetraFE.cgal_mesh(BW4, voxelsize=vs, meshtype='tetra', max_facet_distance=max_facet_distance, max_cell_circumradius=max_cell_circumradius)
 
     # write mesh output
-    filename_mesh_out = os.path.join(output_folder, dataset+'_VoidMesh_MaxFacetDistance'+str(max_facet_distance)+'_MaxCellCircradius'+str(max_cell_circumradius)+'.vtk')
+    filename_mesh_out = os.path.join(output_folder, dataset+'_VoidMesh_MaxFacetDistance'+str(max_facet_distance)+'_MaxCellCircradius'+str(max_cell_circumradius)+'.ply')
     m1.write(filename_mesh_out)
-    filename_mesh_out = os.path.join(output_folder, dataset+'_VoidMesh_MaxFacetDistance'+str(max_facet_distance)+'_MaxCellCircradius'+str(max_cell_circumradius)+'.nas')
-    m1.write(filename_mesh_out)
-    # filename_mesh_out = os.path.join(output_folder, datasets[0]+'voidmesh.stl')
+    # filename_mesh_out = os.path.join(output_folder, dataset+'_VoidMesh_MaxFacetDistance'+str(max_facet_distance)+'_MaxCellCircradius'+str(max_cell_circumradius)+'.vtk')
     # m1.write(filename_mesh_out)
-
+    # filename_mesh_out = os.path.join(output_folder, dataset+'_VoidMesh_MaxFacetDistance'+str(max_facet_distance)+'_MaxCellCircradius'+str(max_cell_circumradius)+'.nas')
+    # m1.write(filename_mesh_out)
+    
