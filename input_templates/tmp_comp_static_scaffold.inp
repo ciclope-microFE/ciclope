@@ -1,0 +1,28 @@
+** ----------------------------------------------------
+** Material definition:
+*MATERIAL, NAME=BONE
+*ELASTIC
+18000, 0.3, 0
+*SOLID SECTION, ELSET=SET1, MATERIAL=BONE
+** ---------------------------------------------------
+** Analysis definition. The Step module defines the analysis steps and associated output requests.
+** More info at:
+** https://abaqus-docs.mit.edu/2017/English/SIMACAECAERefMap/simacae-m-Sim-sb.htm#simacae-m-Sim-sb
+** ---------------------------------------------------
+*STEP
+*STATIC
+** All displacements fixed at bottom:
+*BOUNDARY
+NODES_Z0, 1, 3, 0.0
+** Vertical displacement imposed at top:
+*BOUNDARY
+NODES_Z1, 3, 3, -0.04
+** ---------------------------------------------------
+** Output request:
+*NODE FILE, OUTPUT=2D
+U
+*NODE PRINT, TOTALS=ONLY, NSET=NODES_Z0
+RF
+*EL FILE, OUTPUT=2D
+S, E
+*END STEP

@@ -475,7 +475,7 @@ def convert_bmp_to_tiff(input_folder, tiff_folder):
     return tiff_folder
 
 
-def crop_and_resize_images(input_folder, output_folder, diameter):
+def crop_and_resize_images(input_folder, output_folder, diameter, pixel_spacing_mm=0.0195, res_X=257, res_Y=257):
     """
     Crop and resize images based on a provided diameter.
 
@@ -483,6 +483,9 @@ def crop_and_resize_images(input_folder, output_folder, diameter):
     - input_folder (str): The path to the input folder containing the images.
     - output_folder (str): The path to the output folder where cropped and resized images will be saved.
     - diameter (float): The diameter in millimeters for cropping and resizing.
+    - pixel_spacing_mm (float, optional): The pixel spacing in millimeters, used to convert the diameter into pixels.
+    - res_X (int, optional): The target width in pixels for resizing.
+    - res_Y (int, optional): The target height in pixels for resizing.
 
     Returns:
     None
@@ -491,11 +494,10 @@ def crop_and_resize_images(input_folder, output_folder, diameter):
         os.makedirs(output_folder)
 
     # Calculate the radius in pixels based on the provided diameter
-    pixel_spacing_mm = 0.01948  # Modify the value of PixelSpacing if necessary
     radius_in_pixels = int(diameter / (2 * pixel_spacing_mm))
 
     for filename in os.listdir(input_folder):
-        if filename.endswith(".tif"):
+        if filename.endswith((".tif", ".bmp")):
             input_path = os.path.join(input_folder, filename)
             img = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE)
 
@@ -513,13 +515,52 @@ def crop_and_resize_images(input_folder, output_folder, diameter):
             top, bottom = non_zero_y[0][0], non_zero_y[0][-1]
 
             cropped_img = cropped_img[top:bottom+1, left:right+1]
-            resized_img = cv2.resize(cropped_img, (257, 257), interpolation=cv2.INTER_LINEAR)
+            resized_img = cv2.resize(cropped_img, (res_X, res_Y), interpolation=cv2.INTER_LINEAR)
 
             output_path = os.path.join(output_folder, filename)
             Image.fromarray(resized_img).save(output_path)
             
+def crop_images(input_folder, output_folder, diameter, pixel_spacing_mm=0.0195):
+    """
+    Crop images based on a provided diameter.
+
+    Parameters:
+    - input_folder (str): The path to the input folder containing the images.
+    - output_folder (str): The path to the output folder where cropped images will be saved.
+    - diameter (float): The diameter in millimeters for cropping.
+    - pixel_spacing_mm (float, optional): The pixel spacing in millimeters, used to convert the diameter into pixels. Default is 0.0195 mm.
+
+    Returns:
+    None
+    """
+    if not os.path.exists(output_folder):
+        print(f"Creating output folder: {output_folder}")
+        os.makedirs(output_folder)
+    
+    # Calcolo del raggio in pixel basato sul diametro fornito
+    radius_in_pixels = int(diameter / (2 * pixel_spacing_mm))
+
+    for filename in os.listdir(input_folder):
+        if filename.endswith((".tif", ".bmp")):
+            input_path = os.path.join(input_folder, filename)
+            img = cv2.imread(input_path, cv2.IMREAD_GRAYSCALE)
+
+            h, w = img.shape
+
+            # Creazione della maschera circolare
+            y, x = np.ogrid[:h, :w]
+            mask = (x - w//2)**2 + (y - h//2)**2 <= radius_in_pixels**2
+
+            # Applichiamo la maschera all'immagine
+            cropped_img = img.copy()
+            cropped_img[~mask] = 0
+
+            # Salvataggio dell'immagine risultante
+            output_path = os.path.join(output_folder, filename)
+            cv2.imwrite(output_path, cropped_img)
+            
 def replace_ElType_ref(filename, old_word, new_word):
-"""
+    """
     Replace element type word in a `.inp` file for correct input to Calculix.
 
     This function reads a `.inp` file, replaces all instances of the specified

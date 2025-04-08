@@ -1,4 +1,8 @@
 # ciclope 2 DO:
+### General
+- [X] Support for quadratic 10-node tetrahedra elements (TETRA10)
+- [X] Support and document use of ParOSol solver
+- [X] Boundary tolerance parameter to mesh2tetrafe function
 - [X] plot field mid-planes with Paraview
 - [ ] BCs as in [Cox et. al 2022. “Heterogeneous Tissue Modulus Improved Prediction of Mechanical Behavior in Osteoporotic Vertebral Cancellous Bone.”](https://www.biorxiv.org/content/10.1101/2021.11.30.470675v2)
 - [X] voxel uFE with heterogeneous material mapping
@@ -9,8 +13,8 @@
 - [X] voxelFE: mesh2voxelFE
 
 ### JOSS paper review
-- [ ] rerun jupyter notebooks
-- [ ] upload LHDL reproduction dataset to Zenodo or github
+- [X] rerun jupyter notebooks
+- [X] upload LHDL reproduction dataset to Zenodo or github
 - [X] ethics LHDL dataset
 - [X] single trabecula test dataset upload
 **Tests:**

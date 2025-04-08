@@ -7,6 +7,7 @@ Ciclope postprocessing module
 import numpy as np
 import math
 import h5py
+import os
 
 try:
     from paraview.simple import *
@@ -320,21 +321,50 @@ def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
         circular_masks.append(circular_mask)
 
     # Calculate the BVTV of the entire model
-    num_pixel_osso_totale = 0
-    num_pixel_osseo_vuoto_totale = 0
+    num_pixel_total_bone = 0
+    num_pixel_total_bone-empty = 0
 
     for slice_mask, circular_mask in zip(L, circular_masks):
-        num_pixel_osso = np.sum(np.logical_and(slice_mask, circular_mask))
-        num_pixel_osseo_vuoto = np.sum(np.logical_or(slice_mask, circular_mask))
+        num_pixel_bone = np.sum(np.logical_and(slice_mask, circular_mask))
+        num_pixel_bone-empty = np.sum(np.logical_or(slice_mask, circular_mask))
 
-        num_pixel_osso_totale += num_pixel_osso
-        num_pixel_osseo_vuoto_totale += num_pixel_osseo_vuoto
+        num_pixel_total_bone += num_pixel_bone
+        num_pixel_total_bone-empty += num_pixel_bone-empty
 
-    BVTV = num_pixel_osso_totale / (num_pixel_osseo_vuoto_totale)
+    BVTV = num_pixel_total_bone / (num_pixel_total_bone-empty)
 
     return circular_masks, BVTV
+    
+def cyl_binary_mask2bvtv(mask: np.ndarray, voxel_size: float, radius: float, height: float) -> float:
+    """
+    Calculates the BV/TV (Bone Volume/Total Volume) ratio of a trabecular bone sample.
+    
+    Parameters:
+        mask (np.ndarray): Binarized (3D) mask with 1 = bone, 0 = empty.
+        voxel_size (float): Size of the voxel in mm.
+        radius (float): Radius of the sample cylinder in mm.
+        height (float): Height of the sample in mm.
+    
+    returns:
+        float: BV/TV expressed as a percentage.
+    """
+    # Compute the number of bone voxels
+    bone_pixel_number = np.sum(mask)
+    
+    # Compute the bone volume
+    voxel_volume = voxel_size ** 3
+    bone_volume = bone_pixel_number * voxel_volume
+    
+    # Compute of the geometric volume of the ideal cylinder
+    ideal_bone_volume = np.pi * (radius ** 2) * height
+    
+    # Compute the BV/TV percentage
+    bvtv = (bone_volume / ideal_bone_volume) * 100
+    print(f'BV/TV = {bvtv:.2f}%')
+    
+    return bvtv
 
- def reaction_forces(file_path, vs):
+def reaction_forces(file_path, vs):
     """
     Calculate total reaction force and Z value from an HDF5 file.
 
