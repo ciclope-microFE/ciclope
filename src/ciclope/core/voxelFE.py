@@ -9,6 +9,7 @@ import h5py
 import logging
 import numpy as np
 from datetime import datetime
+from ciclope.utils.preprocess import _collect_from_elements
 from ciclope.utils.recon_utils import bbox
 
 def vol2ugrid(voldata, voxelsize=[1, 1, 1], GVmin=0, plane_lock_num=1, node_level_lock_num=1, locking_strategy="plane", refnodes=False, verbose=False):
@@ -310,7 +311,7 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
         By default, BCs are applied only to the first layer nodes at the bases.        
     verbose : bool
         Activate verbose output.
-    """
+    """    
     #definitions
     H5T_IEEE_F64LE='<f8'
     H5T_IEEE_F32LE='<f4'
@@ -337,59 +338,23 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     origin=[origin[2],origin[0],origin[1]]
     dims=[dims[2],dims[0],dims[1]]
     
-    #Calculating end using origin and dims 
-    end=[origin[0]+dims[0], origin[1]+dims[1], origin[2]+dims[2]]
+    # Compute end indices along each axis
+    end = [origin[i] + dims[i] for i in range(3)]
     
-    #image dataset preparation
-    logging.info('preparing Image dataset...')
-    array_data = np.zeros((dims[0] + 1, dims[1] + 1, dims[2] + 1))
-    
-    lowBoundaryEls = []
-    topBoundaryEls = []
-    
-    #logging.info('D shape ' + str(data_shape[0])+ ' ' + str(data_shape[1]) + ' ' + str(data_shape[2]))
-    #logging.info('origin ' + str(origin[0])+ ' ' + str(origin[1]) + ' ' + str(origin[2]))
-    #logging.info('dims ' + str(dims[0])+ ' ' + str(dims[1]) + ' ' + str(dims[2]))
-        
-    #fill output image data and get low and top boundary elements 
-    # Define slices for the region of interest
+    # Define slicing ranges for sub-block extraction
     slice_start, slice_end = origin[0], end[0] + 1
-    row_start, row_end = origin[1], end[1] + 1
-    col_start, col_end = origin[2], end[2] + 1
+    row_start,   row_end   = origin[1], end[1] + 1
+    col_start,   col_end   = origin[2], end[2] + 1
 
-    # Extract the sub-block from voldata
-    sub_block = voldata[slice_start:slice_end, row_start:row_end, col_start:col_end]
+    # Extract the relevant sub-block of voxel data
+    sub_block = voldata[slice_start:slice_end,
+                        row_start:row_end,
+                        col_start:col_end]
+    # Scale voxel values by Young's modulus to get material stiffness
+    array_data = (sub_block * young_modulus).astype(np.float32)
 
-    # Compute the new values in one operation
-    result_block = sub_block * young_modulus
-
-    # Assign directly to array_data
-    array_data[:, :, :] = result_block
-        
-    # Find low boundary elements (slice == origin[0]) and non-zero values
-    for i in range (0, plane_lock_num):
-        low_boundary_mask = (sub_block[i, :, :] != 0)
-        lowBoundaryEls2d = np.argwhere(low_boundary_mask)
-        lowBoundaryEls2d = np.hstack((np.full((lowBoundaryEls2d.shape[0], 1), i), lowBoundaryEls2d))
-        if (i == 0):
-            lowBoundaryEls = lowBoundaryEls2d
-        else:
-            lowBoundaryEls = np.concatenate((lowBoundaryEls, lowBoundaryEls2d), axis=0)
-
-    # Find top boundary elements (slice == end[0]) and non-zero values
-    for i in range (0, plane_lock_num):
-        top_boundary_mask = (sub_block[-(i+1), :, :] != 0)
-        topBoundaryEls2d = np.argwhere(top_boundary_mask)
-        topBoundaryEls2d = np.hstack((np.full((topBoundaryEls2d.shape[0], 1), slice_end - slice_start - (i+1)), topBoundaryEls2d))
-        if (i == 0):
-            topBoundaryEls = topBoundaryEls2d
-        else:
-            topBoundaryEls = np.concatenate((topBoundaryEls, topBoundaryEls2d), axis=0)
-    
-    #image dataset creation
-    logging.info('creating Image dataset...')
-    # Creazione di un array di esempio
-    image=imgData.create_dataset("Image", (dims[0]+1,dims[1]+1,dims[2]+1), data=array_data, dtype=H5T_IEEE_F32LE)
+    # Store image data and material parameters in HDF5
+    imgData.create_dataset("Image", data=array_data, dtype=H5T_IEEE_F32LE)
     
     #setting voxel size
     logging.info('Setting voxel size')
@@ -399,126 +364,63 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     logging.info('Setting Poisson ratio')
     imgData.create_dataset("Poisons_ratio", data=poisson_ratio, dtype=H5T_IEEE_F64LE)
     
-    #create nodes condition lists for top and low boundary els.
+    # Initialize sets to collect boundary nodes for bottom (lb) and top (tb)
     lbNodesSet = set()
     tbNodesSet = set()
 
-    #Creating boundary condition for nodes as sets 
-    #each voxel has 8 nodes at the coordinates x and x+1, y and y+1, z and z+1
-    #as reference read this 2d table:
-        
-    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
-    # Elements:  |  0,0  |  0,1  |  0,2  |  0,3  |  0,4  |  0,5  |
-    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
-    # Elements:  |  0,0  |  0,1  |  0,2  |  0,3  |  0,4  |  0,5  |
-    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
-    # Elements:  |  0,0  |  0,1  |  0,2  |  0,3  |  0,4  |  0,5  |
-    # Nodes:    0,0 --- 0,1 --- 0,2 --- 0,3 --- 0,4 --- 0,5 --- 0,6 
-    
-    #Voxels can have common nodes so we use a set to remove duplicates on nodes list 
-    #the last column indicate the direction of the BCs
-    
-    for lbEl in lowBoundaryEls:
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,0) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,0) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,0) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,0) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,0) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,0) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,0) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,0) )
-        
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,1) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,1) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,1) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,1) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,1) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,1) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,1) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,1) )
+    # PLANE: select voxels in first/last plane_lock_num layers
+    lowBoundaryEls = []
+    topBoundaryEls = []
+    for i in range(plane_lock_num):
+        # Identify non-zero voxels in bottom plane i
+        low_mask = (sub_block[i] != 0)
+        low2d = np.argwhere(low_mask)
+        # Prepend the plane index to each (y,x) coordinate
+        low2d = np.hstack((np.full((low2d.shape[0],1), i), low2d))
+        lowBoundaryEls.append(low2d)
 
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]  ,2) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]  , lbEl[2]+1,2) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]  ,2) )
-        lbNodesSet.add( (lbEl[0]  , lbEl[1]+1, lbEl[2]+1,2) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]  ,2) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]  , lbEl[2]+1,2) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]  ,2) )
-        lbNodesSet.add( (lbEl[0]+1, lbEl[1]+1, lbEl[2]+1,2) )
-    
-    #if topHorizontaFixedlDisplacement is true X and Y displacements are fixed at the top
-    if(topHorizontaFixedlDisplacement):    
-        for tbEl in topBoundaryEls:
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]  , tpEl[2]  ,0) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]  , tpEl[2]+1,0) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]+1, tpEl[2]  ,0) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]+1, tpEl[2]+1,0) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]  , tpEl[2]  ,0) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]  , tpEl[2]+1,0) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]+1, tpEl[2]  ,0) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]+1, tpEl[2]+1,0) )
-            
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]  , tpEl[2]  ,1) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]  , tpEl[2]+1,1) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]+1, tpEl[2]  ,1) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]+1, tpEl[2]+1,1) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]  , tpEl[2]  ,1) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]  , tpEl[2]+1,1) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]+1, tpEl[2]  ,1) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]+1, tpEl[2]+1,1) )
+        # Identify non-zero voxels in top plane (from end)
+        idx = sub_block.shape[0] - 1 - i
+        top_mask = (sub_block[idx] != 0)
+        top2d = np.argwhere(top_mask)
+        top2d = np.hstack((np.full((top2d.shape[0],1), idx), top2d))
+        topBoundaryEls.append(top2d)
+    # Concatenate all boundary element arrays
+    lowBoundaryEls = np.vstack(lowBoundaryEls)
+    topBoundaryEls = np.vstack(topBoundaryEls)
 
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]  , tpEl[2]  ,2) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]  , tpEl[2]+1,2) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]+1, tpEl[2]  ,2) )
-            tbNodesSet.add( (tpEl[0]  , tpEl[1]+1, tpEl[2]+1,2) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]  , tpEl[2]  ,2) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]  , tpEl[2]+1,2) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]+1, tpEl[2]  ,2) )
-            tbNodesSet.add( (tpEl[0]+1, tpEl[1]+1, tpEl[2]+1,2) )
+    # Bottom: fix X,Y,Z; Top: conditionally fix X,Y based on flag
+    _collect_from_elements(lowBoundaryEls, lbNodesSet, (0,1,2))
+    if topHorizontaFixedlDisplacement:
+        _collect_from_elements(topBoundaryEls, tbNodesSet, (0,1,2))
     else:
-        for tbEl in topBoundaryEls:
-            tbNodesSet.add( (tbEl[0]  , tbEl[1]  , tbEl[2]  ,2) )
-            tbNodesSet.add( (tbEl[0]  , tbEl[1]  , tbEl[2]+1,2) )
-            tbNodesSet.add( (tbEl[0]  , tbEl[1]+1, tbEl[2]  ,2) )
-            tbNodesSet.add( (tbEl[0]  , tbEl[1]+1, tbEl[2]+1,2) )
-            tbNodesSet.add( (tbEl[0]+1, tbEl[1]  , tbEl[2]  ,2) )
-            tbNodesSet.add( (tbEl[0]+1, tbEl[1]  , tbEl[2]+1,2) )
-            tbNodesSet.add( (tbEl[0]+1, tbEl[1]+1, tbEl[2]  ,2) )
-            tbNodesSet.add( (tbEl[0]+1, tbEl[1]+1, tbEl[2]+1,2) )
+        _collect_from_elements(topBoundaryEls, tbNodesSet, (2,))
 
-	#Create Fixed_Displacement_Coordinates
-    logging.info('Creating Fixed_Displacement_Coordinates')
-    
-    lbNsLen=len(lbNodesSet);
-    tbNsLen=len(tbNodesSet);
-    
-    # Create a NumPy array of size lbNsLen+tbNsLen x 4
-    fixDispCoord = np.zeros((lbNsLen+tbNsLen, 4), dtype=int)
-    
-    #put sets elements in the array
-    lb_list = list(lbNodesSet)
-    tb_list = list(tbNodesSet)
-    fixDispCoord[:len(lb_list), :] = lb_list
-    fixDispCoord[len(lb_list):, :] = tb_list
-        
-    fdc=imgData.create_dataset("Fixed_Displacement_Coordinates", data=fixDispCoord, dtype=H5T_STD_U16LE)
-    
-    #Create Fixed_Displacement_Values 
-    logging.info('Creating Fixed_Displacement_Values')
-    
-    # Create a NumPy array of size lbNsLen+tbNsLen 
-    fixDispValues = np.zeros((lbNsLen+tbNsLen), dtype=float)
-            
-    # All displacements are at 0 due to np.zeros so we need to add only top diplacement in the Z direction (ns[3] == 2)
-    for idx, ns in enumerate(tbNodesSet):
-        if(ns[3]==2):
-            fixDispValues[lbNsLen+idx]=topDisplacement
-        
-    fdv=imgData.create_dataset("Fixed_Displacement_Values", data=fixDispValues, dtype=H5T_IEEE_F32LE)
-    
-    #finalizing 
+    # Merge bottom+top sets and prepare arrays for HDF5
+    all_nodes = list(lbNodesSet) + list(tbNodesSet)
+    fixDispCoord = np.array(all_nodes, dtype=np.uint16)  # (n_nodes,4)
+
+    # Initialize displacement values (0 for all), then set top Z displacements
+    values = np.zeros(len(all_nodes), dtype=np.float32)
+    for i, (_, _, _, d) in enumerate(all_nodes[len(lbNodesSet):], start=len(lbNodesSet)):
+        if d == 2:
+            values[i] = topDisplacement
+
+    # Write Fixed_Displacement datasets
+    imgData.create_dataset(
+        "Fixed_Displacement_Coordinates",
+        data=fixDispCoord,
+        dtype=H5T_STD_U16LE
+    )
+    imgData.create_dataset(
+        "Fixed_Displacement_Values",
+        data=values,
+        dtype=H5T_IEEE_F32LE
+    )
+
+    # Close file and log completion
     file.close()
-    logging.info('hdf5 export done!')
+    logging.info('h5 export done!')
 
 def mesh2voxelfe(mesh, templatefile, fileout, matprop=None, keywords=['NSET', 'ELSET'], eltype='C3D8', matpropbits=8, refnode=None, verbose=False):
     """Generate ABAQUS voxel Finite Element (FE) input file from 3D Unstructured Grid mesh data.
