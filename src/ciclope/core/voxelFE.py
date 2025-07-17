@@ -324,9 +324,9 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
         logging.basicConfig(level=logging.INFO)
 
     #file and main group(Image_Data)creation
-	logging.info('Opening Output file')
+    logging.info('Opening Output file')
     file = h5py.File(fileout, 'w')
-	logging.info('creating h5 Image_Data Group')
+    logging.info('creating h5 Image_Data Group')
     imgData = file.create_group("Image_Data")
 
     # Get original data dimensions (Z, Y, X)
@@ -356,8 +356,8 @@ def vol2h5ParOSol(voldata, fileout, topDisplacement, voxelsize=1, poisson_ratio=
     # Store image data and material parameters in HDF5
     imgData.create_dataset("Image", data=array_data, dtype=H5T_IEEE_F32LE)
 
-	#setting voxel size
-	logging.info('Setting voxel size')
+    #setting voxel size
+    logging.info('Setting voxel size')
     imgData.create_dataset("Voxelsize", data=voxelsize, dtype=H5T_IEEE_F64LE)
     #setting poisson ratio
     logging.info('Setting Poisson ratio')

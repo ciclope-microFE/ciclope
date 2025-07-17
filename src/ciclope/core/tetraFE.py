@@ -382,12 +382,12 @@ def mesh2tetrafe(meshdata, templatefile, fileout,
     if verbose:
         logging.basicConfig(level=logging.INFO)
 
-    # Calcola i limiti del modello
+    # Calculate model boundaries
     model_coors_max = np.amax(meshdata.points, axis=0)
     model_coors_min = np.amin(meshdata.points, axis=0)
     extent = model_coors_max - model_coors_min
 
-    # Tolleranza di confine: se non specificata, 1% dell'estensione del modello
+    # Boundary tolerance: if not specified, 1% of the model extension
     if bound_tol is None:
         bound_tol = 0.01 * extent
     else:
@@ -445,20 +445,20 @@ def mesh2tetrafe(meshdata, templatefile, fileout,
         cells_array = meshdata.cells[0][1]
         cell_sets = {'SETALL': [np.arange(len(cells_array))]}
 
-        # Se esistono dati per le celle, crea ulteriori set in base ai valori unici
+        # If data exist for cells, create additional sets based on unique values
         if hasattr(meshdata, 'cell_data') and 'medit:ref' in meshdata.cell_data:
             cell_data_unique = np.unique(meshdata.cell_data['medit:ref'])
             for val in cell_data_unique:
                 indices = np.where(meshdata.cell_data['medit:ref'] == val)[0]
                 cell_sets['SET' + str(val)] = [indices]
 
-        # Per ogni set di nodi, utilizza la vectorizzazione per trovare rapidamente gli elementi
+        # For each set of nodes, use vectorisation to quickly find the elements
         for cell_set_name, node_set_name in mapping.items():
             node_set = meshdata.point_sets.get(node_set_name, [])
             if len(node_set) == 0:
                 continue
 
-            # Crea una maschera: per ogni elemento controlla se contiene almeno un nodo del set
+            # Create a mask: for each element check if it contains at least one node of the set
             mask = np.any(np.isin(cells_array, node_set), axis=1)
             elem_indices = np.where(mask)[0]
             if elem_indices.size > 0:
@@ -469,7 +469,7 @@ def mesh2tetrafe(meshdata, templatefile, fileout,
     else:
         meshdata.cell_sets = {'SETALL': [np.arange(len(meshdata.cells[0][1]))]}
 
-    # Scrive la mesh in formato ABAQUS usando meshio
+    # Writes the mesh in ABAQUS format using meshio
     meshio.abaqus.write(fileout, meshdata, float_fmt)
     try:
         with open(templatefile, 'r') as BCfile, open(fileout, 'a') as INP:

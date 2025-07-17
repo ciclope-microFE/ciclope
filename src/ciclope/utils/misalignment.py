@@ -107,38 +107,38 @@ def signed_point_to_ellipse_distance(P, C, a, b, alpha):
         Positive if the point is outside, negative if inside.
     """
     
-    # Converti P e C in numpy array
+    # Convert P and C to numpy array
     P = np.asarray(P)
     C = np.asarray(C)
 
-    # Ruota e trasla il punto nello spazio dell'ellisse non ruotata
+    # Rotate and translate the point in the space of the unrotated ellipse
     cos_a, sin_a = np.cos(-alpha), np.sin(-alpha)
     R = np.array([[cos_a, -sin_a],
                   [sin_a, cos_a]])
     
     P_rot = R @ (P - C)
 
-    # Funzione distanza quadrata da un punto su ellisse parametrica
+    # Square distance function from a point on a parametric ellipse
     def distance_squared(theta):
         x = a * np.cos(theta)
         y = b * np.sin(theta)
         return (x - P_rot[0])**2 + (y - P_rot[1])**2
 
-    # Minimizza la distanza al quadrato per trovare il punto più vicino sull’ellisse
+    # Minimize the distance squared to find the nearest point on the ellipse
     res = minimize_scalar(distance_squared, bounds=(0, 2*np.pi), method='bounded')
 
-    # Calcola il punto minimo sulla ellisse (non ruotata)
+    # Calculate the minimum point on the ellipse (not rotated)
     theta_min = res.x
     x_min = a * np.cos(theta_min)
     y_min = b * np.sin(theta_min)
 
-    # Ruota il punto trovato nello spazio originale
+    # Rotate point found in original space
     cos_a, sin_a = np.cos(alpha), np.sin(alpha)
     R_inv = np.array([[cos_a, -sin_a],
                       [sin_a, cos_a]])
     closest_point = R_inv @ np.array([x_min, y_min]) + C
 
-    # Distanza euclidea dal punto originale
+    # Euclidean distance from original point
     euclideanDist=np.sqrt((P[0] - closest_point[0])**2 + (P[1] - closest_point[1])**2)
 
     centerClosDist=np.sqrt((C[0] - closest_point[0])**2 + (C[1] - closest_point[1])**2)
@@ -252,23 +252,23 @@ def fit_ellipse_filtered(pts):
     """
     
     threshold_percent = 5
-    # Primo fit del cerchio
+    # First fit of the circle
     C, a, b, alpha = fit_ellipse(pts)
     
     for i in range(0,4):
-        # Calcola le distanze dei punti dal centro
+        # Calculate distances of points from the centre
         distances=np.array([signed_point_to_ellipse_distance(p, C, a, b, alpha) for p in pts])
         
-        # Soglia di distanza (5% del semiasse medio)
+        # Distance threshold (5% of mean semi-axis)
         medium_semi_ax=(a+b)/2.0 
         
 
         threshold = medium_semi_ax* ((threshold_percent-i) / 100)
         
-        # Filtra i punti che sono dentro la soglia
+        # Filter the points that are within the threshold
         filtered_pts = pts[distances > -threshold]
 
-        # Secondo fit del cerchio con i punti filtrati
+        # Second fit of the circle with filtered points
         C, a, b, alpha = fit_ellipse(filtered_pts)
         
     return C, a, b, alpha
@@ -701,7 +701,7 @@ def calc_radius(center, points):
         Array of Euclidean distances from the center to each point.
     """
 
-    # distanza dal centro a ogni punto
+    # distance from centre to each point
     return np.sqrt((points[:,0] - center[0])**2 + (points[:,1] - center[1])**2)
 
 #-------------------------------------------------------------------------------------------
@@ -757,9 +757,9 @@ def fit_circle(points):
     from the center and the radius.
     """
 
-    # Stima iniziale centro come media dei punti
+    # Initial centre estimate as average of points
     center_estimate = np.mean(points, axis=0)
-    # Stima iniziale raggio come media delle distanze dal centro stimato
+    # Initial radius estimate as the average of distances from the estimated centre
     r_estimate = np.mean(calc_radius(center_estimate, points))
     
     initial_params = [center_estimate[0], center_estimate[1], r_estimate]
@@ -801,20 +801,20 @@ def fit_circle_filtered(pts, threshold_percent=5):
     - The circle is refit to the filtered points for up to 4 iterations.
     """
 
-    # Primo fit del cerchio
+    # First fit of the circle
     x, y, radius = fit_circle(pts)
     
     for i in range(0,4):
-        # Calcola le distanze dei punti dal centro
+        # Calculate distances of points from the centre
         distances = np.sqrt((pts[:,0] - x)**2 + (pts[:,1] - y)**2)
         
-        # Soglia di distanza (5% del raggio)
+        # Distance threshold (5% of radius)
         threshold = radius * ((threshold_percent-i) / 100)
         
-        # Filtra i punti che sono dentro la soglia
+        # Filter the points that are within the threshold
         filtered_pts = pts[distances >= (radius - threshold)]
 
-        # Secondo fit del cerchio con i punti filtrati
+        # Second fit of the circle with filtered points
         x, y, radius = fit_circle(filtered_pts)
         
     return x, y, radius

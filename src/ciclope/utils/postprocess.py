@@ -322,16 +322,16 @@ def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
 
     # Calculate the BVTV of the entire model
     num_pixel_total_bone = 0
-    num_pixel_total_bone-empty = 0
+    num_pixel_total_bone_empty = 0
 
     for slice_mask, circular_mask in zip(L, circular_masks):
         num_pixel_bone = np.sum(np.logical_and(slice_mask, circular_mask))
-        num_pixel_bone-empty = np.sum(np.logical_or(slice_mask, circular_mask))
+        num_pixel_bone_empty = np.sum(np.logical_or(slice_mask, circular_mask))
 
         num_pixel_total_bone += num_pixel_bone
-        num_pixel_total_bone-empty += num_pixel_bone-empty
+        num_pixel_total_bone_empty += num_pixel_bone_empty
 
-    BVTV = num_pixel_total_bone / (num_pixel_total_bone-empty)
+    BVTV = num_pixel_total_bone / (num_pixel_total_bone_empty)
 
     return circular_masks, BVTV
     
