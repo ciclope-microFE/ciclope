@@ -364,6 +364,44 @@ def cyl_binary_mask2bvtv(mask: np.ndarray, voxel_size: float, radius: float, hei
     
     return bvtv
 
+def count_fixed_displacements(file_path, slice_level):
+    """
+    Count the number of nodes fixed (bottom region) and nodes
+    fixed with top_displacement (top region), based on voxel coordinates only.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the HDF5 file.
+    slice_level: int
+        Number of planes locked at the top (just the nodes on the base of 
+        the voxels, not all nodes of the voxel planes)
+
+    Returns
+    -------
+    tuple of int
+        nodes_z0_count, nodes_z1_count
+    """
+    nodes_z0_count, nodes_z1_count = 0, 0
+
+    with h5py.File(file_path, 'r') as file:
+        vs = file['/Image_Data/Voxelsize'][0]
+        fixed_disp_coords = file['/Image_Data/Fixed_Displacement_Coordinates'][()]
+        z_slices = fixed_disp_coords[:, 0]
+        max_slice_id = np.max(z_slices)
+
+        # Nodes at bottom (Z=0) --> slices from max_id - slice_level +1 to max_id
+        z0_mask = (z_slices >= (max_slice_id - slice_level + 1)) & (z_slices <= max_slice_id)
+        z0_raw = np.sum(z0_mask)
+        nodes_z0_count = int(z0_raw / 3)  # each DOF counted
+
+        # Nodes at top (-0.04) --> slices 0 to 10 inclusive
+        z1_mask = (z_slices >= 0) & (z_slices <= 10)
+        z1_raw = np.sum(z1_mask)
+        nodes_z1_count = int(z1_raw / 3)
+
+    return nodes_z0_count, nodes_z1_count
+
 def reaction_forces(file_path, vs):
     """
     Calculate total reaction force and Z value from an HDF5 file.
