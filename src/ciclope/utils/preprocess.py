@@ -419,6 +419,42 @@ def periosteummask(bwimage, closepixels=10, closevoxels=0, remove_objects_smalle
 
     return perimask
 
+def _collect_from_elements(boundEls, nodesSet, dirs):
+    """
+    Expands voxel elements into their 8 corner nodes and adds direction-tagged nodes to a set.
+
+    Each element in `boundEls` is treated as a voxel defined by its lower corner `(z, y, x)`.
+    This function computes all 8 corner node positions for each voxel and adds them to `nodesSet`
+    with each specified direction from `dirs`.
+
+    Parameters
+    ----------
+    boundEls : iterable of tuple of int
+        An iterable of 3D indices representing the lower-front-left corner of each voxel element.
+        Each element should be a tuple of three integers (z, y, x).
+
+    nodesSet : set of tuple
+        A set to which the resulting nodes will be added. Each node is represented as a 4-tuple
+        `(z, y, x, dir)`, where `(z, y, x)` is the node position and `dir` is a directional tag.
+
+    dirs : iterable
+        A list or iterable of direction tags to associate with each corner node. Can be any
+        hashable type (e.g., int, str).
+
+    Returns
+    -------
+    None
+        This function modifies `nodesSet` in-place and does not return a value.
+    """
+    for el in boundEls:
+        z, y, x = el  # element index triple
+        for dz in (0, 1):
+            for dy in (0, 1):
+                for dx in (0, 1):
+                    # Add a tuple (z+dz, y+dy, x+dx, dir)
+                    for d in dirs:
+                        nodesSet.add((z + dz, y + dy, x + dx, d))
+
 """
 Ciclope functions for the modelling of trabecular bone sample with a cylindrical shape
 """

@@ -322,16 +322,16 @@ def circular_masks_BVTV(L, diameter, pixel_spacing_mm):
 
     # Calculate the BVTV of the entire model
     num_pixel_total_bone = 0
-    num_pixel_total_bone-empty = 0
+    num_pixel_total_bone_empty = 0
 
     for slice_mask, circular_mask in zip(L, circular_masks):
         num_pixel_bone = np.sum(np.logical_and(slice_mask, circular_mask))
-        num_pixel_bone-empty = np.sum(np.logical_or(slice_mask, circular_mask))
+        num_pixel_bone_empty = np.sum(np.logical_or(slice_mask, circular_mask))
 
         num_pixel_total_bone += num_pixel_bone
-        num_pixel_total_bone-empty += num_pixel_bone-empty
+        num_pixel_total_bone_empty += num_pixel_bone_empty
 
-    BVTV = num_pixel_total_bone / (num_pixel_total_bone-empty)
+    BVTV = num_pixel_total_bone / (num_pixel_total_bone_empty)
 
     return circular_masks, BVTV
     
@@ -364,57 +364,125 @@ def cyl_binary_mask2bvtv(mask: np.ndarray, voxel_size: float, radius: float, hei
     
     return bvtv
 
-def reaction_forces(file_path, vs):
+def count_fixed_displacements(file_path, slice_level):
     """
-    Calculate total reaction force and Z value from an HDF5 file.
+    Count the number of nodes fixed (bottom region) and nodes
+    fixed with top_displacement (top region), based on voxel coordinates only.
 
-    Parameters:
-    file_path (str): Path to the HDF5 file.
-    vs (float): Voxel size.
+    Parameters
+    ----------
+    file_path : str
+        Path to the HDF5 file.
+    slice_level: int
+        Number of planes locked at the top (just the nodes on the base of 
+        the voxels, not all nodes of the voxel planes)
 
-    Returns:
-    Z_value (float): The calculated Z value.
-    total_force (numpy.ndarray): The total force (fx, fy, fz).
-    F_tot (float): Magnitude of the total force.
+    Returns
+    -------
+    tuple of int
+        nodes_z0_count, nodes_z1_count
+    """
+    nodes_z0_count, nodes_z1_count = 0, 0
+
+    with h5py.File(file_path, 'r') as file:
+        vs = file['/Image_Data/Voxelsize'][0]
+        fixed_disp_coords = file['/Image_Data/Fixed_Displacement_Coordinates'][()]
+        z_slices = fixed_disp_coords[:, 0]
+        max_slice_id = np.max(z_slices)
+
+        # Nodes at bottom (Z=0) --> slices from max_id - slice_level +1 to max_id
+        z0_mask = (z_slices >= (max_slice_id - slice_level + 1)) & (z_slices <= max_slice_id)
+        z0_raw = np.sum(z0_mask)
+        nodes_z0_count = int(z0_raw / 3)  # each DOF counted
+
+        # Nodes at top (-0.04) --> slices 0 to 10 inclusive
+        z1_mask = (z_slices >= 0) & (z_slices <= 10)
+        z1_raw = np.sum(z1_mask)
+        nodes_z1_count = int(z1_raw / 3)
+
+    return nodes_z0_count, nodes_z1_count
+
+def reaction_forces(file_path, slice_level):
+    """
+    Compute reaction forces and mesh information from an HDF5 file,
+    considering a region of nodes within a specified range of slices
+    defined by `slice_level`.
+
+    The function identifies the nodes whose Z-coordinate falls within
+    the range corresponding to the last `slice_level` slices at the
+    top of the voxel grid, sums their nodal forces, and returns related
+    quantities.
+
+    Parameters
+    ----------
+    file_path : str
+        Path to the HDF5 file containing mesh and solution data.
+    slice_level : int
+        Number of voxel levels (just the nodes on the base of the voxels,
+        not all nodes of the voxel planes) used to define the locked region 
+        for boundary conditions. The reaction forces are computed for all
+        nodes within this region.
+
+    Returns
+    -------
+    dict
+        Dictionary containing:
+        - 'Z_min' : float
+            Lower Z limit of the locked region.
+        - 'Z_max' : float
+            Upper Z limit of the locked region.
+        - 'total_force' : ndarray of shape (3,)
+            Total reaction force vector [Fx, Fy, Fz].
+        - 'F_tot' : float
+            Norm of the total reaction force.
+        - 'num_nodes' : int
+            Total number of nodes in the mesh.
+        - 'num_elements' : int
+            Total number of elements in the mesh.
+        - 'vs' : float
+            Voxel size.
+        - 'nodes_z0_count' : int
+            Number of nodes constrained at Z = 0.
+        - 'nodes_z1_count' : int
+            Number of nodes constrained at Z = Z_max.
     """
     with h5py.File(file_path, 'r') as file:
-        # Access the Fixed_Displacement_Coordinates dataset within the Image_Data group
+        vs = file['/Image_Data/Voxelsize'][0]
+
         fixed_disp_coords = file['Image_Data/Fixed_Displacement_Coordinates'][()]
-        
-        # Find the slice ID with the highest numerical value
         max_slice_id = np.max(fixed_disp_coords[:, 0])
-        
-        # Calculate Z_value
-        Z_value = max_slice_id * vs
-        
-        print(f"Z_value: {Z_value}")
-        print()
-        
-        # Read the node coordinates from the Mesh group
+
+        Z_min = (max_slice_id - slice_level + 1) * vs
+        Z_max = max_slice_id * vs
+
         coordinates = file['Mesh/Coordinates'][()]
-        
-        # Identify nodes with the specified Z value
-        z_indices = np.where(coordinates[:, 2] == Z_value)[0]
-        
-        # Assuming we can access the nodal force data in some manner
+        num_nodes = coordinates.shape[0]
+
+        z_indices = np.where(
+            (coordinates[:, 2] >= Z_min) & (coordinates[:, 2] <= Z_max)
+        )[0]
+
         nodal_forces = file['Solution/Nodal forces'][()]
-        
-        # Assuming nodal_forces has a one-to-one mapping with coordinates
-        # Extract forces corresponding to Z indices
         forces_filtered = nodal_forces[z_indices, :]
-        
-        # Calculate the sum of forces for fx, fy, and fz
         total_force = np.sum(forces_filtered, axis=0)
-        
-        print(f"Total force (fx, fy, fz) for set NODES_Z0 and time  0.1000000E+01: {total_force}")
-        print()
-        
-        # Apply Pythagoras' theorem to calculate the total force
-        F_tot = np.sqrt(np.sum(total_force**2))
-        
-        print(f"F_tot: {F_tot:.2f} N")
-        
-        return Z_value, total_force, F_tot
+        F_tot = np.linalg.norm(total_force)
+
+        elements = file['Mesh/Elements'][()]
+        num_elements = elements.shape[0]
+
+        nodes_z0_count, nodes_z1_count = count_fixed_displacements(file_path, slice_level)
+
+        return {
+            'Z_min': Z_min,
+            'Z_max': Z_max,
+            'total_force': total_force,
+            'F_tot': F_tot,
+            'num_nodes': num_nodes,
+            'num_elements': num_elements,
+            'vs': vs,
+            'nodes_z0_count': nodes_z0_count,
+            'nodes_z1_count': nodes_z1_count
+        }
     
 def sample_height(input_folder, vs):
     """
