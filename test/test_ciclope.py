@@ -73,13 +73,18 @@ class run_tests(unittest.TestCase):
         self.assertEqual(bc, True)
 
     def test_voxelFE_vol2ugrid(self):
-        pippo_mesh = ciclope.core.voxelFE.vol2ugrid(read_tiff_stack(test_data_file), [0.12,0.12,0.12], GVmin=100)
-        self.assertEqual(pippo_mesh.cells[0].type, "hexahedron")
-        self.assertEqual(pippo_mesh.cells[0].data.shape, (209,8))
-        self.assertEqual(pippo_mesh.cells[0].data.shape, (209,8))
-        self.assertEqual(pippo_mesh.points.shape, (1331,3))
-        self.assertEqual(pippo_mesh.point_sets['NODES_X0Y0Z0'], [18,19])
-        self.assertEqual((pippo_mesh.points[100] == np.array([0.12, 1.08, 0])).all(), True)
+            pippo_mesh = ciclope.core.voxelFE.vol2ugrid(
+            read_tiff_stack(test_data_file),
+            [0.12, 0.12, 0.12],
+            GVmin=100,
+            locking_strategy="exact",
+            node_level_lock_num=1)
+            self.assertEqual(pippo_mesh.cells[0].type, "hexahedron")
+            self.assertEqual(pippo_mesh.cells[0].data.shape, (209,8))
+            self.assertEqual(pippo_mesh.cells[0].data.shape, (209,8))
+            self.assertEqual(pippo_mesh.points.shape, (1331,3))
+            self.assertEqual(pippo_mesh.point_sets['NODES_X0Y0Z0'], [18,19])
+            self.assertEqual((pippo_mesh.points[100] == np.array([0.12, 1.08, 0])).all(), True)
 
     def test_mesh2voxelFE(self):
         ciclope.voxelFE.mesh2voxelfe(ciclope.core.voxelFE.vol2ugrid(read_tiff_stack(test_data_file), [0.12,0.12,0.12], GVmin=100), 'test_input.inp', 'foo.inp')
@@ -124,7 +129,7 @@ class run_tests(unittest.TestCase):
 
         # assert one node and one node_set line
         self.assertEqual(list(map(float, lines[0].split(","))), [359.0, 0.84, 1.2, 0.24])
-        self.assertEqual(list(map(int, lines[1].strip(',').split(','))), [37, 64, 92, 126])
+        self.assertEqual(list(map(int, lines[1].strip(',').split(','))), [1315, 1316, 1326, 1327])
 
 if __name__ == '__main__':
     unittest.main()
