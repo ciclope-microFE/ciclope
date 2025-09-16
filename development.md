@@ -25,9 +25,10 @@ flit install --symlink
 #### Basic installation (only voxelFE)
 ```shell
 micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py opencv -c conda-forge
+pip3 install pygalmesh
 git clone https://github.com/gianthk/ciclope.git
 cd ciclope
-pip install .
+pip3 install .
 ```
 
 ### Build instructions
