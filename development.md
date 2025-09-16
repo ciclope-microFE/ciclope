@@ -1,4 +1,4 @@
-#### Development installation
+### Development installation
 Create and activate a virtual environment for development:
 ```commandline
 conda env create -n ciclope
@@ -22,7 +22,15 @@ Or install the package locally for development with [Flit](https://flit.pypa.io/
 flit install --symlink
 ```
 
-#### Build instructions
+#### Basic installation (only voxelFE)
+```shell
+micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py opencv -c conda-forge
+git clone https://github.com/gianthk/ciclope.git
+cd ciclope
+pip install .
+```
+
+### Build instructions
 Build package:
 ```commandline
 python3 -m build
