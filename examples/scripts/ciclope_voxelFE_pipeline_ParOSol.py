@@ -31,7 +31,8 @@ vol2h5ParOSol(
 # Slurm call
 # sbatch --ntasks=16 --time=2 --mem-per-cpu=100 --wrap="mpirun -np 16 build/parosol mesh/h5/sphere.h5"
 
-# Define the sbatch command
+# Define a sbatch command
+
 command = [
     "sbatch",
     "--ntasks=16",
@@ -41,15 +42,15 @@ command = [
 ]
 
 # Run the command and capture the output
-try:
-    result = subprocess.run(command, capture_output=True, text=True, check=True)
-    print("Job submitted successfully!")
-    print("SLURM output:", result.stdout)
-except subprocess.CalledProcessError as e:
-    print("Error submitting job:")
-    print(e.stderr)
+# try:
+#     result = subprocess.run(command, capture_output=True, text=True, check=True)
+#     print("Job submitted successfully!")
+#     print("SLURM output:", result.stdout)
+# except subprocess.CalledProcessError as e:
+#     print("Error submitting job:")
+#     print(e.stderr)
 
-# see how to submit a joba rray here: https://www.gdc-docs.ethz.ch/EulerManual/site/jobs/
+# see how to submit a job array here: https://www.gdc-docs.ethz.ch/EulerManual/site/jobs/
 
 # load reaction forces and calculate stiffness
 plane_lock_num = 10
