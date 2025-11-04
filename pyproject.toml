@@ -49,7 +49,7 @@ dependencies = [
     "matplotlib",
     "tifffile",
     "h5py",
-    "opencv",
+    "opencv-python",
 ]
 
 [project.optional-dependencies]
