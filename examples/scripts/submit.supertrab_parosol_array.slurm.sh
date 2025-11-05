@@ -30,5 +30,5 @@ mpirun -np 1 ~/code/parosol-tu-wien/build/parosol ${MODEL}
 
 ##############################################
 ##Get a summary of the job
-jeffrun -j ${SLURM_JOB_ID}
+# jeffrun -j ${SLURM_JOB_ID}
 ##############################################
