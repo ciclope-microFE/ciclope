@@ -21,3 +21,5 @@ results = reaction_forces(output_file, slice_level)
 - 'nodes_z0_count': 154405,
 - 'nodes_z1_count': 73097
 ---
+
+/home/giiori/terminus/external/tacosound/HR-pQCT_II/parosol/20251105_125728/*
