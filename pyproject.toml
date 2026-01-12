@@ -49,16 +49,17 @@ dependencies = [
     "matplotlib",
     "tifffile",
     "h5py",
-    "opencv-python",
 ]
 
 [project.optional-dependencies]
 all = [
+    "pillow",
     "itkwidgets",
     "itk",
     "vtk",
     "ccx2paraview",
     "pygalmesh>=0.10.6",
+    "opencv-python",
 ]
 
 [project.urls]

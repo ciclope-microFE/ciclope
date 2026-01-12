@@ -4,7 +4,7 @@ Create and activate a virtual environment for development:
 conda env create -n ciclope
 conda activate ciclope
 ```
-Install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html):
+(Optional) Install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html) for some examples:
 ```shell
 conda install -c conda-forge dxchange
 ```
@@ -24,8 +24,8 @@ flit install --symlink
 
 #### Basic installation (only voxelFE)
 ```shell
-micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py opencv -c conda-forge
-pip3 install pygalmesh
+micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py -c conda-forge
+# pip3 install pygalmesh 
 git clone https://github.com/gianthk/ciclope.git
 cd ciclope
 pip3 install .
