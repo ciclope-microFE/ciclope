@@ -4,15 +4,15 @@ Create and activate a virtual environment for development:
 conda env create -n ciclope
 conda activate ciclope
 ```
-(Optional) Install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html) for some examples:
+Install [DXchange](https://dxchange.readthedocs.io/en/latest/index.html) (**Optional**, used in some of the examples) :
 ```shell
 conda install -c conda-forge dxchange
 ```
 Clone the git repository:
 ```shell
-git clone https://github.com/gianthk/ciclope.git
+git clone https://github.com/ciclope-microFE/ciclope.git
 ```
-Navigate to the repo folder and install the package using pip:
+Navigate to the repository folder and install the package using pip:
 ```shell
 cd ciclope
 pip install .
@@ -26,7 +26,7 @@ flit install --symlink
 ```shell
 micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py -c conda-forge
 # pip3 install pygalmesh 
-git clone https://github.com/gianthk/ciclope.git
+git clone https://github.com/ciclope-microFE/ciclope.git
 cd ciclope
 pip3 install .
 ```
