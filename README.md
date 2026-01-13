@@ -22,6 +22,8 @@ After installing pygalmesh, you can install `ciclope` using pip. The flag `[all]
 pip install ciclope[all]
 ```
 
+A minimal version of `ciclope` (**voxelFE pipelines only**) can be installed without `CGAL`, `Eigen`, and `pygalmesh` following instructions in the [development guide](development.md)
+
 Some examples will require [DXchange](https://dxchange.readthedocs.io/en/latest/index.html). You can install it with
 ```shell
 conda install -c conda-forge dxchange

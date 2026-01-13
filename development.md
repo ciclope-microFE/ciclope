@@ -22,15 +22,16 @@ Or install the package locally for development with [Flit](https://flit.pypa.io/
 flit install --symlink
 ```
 
-#### Basic installation (only voxelFE)
+#### Basic installation (`voxelFE` only)
+This section describes how to create a minimal environment for voxelFE only pipelines which don't require `CGAL`, `Eigen`, and `pygalmesh`.
+
 ```shell
 micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py -c conda-forge
-# pip3 install pygalmesh 
 git clone https://github.com/ciclope-microFE/ciclope.git
 cd ciclope
 pip3 install .
 ```
-
+---
 ### Build instructions
 Build package:
 ```commandline
