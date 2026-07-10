@@ -38,7 +38,7 @@ requires-python = ">=3.9"
 dynamic = ["version"]
 dependencies = [
     "numpy>=1.20.0,<2.0",
-    "meshio>=5,<6",
+    "meshio==5.0.0",
     "PyMCubes",
     "scipy",
     "scikit-image",
