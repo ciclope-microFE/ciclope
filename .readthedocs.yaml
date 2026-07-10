@@ -10,9 +10,9 @@ build:
   os: ubuntu-24.04
   tools:
     python: "mambaforge-4.10"
-  apt_packages:
-    - libcgal-dev
-    - libeigen3-dev
+  # apt_packages:
+  #   - libcgal-dev
+  #   - libeigen3-dev
 
 # Configuration for Conda support
 conda:
