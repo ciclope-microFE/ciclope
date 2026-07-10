@@ -39,7 +39,7 @@ classifiers = [
 requires-python = ">=3.7"
 dynamic = ["version"]
 dependencies = [
-    "numpy>=1.20.0",
+    "numpy>=1.20.0,<2.0",
     "meshio>=5,<6",
     "PyMCubes",
     "scipy",
