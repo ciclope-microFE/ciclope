@@ -27,7 +27,7 @@ jobs:
             python=3.10
             pip
             numpy>=1.20,<2
-            meshio>=5,<6
+            meshio==5.0.0
             pymcubes
             scipy
             py-opencv
