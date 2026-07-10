@@ -16,7 +16,7 @@ project = 'ciclope'
 copyright = '2026, Open and Reproducible Musculoskeletal Imaging Research (ORMIR)'
 author = 'Gianluca Iori'
 # The full version, including alpha/beta/rc tags
-release = '2.0.2'
+release = '2.0.3'
 # -- General configuration ---------------------------------------------------
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
