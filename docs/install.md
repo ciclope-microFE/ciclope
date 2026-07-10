@@ -26,7 +26,7 @@ conda install -c conda-forge pygalmesh
 pip install ciclope[all]
 ```
 
-[pygalmesh](https://github.com/meshpro/pygalmesh), a Python frontend to [CGAL](https://www.cgal.org/), should come with [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page). If not, follow the [installation procedure](https://github.com/meshpro/pygalmesh#installation) for [CGAL](https://www.cgal.org/) and [Eigen](http://eigen.tuxfamily.org/index.php?title=Main_Page).
+A minimal version of `ciclope` (**voxelFE pipelines only**) can be installed without `CGAL`, `Eigen`, and `pygalmesh` following instructions in the [development guide](./../development.md).
 
 ---
 ## Testing
