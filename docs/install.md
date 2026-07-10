@@ -26,7 +26,15 @@ conda install -c conda-forge pygalmesh
 pip install ciclope[all]
 ```
 
-A minimal version of `ciclope` (**voxelFE pipelines only**) can be installed without `CGAL`, `Eigen`, and `pygalmesh` following instructions in the [development guide](./../development.md).
+### Basic installation (`voxelFE` only)
+A minimal version of `ciclope` (**voxelFE pipelines only**) can be installed without `CGAL`, `Eigen`, and `pygalmesh` with:
+
+```shell
+micromamba create -n ciclope ipython python==3.11.11 jupyter numpy pymcubes scipy scikit-image meshio h5py -c conda-forge
+git clone https://github.com/ciclope-microFE/ciclope.git
+cd ciclope
+pip3 install .
+```
 
 ---
 ## Testing
