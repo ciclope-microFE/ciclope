@@ -19,11 +19,11 @@ import sphinx_rtd_theme
 # -- Project information -----------------------------------------------------
 
 project = 'ciclope'
-copyright = '2023, Open and Reproducible MSK Imaging Research - ORMIR'
+copyright = '2026, Open and Reproducible Musculoskeletal Imaging Research (ORMIR)'
 author = 'Gianluca Iori'
 
 # The full version, including alpha/beta/rc tags
-release = '1.3.5'
+release = '2.0.0'
 
 # -- General configuration ---------------------------------------------------
 
