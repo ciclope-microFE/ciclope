@@ -30,6 +30,7 @@ jobs:
             meshio>=5,<6
             pymcubes
             scipy
+            py-opencv
             scikit-image
             pypng
             tqdm
