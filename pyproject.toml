@@ -63,7 +63,10 @@ all = [
 ]
 
 [project.urls]
-Home = "https://github.com/gianthk/ciclope"
+Homepage = "https://github.com/ciclope-microFE/ciclope"
+Repository = "https://github.com/ciclope-microFE/ciclope"
+Documentation = "https://ciclope.readthedocs.io"
+"Bug Tracker" = "https://github.com/ciclope-microFE/ciclope/issues"
 
 [project.scripts]
 ciclope = "ciclope:pipeline.main"
