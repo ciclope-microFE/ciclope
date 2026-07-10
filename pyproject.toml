@@ -36,7 +36,7 @@ classifiers = [
     "Topic :: Scientific/Engineering",
     "Topic :: Utilities",
 ]
-requires-python = ">=3.7"
+requires-python = ">=3.9"
 dynamic = ["version"]
 dependencies = [
     "numpy>=1.20.0,<2.0",
